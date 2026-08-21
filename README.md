@@ -99,11 +99,13 @@ Det som finns just nu:
 
 ## Nästa steg
 
-1. **Fyll i riktiga YouTube-ID:n** för `PENDING-genesis-*` och
-   `PENDING-christ-*` i `prisma/seed.ts` — hämta från den officiella
-   spellistan (t.ex. `youtube.com/playlist?list=PLCew51JD0hBFfOUYl31kz23qPylA9QBnP`,
-   verifiera mot Petersons egen kanal) via YouTube Data API eller `yt-dlp
-   --flat-playlist`.
+1. ~~Fyll i riktiga YouTube-ID:n~~ **Klart 2026-08-21**: alla 15
+   Genesis-föreläsningar verifierade mot officiella kanalen via oEmbed.
+   Kristus-serien visade sig vara EN sammanslagen video (inte 5) —
+   kapitel-tidsstämplar för de fem delarna är fortfarande TODO. 16 fria
+   Exodus-klipp tillagda (ett spot-verifierat, resten från archive.org-
+   mirror, bör stickprovskontrolleras mer om serien aktiveras på riktigt).
+   Avsnitt 11:s klipp hittades inte.
 2. **Transkript → segment**: hämta undertexter per video (`yt-dlp
    --write-auto-sub`), och för var och en manuellt/halvautomatiskt (AI-
    assisterat) markera var respektive `Story` börjar/slutar i videon →
