@@ -97,6 +97,34 @@ Det som finns just nu:
   egna korta sammanfattningar + tidsstämplar (samma modell som övriga
   serier) är rimligt.
 
+## Uppdatering 2026-08-22: full text i appen + versnivå-kommentarer
+
+Efter feedback (kontrast/design, att bibeltexten faktiskt ska synas i
+appen, och att Petersons genomgång ska knytas till specifika verser i
+stället för bara hela berättelsen):
+
+- **Fullständig bibeltext, alltid i appen**: `bible.ts` hämtar nu varje
+  kapitel för sig och klipper ihop dem, så även flerkapitel-berättelser
+  (Noa: Gen 6–9, Josef: Gen 37–45) renderas i sin helhet — ingen
+  "läs resten på annan sajt"-kompromiss längre. En permanent länk till
+  BibleGateway finns ändå kvar som referens.
+- **Vers-för-vers-layout**: texten radbryts vid varje ny vers (som i
+  Petersons egna föreläsningsbilder) i stället för att flyta ihop i ett
+  stycke.
+- **`VerseCommentary`** (ny modell): för de specifika verser Peterson går
+  in på extra djupt, visas nu — direkt inline efter just den versen — ett
+  kort utvalt citat + en egen sammanfattning av poängen. Detta är en
+  djupare nivå än `PetersonSegment.quote`/`keyPoints` (som gäller hela
+  berättelsen). **Proof-of-concept-täckning**, inte komplett: Kain och
+  Abel (v4–5), Jakobs stege (v12–13), Isaks offer (v5). Kräver mycket
+  transkript-grävande per vers — se "Nästa steg".
+- **Avvägning kring fullständiga transkript**: användaren efterfrågade
+  Petersons ord "ordagrant" om varje mening — vi bygger medvetet bara
+  korta utvalda citat (1–2 meningar), inte hela transkriptsegment, eftersom
+  det senare börjar likna bulk-kopiering av hans upphovsrättsskyddade tal
+  snarare än citat i kommentarssyfte. Beslutet står tills vidare men kan
+  omprövas.
+
 ## Nästa steg
 
 1. ~~Fyll i riktiga YouTube-ID:n~~ **Klart 2026-08-21**: alla 15
@@ -118,6 +146,11 @@ Det som finns just nu:
    kapitel i EN video) och Exodus-panelen är inte annoterade än.
 3. **Koppla in textfetch** mot bible-api.com i berättelsevyn (ersätt
    TODO-texten i `src/app/[corpus]/[book]/[story]/page.tsx`).
+4a. **Utöka `VerseCommentary`-täckningen**: just nu bara 5 verser
+    annoterade (av potentiellt hundratals). Kräver att gå igenom
+    respektive videos transkript (redan nedladdat för alla 15, se
+    scratchpad-mappen från sessionen) vers för vers och plocka ut var
+    Peterson gör en specifik poäng.
 4. **Utöka Genesis-indexet** om fler substories önskas (just nu 13 stycken,
    kan brytas ner finare, t.ex. separera "Abraham och Lot" i fler delar).
 5. **Nya Testamentet**: samma mönster, bygg vidare seed-data.
