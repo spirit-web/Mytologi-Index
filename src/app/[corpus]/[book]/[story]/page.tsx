@@ -97,13 +97,29 @@ export default async function StoryPage({
         </div>
 
         {passage ? (
-          <div className="font-serif text-[1.05rem] leading-relaxed text-[var(--text)]">
-            {passage.verses.map((v) => (
-              <span key={`${v.chapter}:${v.verse}`}>
-                <sup className="mr-1 select-none text-[var(--text-faint)]">{v.verse}</sup>
-                {v.text}{" "}
-              </span>
-            ))}
+          <div>
+            {passage.truncated && (
+              <p className="mb-3 text-sm text-[var(--text-muted)]">
+                Berättelsen spänner över {passage.truncated.fullRangeLabel} — bible-api.com tillåter
+                bara utdrag inom en kapitelgräns, så här visas öppningskapitlet.{" "}
+                <a
+                  href={passage.truncated.externalUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[var(--link)] underline underline-offset-2"
+                >
+                  Läs hela texten på BibleGateway →
+                </a>
+              </p>
+            )}
+            <div className="font-serif text-[1.05rem] leading-relaxed text-[var(--text)]">
+              {passage.verses.map((v) => (
+                <span key={`${v.chapter}:${v.verse}`}>
+                  <sup className="mr-1 select-none text-[var(--text-faint)]">{v.verse}</sup>
+                  {v.text}{" "}
+                </span>
+              ))}
+            </div>
           </div>
         ) : (
           <p className="text-sm text-[var(--text-muted)]">

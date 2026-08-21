@@ -390,6 +390,163 @@ async function main() {
     }
   }
 
+  // --- PetersonSegment: verkliga tidsstämplar från Genesis-serien ----
+  // Hittade genom att ladda ner auto-genererade undertexter (yt-dlp) för
+  // alla 15 videor och söka efter var Peterson faktiskt börjar läsa/
+  // diskutera respektive bibeltext (inte bara nämner den i förbifarten).
+  // startSec = där han börjar den substantiella genomgången av just den
+  // berättelsen. endSec lämnas obestämt (ej annoterat) — dessa lektioner
+  // fortsätter ofta in i sidospår eller Q&A som inte är kartlagt än.
+  // keyPoints är egna, korta sammanfattningar — inte citat ur transkriptet
+  // (se README, upphovsrättsgräns).
+  const segments: Array<{
+    storySlug: string;
+    youtubeId: string;
+    startSec: number;
+    keyPoints: string;
+  }> = [
+    {
+      storySlug: "creation",
+      youtubeId: "hdrLQ7DpiWs",
+      startSec: 18 * 60 + 55,
+      keyPoints:
+        "Läser Genesis 1:1–2 rakt av och börjar sedan bryta ner nyckelorden " +
+        "(kaos/ordning, formlöshet, Guds ande över vattnet) — påpekar att " +
+        "avsnittet är tätt packat och kräver bakgrund från andra urtexter " +
+        "för att förstås fullt ut.",
+    },
+    {
+      storySlug: "garden-of-eden",
+      youtubeId: "Ifi5KkXig3s",
+      startSec: 59 * 60 + 4,
+      keyPoints:
+        "Läser Genesis 2:7 (Gud formar människan av jord och blåser liv i " +
+        "henne) och kopplar andetag/liv till begrepp som psyke, ande och " +
+        "inspiration.",
+    },
+    {
+      storySlug: "cain-and-abel",
+      youtubeId: "44f3mxcsI50",
+      startSec: 60 * 60 + 1 * 60 + 27,
+      keyPoints:
+        "Poängterar att Kain och Abel är de första människorna som föds av " +
+        "människor (till skillnad från Adam och Eva, skapade direkt av " +
+        "Gud) — helt postlapsariska, redan utkastade ur paradiset, redan " +
+        "självmedvetna.",
+    },
+    {
+      storySlug: "noahs-flood",
+      youtubeId: "wNjbasba-Qw",
+      startSec: 0,
+      keyPoints:
+        "Hela föreläsningen (del 1 av 2 om Noa) är komparativ mytologi " +
+        "snarare än radgenomgång — jämför syndaflodsberättelser tvärs " +
+        "kulturer (bl.a. med hänvisning till Mircea Eliade) innan del 2 " +
+        "(nästa video) går in i själva bibeltexten.",
+    },
+    {
+      storySlug: "noahs-flood",
+      youtubeId: "6gFjB9FTN58",
+      startSec: 33 * 60 + 15,
+      keyPoints:
+        "Går igenom Genesis 6 (Guds vrede över människans ondska, Noas " +
+        "rättfärdighet) och lyfter fram frasen 'Noa vandrade med Gud' som " +
+        "en 'Adam utan syndafallet'-parallel.",
+    },
+    {
+      storySlug: "tower-of-babel",
+      youtubeId: "UoQdp2prfmM",
+      startSec: 16 * 60 + 17,
+      keyPoints:
+        "Läser Babels torn-berättelsen och tolkar tornbygget som ett " +
+        "hybris-projekt: ett försök att nå det gudomliga genom ren " +
+        "teknisk/social makt istället för genom rätt relation till det " +
+        "transcendenta.",
+    },
+    {
+      storySlug: "call-of-abram",
+      youtubeId: "GmuzUZTJ0GA",
+      startSec: 33 * 60 + 14,
+      keyPoints:
+        "Läser Guds kallelse ('drag ut ur ditt land...') fras för fras — " +
+        "att lämna det trygga och kända är kallelsens kärna, jämför med " +
+        "1920-talets amerikanska exilförfattare i Paris.",
+    },
+    {
+      storySlug: "covenant-with-abram",
+      youtubeId: "3Y6bCqT85Pc",
+      startSec: 57 * 60 + 52,
+      keyPoints:
+        "Läser förbundsceremonin i Genesis 15 (den rykande ugnen och den " +
+        "brinnande lågan som passerar mellan de itudelade offerdjuren) som " +
+        "ett förbund beseglat med liv-och-död-symbolik.",
+    },
+    {
+      storySlug: "sodom-and-gomorrah",
+      youtubeId: "SKzpj0Ev8Xs",
+      startSec: 60 * 60 + 14 * 60 + 4,
+      keyPoints:
+        "Börjar följa Abraham och budbärarna mot Sodom, men gör ett längre " +
+        "sidospår om 'potential' innan han fortsätter mot stadens öde.",
+    },
+    {
+      storySlug: "binding-of-isaac",
+      youtubeId: "-yUP40gwht0",
+      startSec: 24 * 60 + 17,
+      keyPoints:
+        "Läser hela offerscenen i Genesis 22 — Guds uppmaning att offra " +
+        "Isak, vandringen till Moria — och noterar att det är en av " +
+        "bibeltextens första förekomster av ordet 'tillbedjan'.",
+    },
+    {
+      storySlug: "jacobs-ladder",
+      youtubeId: "A9JtQN_GoVI",
+      startSec: 60 * 60 + 14 * 60 + 44,
+      keyPoints:
+        "Läser drömmen om stegen mellan himmel och jord med änglar som " +
+        "vandrar upp och ner, och Guds löfte till Jakob — beskriver hur " +
+        "bilden 'besatt Västerlandets fantasi' i konst och litteratur.",
+    },
+    {
+      storySlug: "jacob-wrestling",
+      youtubeId: "DRJKwDfDbco",
+      startSec: 60 * 60 + 12 * 60 + 4,
+      keyPoints:
+        "Läser brottningsscenen vid Jabbok: Jakob brottas hela natten med " +
+        "'en man/ängel/Gud', får höften ur led men vägrar släppa taget " +
+        "förrän han blir välsignad och får ett nytt namn.",
+    },
+    {
+      storySlug: "joseph-and-his-brothers",
+      youtubeId: "B7V8eZ1BLiI",
+      startSec: 21 * 60 + 15,
+      keyPoints:
+        "Explicit startpunkt i föreläsningen ('nu börjar berättelsen om " +
+        "Josef') — läser hur Jakob favoriserar Josef med den mångfärgade " +
+        "kappan och kopplar det till det återkommande mönstret i Genesis " +
+        "att föräldrars favorisering av ett barn leder till familjekatastrof.",
+    },
+  ];
+
+  for (const seg of segments) {
+    const story = await prisma.story.findFirstOrThrow({
+      where: { bookId: genesis.id, slug: seg.storySlug },
+    });
+    const video = await prisma.petersonVideo.findUniqueOrThrow({
+      where: { youtubeId: seg.youtubeId },
+    });
+    await prisma.petersonSegment.upsert({
+      where: { videoId_storyId: { videoId: video.id, storyId: story.id } },
+      update: { startSec: seg.startSec, keyPoints: seg.keyPoints },
+      create: {
+        videoId: video.id,
+        storyId: story.id,
+        startSec: seg.startSec,
+        keyPoints: seg.keyPoints,
+      },
+    });
+  }
+
   // --- Exempel-Parallel (visar konceptet med en enda post) -----------
   // Fler tvärtext-jämförelser (särskilt Bibeln↔Koranen) läggs till när
   // Koranen är indexerad, se README.
@@ -427,7 +584,7 @@ async function main() {
   console.log(
     `Seedat: ${stories.length} stories i Genesis, ` +
       `${genesisEpisodes.length + 1 + exodusClips.length} Peterson-videor, ` +
-      `1 exempel-Parallel.`
+      `${segments.length} tidsstämplade segment, 1 exempel-Parallel.`
   );
 }
 

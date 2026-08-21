@@ -182,6 +182,7 @@ model PetersonSegment {
   // fullständigt transkript (se README, upphovsrättsgräns).
   keyPoints String?
 
+  @@unique([videoId, storyId])
   @@index([storyId])
   @@index([videoId])
 }
