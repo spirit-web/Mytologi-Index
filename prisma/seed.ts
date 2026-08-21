@@ -397,13 +397,27 @@ async function main() {
   // startSec = där han börjar den substantiella genomgången av just den
   // berättelsen. endSec lämnas obestämt (ej annoterat) — dessa lektioner
   // fortsätter ofta in i sidospår eller Q&A som inte är kartlagt än.
-  // keyPoints är egna, korta sammanfattningar — inte citat ur transkriptet
-  // (se README, upphovsrättsgräns).
+  // keyPoints är egna, korta sammanfattningar. quote är ETT kort, utvalt
+  // ordagrant citat (inte ett fullständigt transkript, se README,
+  // upphovsrättsgräns) — källa: auto-genererade YouTube-undertexter, kan
+  // innehålla enstaka transkriberingsfel (ASR), bör proofreadas innan de
+  // sprids vidare. Inte alla segment har hunnit få ett bra citat än.
+  type VerseNote = {
+    chapter: number;
+    verse: number;
+    verseEnd?: number;
+    order: number;
+    quote: string;
+    summary: string;
+  };
+
   const segments: Array<{
     storySlug: string;
     youtubeId: string;
     startSec: number;
     keyPoints: string;
+    quote?: string;
+    verseNotes?: VerseNote[];
   }> = [
     {
       storySlug: "creation",
@@ -414,6 +428,9 @@ async function main() {
         "(kaos/ordning, formlöshet, Guds ande över vattnet) — påpekar att " +
         "avsnittet är tätt packat och kräver bakgrund från andra urtexter " +
         "för att förstås fullt ut.",
+      quote:
+        "This is a hard narrative section to get a handle on, because in " +
+        "order to understand it properly you have to actually look behind it.",
     },
     {
       storySlug: "garden-of-eden",
@@ -423,6 +440,7 @@ async function main() {
         "Läser Genesis 2:7 (Gud formar människan av jord och blåser liv i " +
         "henne) och kopplar andetag/liv till begrepp som psyke, ande och " +
         "inspiration.",
+      quote: "The breath is life, right? That's psyche, that's spirit, that's inspiration.",
     },
     {
       storySlug: "cain-and-abel",
@@ -433,6 +451,41 @@ async function main() {
         "människor (till skillnad från Adam och Eva, skapade direkt av " +
         "Gud) — helt postlapsariska, redan utkastade ur paradiset, redan " +
         "självmedvetna.",
+      quote:
+        "Cain and Abel are the first two human beings, because Adam and Eve " +
+        "were made by God and they were born in Paradise.",
+      verseNotes: [
+        {
+          chapter: 4,
+          verse: 4,
+          order: 1,
+          quote:
+            "There's a hint that Abel's putting a little bit more into the " +
+            "whole sacrificial thing than Cain — but there's also a hint " +
+            "that maybe God is just liking him a little better.",
+          summary:
+            "Betonar textens inbyggda tvetydighet: vi vet inte säkert om " +
+            "Abels offer var kvalitativt bättre eller om Gud helt enkelt " +
+            "gynnade honom mer — och kopplar det till livets godtycklighet, " +
+            "som hur hans egna barn fått väldigt olika 'öden' trots " +
+            "liknande karaktär.",
+        },
+        {
+          chapter: 4,
+          verse: 5,
+          order: 2,
+          quote:
+            "Cain is not a happy clam that his hard work is being rejected " +
+            "by God — now that's worth thinking about, because you think " +
+            "about how human that story is.",
+          summary:
+            "Läser Kains vrede som djupt mänsklig och igenkännbar: känslan " +
+            "av att bli orättvist förbisedd trots ansträngning — och hur " +
+            "det bittra, cyniska svaret på det (istället för " +
+            "självrannsakan) är precis vad som leder honom vidare mot " +
+            "katastrof.",
+        },
+      ],
     },
     {
       storySlug: "noahs-flood",
@@ -452,6 +505,7 @@ async function main() {
         "Går igenom Genesis 6 (Guds vrede över människans ondska, Noas " +
         "rättfärdighet) och lyfter fram frasen 'Noa vandrade med Gud' som " +
         "en 'Adam utan syndafallet'-parallel.",
+      quote: "Noah is Adam without the fall, essentially.",
     },
     {
       storySlug: "tower-of-babel",
@@ -471,6 +525,7 @@ async function main() {
         "Läser Guds kallelse ('drag ut ur ditt land...') fras för fras — " +
         "att lämna det trygga och kända är kallelsens kärna, jämför med " +
         "1920-talets amerikanska exilförfattare i Paris.",
+      quote: "Go somewhere you don't understand — that's the first thing.",
     },
     {
       storySlug: "covenant-with-abram",
@@ -497,6 +552,20 @@ async function main() {
         "Läser hela offerscenen i Genesis 22 — Guds uppmaning att offra " +
         "Isak, vandringen till Moria — och noterar att det är en av " +
         "bibeltextens första förekomster av ordet 'tillbedjan'.",
+      quote: "It's really one of the first times that we've come across the word 'worship'.",
+      verseNotes: [
+        {
+          chapter: 22,
+          verse: 5,
+          order: 1,
+          quote: "It's really one of the first times that we've come across the word 'worship', if I remember correctly.",
+          summary:
+            "Pekar ut att detta är en av bibeltextens första förekomster " +
+            "av ordet 'tillbedjan' — kopplar akten att gå för att offra " +
+            "sonen till den djupaste formen av underkastelse inför något " +
+            "högre än en själv.",
+        },
+      ],
     },
     {
       storySlug: "jacobs-ladder",
@@ -506,6 +575,37 @@ async function main() {
         "Läser drömmen om stegen mellan himmel och jord med änglar som " +
         "vandrar upp och ner, och Guds löfte till Jakob — beskriver hur " +
         "bilden 'besatt Västerlandets fantasi' i konst och litteratur.",
+      quote: "This story of Jacob's Ladder has really possessed the imagination of the West.",
+      verseNotes: [
+        {
+          chapter: 28,
+          verse: 12,
+          order: 1,
+          quote:
+            "This story of Jacob's Ladder has really possessed the " +
+            "imagination of the West, and there's a reason for that — " +
+            "it's because it's an archetypal story.",
+          summary:
+            "Menar att stegen mellan himmel och jord är en av " +
+            "mänsklighetens äldsta idéer, återfinns brett bland schamanska " +
+            "kulturer och kan ses som ett kännetecken för psykedelisk " +
+            "erfarenhet — en arketypisk bild av 'öppning till en alternativ " +
+            "dimension' snarare än en bokstavlig fysisk plats.",
+        },
+        {
+          chapter: 28,
+          verse: 13,
+          order: 2,
+          quote:
+            "God is beyond space and time — he's not in the universe, " +
+            "he's outside the universe in some manner.",
+          summary:
+            "Tolkar Guds löfte till Jakob i ljuset av att bilden av Gud " +
+            "'däruppe' är mänsklighetens bästa försök att begreppsliggöra " +
+            "en extra-dimensionell upplevelse, inte en bokstavlig " +
+            "platsangivelse i skyn.",
+        },
+      ],
     },
     {
       storySlug: "jacob-wrestling",
@@ -525,6 +625,9 @@ async function main() {
         "Josef') — läser hur Jakob favoriserar Josef med den mångfärgade " +
         "kappan och kopplar det till det återkommande mönstret i Genesis " +
         "att föräldrars favorisering av ett barn leder till familjekatastrof.",
+      quote:
+        "Whenever there's marked preference on the part of parents for one " +
+        "child over the other... that didn't work out so well.",
     },
   ];
 
@@ -535,16 +638,44 @@ async function main() {
     const video = await prisma.petersonVideo.findUniqueOrThrow({
       where: { youtubeId: seg.youtubeId },
     });
-    await prisma.petersonSegment.upsert({
+    const petersonSegment = await prisma.petersonSegment.upsert({
       where: { videoId_storyId: { videoId: video.id, storyId: story.id } },
-      update: { startSec: seg.startSec, keyPoints: seg.keyPoints },
+      update: { startSec: seg.startSec, keyPoints: seg.keyPoints, quote: seg.quote },
       create: {
         videoId: video.id,
         storyId: story.id,
         startSec: seg.startSec,
         keyPoints: seg.keyPoints,
+        quote: seg.quote,
       },
     });
+
+    for (const note of seg.verseNotes ?? []) {
+      await prisma.verseCommentary.upsert({
+        where: {
+          segmentId_chapter_verse: {
+            segmentId: petersonSegment.id,
+            chapter: note.chapter,
+            verse: note.verse,
+          },
+        },
+        update: {
+          verseEnd: note.verseEnd,
+          order: note.order,
+          quote: note.quote,
+          summary: note.summary,
+        },
+        create: {
+          segmentId: petersonSegment.id,
+          chapter: note.chapter,
+          verse: note.verse,
+          verseEnd: note.verseEnd,
+          order: note.order,
+          quote: note.quote,
+          summary: note.summary,
+        },
+      });
+    }
   }
 
   // --- Exempel-Parallel (visar konceptet med en enda post) -----------

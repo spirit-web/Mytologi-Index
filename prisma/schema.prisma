@@ -182,9 +182,46 @@ model PetersonSegment {
   // fullständigt transkript (se README, upphovsrättsgräns).
   keyPoints String?
 
+  // Ett kort, utvalt ordagrant citat (1–2 meningar) där Peterson säger
+  // något skarpt/minnesvärt om just den här berättelsen — medvetet INTE
+  // ett fullständigt transkript av segmentet (se README, upphovsrättsgräns).
+  // Källa: auto-genererade YouTube-undertexter, kan innehålla enstaka
+  // transkriberingsfel — proofreada innan citat sprids vidare.
+  quote String?
+
+  verseNotes VerseCommentary[]
+
   @@unique([videoId, storyId])
   @@index([storyId])
   @@index([videoId])
+}
+
+// Versnivå-kommentar: för de specifika verser/meningar Peterson går in på
+// särskilt (inte hela berättelsen i klump som PetersonSegment ovan) —
+// kopplar en versreferens till hans exakta ord om just DEN versen plus en
+// sammanfattning av poängen. `quote` är fortsatt ett kort, utvalt citat,
+// inte ett fullständigt transkript (se README, upphovsrättsgräns).
+// Detta är en djupare, mer arbetskrävande annotering än PetersonSegment
+// och byggs ut gradvis — inte varje vers i varje berättelse är täckt än.
+model VerseCommentary {
+  id        String          @id @default(cuid())
+  segmentId String
+  segment   PetersonSegment @relation(fields: [segmentId], references: [id])
+
+  // Explicita fält (inte fri text) så UI:t kan matcha kommentaren mot
+  // rätt vers när bibeltexten radbryts vers-för-vers. verseEnd null =
+  // en enda vers; satt = ett litet spann (t.ex. 12–13) med gemensam
+  // kommentar.
+  chapter  Int
+  verse    Int
+  verseEnd Int?
+  order    Int // visningsordning inom segmentet
+
+  quote   String // Petersons exakta ord om just denna vers/detta spann
+  summary String // egen sammanfattning av poängen han gör
+
+  @@unique([segmentId, chapter, verse])
+  @@index([segmentId])
 }
 
 // Referens-index: varje gång Peterson (i en video ELLER i ett kapitel av

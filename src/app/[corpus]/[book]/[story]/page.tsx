@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { fetchBiblePassage } from "@/lib/bible";
+import { fetchBiblePassage, externalBibleUrl } from "@/lib/bible";
 
 export default async function StoryPage({
   params,
@@ -19,7 +19,9 @@ export default async function StoryPage({
       book: { include: { corpus: true } },
       characters: { include: { character: true } },
       themes: { include: { theme: true } },
-      petersonSegments: { include: { video: { include: { series: true } } } },
+      petersonSegments: {
+        include: { video: { include: { series: true } }, verseNotes: { orderBy: { order: "asc" } } },
+      },
       referencesAsTarget: { include: { video: { include: { series: true } } } },
       parallelLinks: {
         include: {
@@ -46,6 +48,21 @@ export default async function StoryPage({
     story.book.corpus.kind === "scripture"
       ? await fetchBiblePassage(story.startRef, story.endRef)
       : null;
+
+  // Slå upp versnivå-kommentarer per "kapitel:vers" så vi kan visa dem
+  // direkt inline efter rätt vers när texten radbryts vers för vers.
+  const verseNotesByVerse = new Map<
+    string,
+    { quote: string; summary: string; verseEnd: number | null }[]
+  >();
+  for (const seg of story.petersonSegments) {
+    for (const note of seg.verseNotes) {
+      const key = `${note.chapter}:${note.verse}`;
+      const list = verseNotesByVerse.get(key) ?? [];
+      list.push({ quote: note.quote, summary: note.summary, verseEnd: note.verseEnd });
+      verseNotesByVerse.set(key, list);
+    }
+  }
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
@@ -98,27 +115,43 @@ export default async function StoryPage({
 
         {passage ? (
           <div>
-            {passage.truncated && (
-              <p className="mb-3 text-sm text-[var(--text-muted)]">
-                Berättelsen spänner över {passage.truncated.fullRangeLabel} — bible-api.com tillåter
-                bara utdrag inom en kapitelgräns, så här visas öppningskapitlet.{" "}
-                <a
-                  href={passage.truncated.externalUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-[var(--link)] underline underline-offset-2"
-                >
-                  Läs hela texten på BibleGateway →
-                </a>
+            {passage.partial && (
+              <p className="mb-3 text-sm text-[var(--accent)]">
+                Ett eller flera kapitel kunde inte hämtas just nu — texten nedan kan ha luckor.
+                Ladda om sidan för att försöka igen.
               </p>
             )}
-            <div className="font-serif text-[1.05rem] leading-relaxed text-[var(--text)]">
-              {passage.verses.map((v) => (
-                <span key={`${v.chapter}:${v.verse}`}>
-                  <sup className="mr-1 select-none text-[var(--text-faint)]">{v.verse}</sup>
-                  {v.text}{" "}
-                </span>
-              ))}
+            <div className="space-y-1">
+              {passage.verses.map((v, i) => {
+                const notes = verseNotesByVerse.get(`${v.chapter}:${v.verse}`) ?? [];
+                return (
+                  <div key={`${v.chapter}:${v.verse}`}>
+                    {(i === 0 || v.verse === 1) && (
+                      <div className="mt-5 mb-1 text-xs font-sans uppercase tracking-wide text-[var(--text-faint)] first:mt-0">
+                        Kapitel {v.chapter}
+                      </div>
+                    )}
+                    <p className="font-serif text-[1.05rem] leading-relaxed text-[var(--text)]">
+                      <sup className="mr-1 select-none text-[var(--text-faint)]">{v.verse}</sup>
+                      {v.text}
+                    </p>
+                    {notes.map((note, ni) => (
+                      <div
+                        key={ni}
+                        className="my-2 ml-4 rounded-lg border border-[var(--accent-border)] bg-[var(--accent-bg)] px-4 py-3"
+                      >
+                        <p className="mb-1 text-xs font-medium uppercase tracking-wide text-[var(--accent)]">
+                          Jordan Peterson om {note.verseEnd ? `v. ${v.verse}–${note.verseEnd}` : `v. ${v.verse}`}
+                        </p>
+                        <blockquote className="mb-2 font-serif italic text-[var(--text)]">
+                          "{note.quote}"
+                        </blockquote>
+                        <p className="text-sm text-[var(--text-muted)]">{note.summary}</p>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })}
             </div>
           </div>
         ) : (
@@ -126,6 +159,19 @@ export default async function StoryPage({
             {story.book.corpus.kind === "scripture"
               ? "Kunde inte hämta versstexten just nu (bible-api.com svarade inte). Prova ladda om sidan."
               : "Ingen extern källtext kopplad för detta ramverkskapitel ännu."}
+          </p>
+        )}
+
+        {story.book.corpus.kind === "scripture" && (
+          <p className="mt-4 border-t border-[var(--border-soft)] pt-3 text-xs text-[var(--text-faint)]">
+            <a
+              href={externalBibleUrl(story.startRef, story.endRef)}
+              target="_blank"
+              rel="noreferrer"
+              className="text-[var(--link)] underline underline-offset-2"
+            >
+              Läs på BibleGateway →
+            </a>
           </p>
         )}
       </section>
@@ -148,6 +194,11 @@ export default async function StoryPage({
                   {seg.video.title} — {formatTime(seg.startSec)}
                   {seg.endSec ? `–${formatTime(seg.endSec)}` : ""}
                 </a>
+                {seg.quote && (
+                  <blockquote className="mt-2 border-l-2 border-[var(--accent-border)] pl-3 font-serif italic text-[var(--text)]">
+                    "{seg.quote}"
+                  </blockquote>
+                )}
                 {seg.keyPoints && <p className="mt-1 text-[var(--text-muted)]">{seg.keyPoints}</p>}
               </li>
             ))}
