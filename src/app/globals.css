@@ -1,26 +1,64 @@
 @import "tailwindcss";
 
+/* Designtoken: varmt "manuskript"-tema. Ljust som standard, äkta mörkt
+   läge via prefers-color-scheme (inte bara Tailwinds fördefinierade
+   grå/svart som gav dålig kontrast). Dessa variabler sätts på :root utan
+   @layer, så de alltid vinner över Tailwinds utility-lager för
+   grundfärgerna på body — annars "vinner" en oskiktad regel ändå, men vi
+   vill vara explicita och konsekventa här. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --bg: #faf7f1;
+  --bg-elevated: #ffffff;
+  --text: #241f19;
+  --text-muted: #6b6156;
+  --text-faint: #948a7c;
+  --border: #e6ddcf;
+  --border-soft: #efe8dc;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --accent: #92400e;
+  --accent-bg: #fdf3e2;
+  --accent-border: #f3ddad;
+
+  --link: #1c6e5e;
+  --link-bg: #eaf3ef;
+  --link-border: #cfe6dd;
+
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg: #17130f;
+    --bg-elevated: #1f1a14;
+    --text: #f1ebe0;
+    --text-muted: #b7ab99;
+    --text-faint: #8c8172;
+    --border: #362c20;
+    --border-soft: #2a221a;
+
+    --accent: #f0b429;
+    --accent-bg: #2b2011;
+    --accent-border: #4a3719;
+
+    --link: #5fd6b8;
+    --link-bg: #16241e;
+    --link-border: #294237;
   }
 }
 
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-source-serif);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+::selection {
+  background: var(--accent-border);
 }

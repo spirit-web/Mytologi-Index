@@ -37,29 +37,35 @@ export default async function BookPage({
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
-      <Link href="/" className="text-sm text-stone-400 hover:text-stone-600">
+      <Link
+        href="/"
+        className="text-sm text-[var(--text-faint)] transition hover:text-[var(--text)]"
+      >
         ← {book.corpus.name}
       </Link>
-      <h1 className="mt-2 mb-1 text-3xl font-semibold tracking-tight text-stone-900">
+      <h1 className="mt-2 mb-1 font-serif text-4xl font-semibold tracking-tight text-[var(--text)]">
         {book.name}
       </h1>
-      <p className="mb-10 text-sm text-stone-500">
+      <p className="mb-10 text-sm text-[var(--text-muted)]">
         {standalone.length} enskilda berättelser · {seriesMap.size} berättelsecykler
         ({[...seriesMap.values()].reduce((n, l) => n + l.length, 0)} avsnitt)
       </p>
 
       {seriesMap.size > 0 && (
         <section className="mb-10">
-          <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-stone-400">
+          <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--text-faint)]">
             Berättelsecykler
           </h2>
           <div className="space-y-4">
             {[...seriesMap.entries()].map(([slug, list]) => (
-              <div key={slug} className="rounded-lg border border-stone-200 p-4">
-                <h3 className="mb-2 font-medium text-stone-800">
+              <div
+                key={slug}
+                className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 shadow-sm"
+              >
+                <h3 className="mb-2 font-serif text-lg font-medium text-[var(--text)]">
                   {list[0].seriesTitle ?? slug}
                 </h3>
-                <ol className="space-y-1">
+                <ol className="divide-y divide-[var(--border-soft)]">
                   {list
                     .sort((a, b) => (a.seriesOrder ?? 0) - (b.seriesOrder ?? 0))
                     .map((s) => (
@@ -76,10 +82,10 @@ export default async function BookPage({
 
       {standalone.length > 0 && (
         <section>
-          <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-stone-400">
+          <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--text-faint)]">
             Enskilda berättelser
           </h2>
-          <ul className="divide-y divide-stone-200 rounded-lg border border-stone-200">
+          <ul className="divide-y divide-[var(--border-soft)] overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-sm">
             {standalone.map((s) => (
               <li key={s.id}>
                 <StoryRow book={book} story={s} />
@@ -110,11 +116,11 @@ function StoryRow({
   return (
     <Link
       href={`/${book.corpus.slug}/${book.slug}/${story.slug}`}
-      className="flex flex-col gap-1 px-5 py-4 transition hover:bg-stone-50"
+      className="flex flex-col gap-1.5 px-5 py-4 transition hover:bg-[var(--accent-bg)]"
     >
       <div className="flex items-center justify-between">
-        <span className="font-medium text-stone-800">{story.title}</span>
-        <span className="text-xs text-stone-400">
+        <span className="font-medium text-[var(--text)]">{story.title}</span>
+        <span className="text-xs text-[var(--text-faint)]">
           {story.startRef}
           {story.endRef !== story.startRef ? `–${story.endRef.replace(/^.*?(\d)/, "$1")}` : ""}
         </span>
@@ -124,7 +130,7 @@ function StoryRow({
           {story.characters.map((c) => (
             <span
               key={c.character.name}
-              className="rounded-full bg-stone-100 px-2 py-0.5 text-xs text-stone-600"
+              className="rounded-full border border-[var(--border)] px-2 py-0.5 text-xs text-[var(--text-muted)]"
             >
               {c.character.name}
             </span>
@@ -132,7 +138,7 @@ function StoryRow({
           {story.themes.map((t) => (
             <span
               key={t.theme.name}
-              className="rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-700"
+              className="rounded-full border border-[var(--accent-border)] bg-[var(--accent-bg)] px-2 py-0.5 text-xs text-[var(--accent)]"
             >
               {t.theme.name}
             </span>

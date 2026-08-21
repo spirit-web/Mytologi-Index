@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import Link from "next/link";
+import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,18 +13,45 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const sourceSerif = Source_Serif_4({
+  variable: "--font-source-serif",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "Berättelseindex",
   description: "Bibelns berättelser med Jordan Peterson som guide",
+};
+
+// Talar om för webbläsaren att sidan faktiskt stödjer både ljust och mörkt
+// läge, så den inte försöker "auto-invertera" färgerna själv (vilket gav
+// nästan osynlig text i mörkt läge tidigare).
+export const viewport: Viewport = {
+  colorScheme: "light dark",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="sv"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-stone-50">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">
+        <header className="border-b border-[var(--border-soft)]">
+          <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
+            <Link
+              href="/"
+              className="font-serif text-lg font-semibold tracking-tight text-[var(--text)]"
+            >
+              Berättelseindex
+            </Link>
+            <span className="text-xs uppercase tracking-wide text-[var(--text-faint)]">
+              Bibeln · Peterson-guide
+            </span>
+          </div>
+        </header>
+        <div className="flex-1">{children}</div>
+      </body>
     </html>
   );
 }
