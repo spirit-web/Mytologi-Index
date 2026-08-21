@@ -1,0 +1,142 @@
+// Datamodell för Biblisk berättelseindex + Jordan Peterson-guide
+// Se README.md för bakgrund och plan.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// En text-tradition, t.ex. "Bibeln" eller "Koranen".
+// Håller isär de olika korpusarna så UI:t kan visa dem separat.
+model Corpus {
+  id    String @id @default(cuid())
+  slug  String @unique // t.ex. "bible", "quran"
+  name  String // t.ex. "Bibeln"
+
+  books Book[]
+}
+
+// En bok inom korpusen, t.ex. "Genesis", "Exodus", "Matteusevangeliet".
+model Book {
+  id       String @id @default(cuid())
+  corpusId String
+  corpus   Corpus @relation(fields: [corpusId], references: [id])
+
+  slug     String // t.ex. "genesis"
+  name     String // t.ex. "Första Moseboken (Genesis)"
+  order    Int    // ordning inom korpusen (kanonisk ordning)
+  testament String? // "old" | "new" | null (för icke-bibliska korpusar)
+
+  stories Story[]
+
+  @@unique([corpusId, slug])
+}
+
+// En berättelseenhet — den centrala byggstenen i indexet.
+// Referensintervallet pekar till verstext som hämtas on-demand från en
+// öppen bibel-API (se README) istället för att lagras här, för att slippa
+// äga/distribuera copyrightad översättningstext.
+model Story {
+  id     String @id @default(cuid())
+  bookId String
+  book   Book   @relation(fields: [bookId], references: [id])
+
+  slug        String // t.ex. "cain-and-abel"
+  title       String // t.ex. "Kain och Abel"
+  startRef    String // t.ex. "Genesis 4:1"
+  endRef      String // t.ex. "Genesis 4:16"
+  summary     String? // kort egen sammanfattning (ej copyright-text)
+  orderInBook Int
+
+  // Är denna story del av en berättelsecykel (t.ex. "Abraham", "Jakob")?
+  // Om satt grupperas den ihop med syskon-storys som har samma seriesSlug.
+  seriesSlug  String?
+  seriesTitle String?
+  seriesOrder Int?
+
+  characters       StoryCharacter[]
+  petersonSegments PetersonSegment[]
+  themes           StoryTheme[]
+
+  @@unique([bookId, slug])
+}
+
+// Karaktärsregister — gör att "återkommande karaktär" blir en härledd
+// egenskap (finns i >=2 Story) istället för manuellt satt flagga.
+model Character {
+  id   String @id @default(cuid())
+  slug String @unique // t.ex. "abraham"
+  name String // t.ex. "Abraham"
+
+  appearances StoryCharacter[]
+}
+
+model StoryCharacter {
+  storyId     String
+  story       Story     @relation(fields: [storyId], references: [id])
+  characterId String
+  character   Character @relation(fields: [characterId], references: [id])
+  role        String? // t.ex. "protagonist", "bifigur"
+
+  @@id([storyId, characterId])
+}
+
+// Tema-taggar, t.ex. "sacrifice", "chaos-order" — används både för
+// filtrering i UI:t och för att koppla ihop med Petersons återkommande
+// teman över flera berättelser.
+model Theme {
+  id   String @id @default(cuid())
+  slug String @unique
+  name String
+
+  stories StoryTheme[]
+}
+
+model StoryTheme {
+  storyId String
+  story   Story  @relation(fields: [storyId], references: [id])
+  themeId String
+  theme   Theme  @relation(fields: [themeId], references: [id])
+
+  @@id([storyId, themeId])
+}
+
+// En källvideo (bara fritt tillgängliga YouTube-videor, se README om
+// upphovsrättsgränser för t.ex. den betalvägg-skyddade Exodus-serien).
+model PetersonVideo {
+  id          String @id @default(cuid())
+  youtubeId   String @unique
+  title       String
+  seriesTitle String // t.ex. "Biblical Series: Genesis"
+  seriesOrder Int?
+  publishedAt String? // ISO-datum om känt
+  lengthSec   Int? // total videolängd i sekunder, om känt
+
+  segments PetersonSegment[]
+}
+
+// Ett tidsstämplat segment i en video där Peterson pratar om en specifik
+// Story. En video kan innehålla flera segment (t.ex. om han återkommer
+// till samma berättelse senare i föreläsningen), och en Story kan ha
+// segment i flera videor.
+model PetersonSegment {
+  id      String @id @default(cuid())
+  videoId String
+  video   PetersonVideo @relation(fields: [videoId], references: [id])
+  storyId String
+  story   Story @relation(fields: [storyId], references: [id])
+
+  startSec Int // sekunder in i videon
+  endSec   Int? // null = "till videons slut" (ej ännu annoterat)
+
+  // Egen kort sammanfattning av vad Peterson säger i segmentet — inte ett
+  // fullständigt transkript (se README, upphovsrättsgräns).
+  keyPoints String?
+
+  @@index([storyId])
+  @@index([videoId])
+}
