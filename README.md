@@ -106,12 +106,16 @@ Det som finns just nu:
    Exodus-klipp tillagda (ett spot-verifierat, resten från archive.org-
    mirror, bör stickprovskontrolleras mer om serien aktiveras på riktigt).
    Avsnitt 11:s klipp hittades inte.
-2. **Transkript → segment**: hämta undertexter per video (`yt-dlp
-   --write-auto-sub`), och för var och en manuellt/halvautomatiskt (AI-
-   assisterat) markera var respektive `Story` börjar/slutar i videon →
-   fyll `PetersonSegment` med riktiga `startSec`/`endSec` + egen
-   `keyPoints`-sammanfattning. ~20 videor totalt för Genesis + Kristus-serien,
-   görbart för hand.
+2. ~~Transkript → segment~~ **Klart 2026-08-21/22 för Genesis**: alla 13
+   Genesis-stories har nu ett riktigt `PetersonSegment.startSec` (Noa har
+   två, ett per video). Metod: `yt-dlp --write-auto-sub` → egen parser
+   (`prisma/seed.ts`-grannmapp, se scratchpad) dedupar auto-undertexterna
+   → grep efter var Peterson faktiskt börjar läsa/diskutera respektive
+   bibeltext (inte bara nämner den) → tidsstämpel + egen kort
+   sammanfattning. `endSec` är fortfarande obestämt för alla (svårare att
+   hitta exakt "slutar prata om X och går vidare" utan djupare
+   transkriptanalys) — kvarstår som förbättring. Kristus-serien (5
+   kapitel i EN video) och Exodus-panelen är inte annoterade än.
 3. **Koppla in textfetch** mot bible-api.com i berättelsevyn (ersätt
    TODO-texten i `src/app/[corpus]/[book]/[story]/page.tsx`).
 4. **Utöka Genesis-indexet** om fler substories önskas (just nu 13 stycken,
