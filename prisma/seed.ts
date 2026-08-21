@@ -75,7 +75,7 @@ async function main() {
   // Exodus: togglebar modul enligt beslut i chatten — av som standard
   // p.g.a. betalvägg + panelformat, men aktiverbar. Bygger struktur runt
   // vilka stories PANELEN diskuterar (fler röster än bara Peterson är ok).
-  await prisma.petersonSeries.upsert({
+  const exodusSeries = await prisma.petersonSeries.upsert({
     where: { slug: "exodus" },
     update: {},
     create: {
@@ -86,36 +86,77 @@ async function main() {
       panelists: "Douglas Hedley, Os Guinness, James Orr, Dennis Prager, Stephen Blackwood, Jonathan Pageau",
       enabledByDefault: false,
       notes:
-        "16 avsnitt, DailyWire+ (betalvägg), 2021–2023. PetersonSegment.speaker " +
-        "används för att markera vem i panelen som pratar i respektive segment. " +
-        "Avsnittstitlar/tidsstämplar TODO — se README.",
+        "16 fullständiga avsnitt bakom betalvägg på DailyWire+ (2021–2023). " +
+        "Videorna nedan är istället de FRIA officiella klippen (kortare " +
+        "höjdpunkter, en per avsnitt) från Petersons YouTube-kanal — hittade " +
+        "via archive.org:s mirror av kanalen, en stickprovsverifierad mot " +
+        "oEmbed 2026-08-21 (övriga inte individuellt verifierade, se README). " +
+        "PetersonSegment.speaker markerar vem i panelen som pratar.",
     },
   });
 
-  const genesisEpisodes: Array<{ order: number; title: string }> = [
-    { order: 1, title: "Introduction to the Idea of God" },
-    { order: 2, title: "Genesis 1: Chaos & Order" },
-    { order: 3, title: "God and the Hierarchy of Authority" },
-    { order: 4, title: "Adam and Eve: Self-Consciousness, Evil, and Death" },
-    { order: 5, title: "Cain and Abel: The Hostile Brothers" },
-    { order: 6, title: "The Psychology of the Flood" },
-    { order: 7, title: "Walking with God: Noah and the Flood" },
-    { order: 8, title: "The Phenomenology of the Divine" },
-    { order: 9, title: "The Call to Abraham" },
-    { order: 10, title: "Abraham: Father of Nations" },
-    { order: 11, title: "Sodom and Gomorrah" },
-    { order: 12, title: "The Great Sacrifice: Abraham and Isaac" },
-    { order: 13, title: "Jacob's Ladder" },
-    { order: 14, title: "Jacob: Wrestling with God" },
-    { order: 15, title: "Joseph and the Coat of Many Colors" },
+  // Fria officiella klipp, ett per Exodus-avsnitt (avsnitt 11 saknas — inget
+  // klipp hittat än). Källa: archive.org-mirror av "Jordan B Peterson"-
+  // YouTube-kanalen (identifierare youtube-<ID>), se README "Källor".
+  const exodusClips: Array<{ order: number; title: string; youtubeId: string }> = [
+    { order: 1, title: "Tyrant Contra God", youtubeId: "GEASnFvLxhU" },
+    { order: 2, title: "Transforming Evil Into Good", youtubeId: "7idDtmKtyZU" },
+    { order: 3, title: "Chaos and Order", youtubeId: "6q2D5-H71yY" },
+    { order: 4, title: "The 10 Plagues of Egypt", youtubeId: "ybkyraDi7Qs" },
+    { order: 5, title: "Pharaoh, Stalin, and Tyranny", youtubeId: "6PSHDHKpQEk" },
+    { order: 6, title: "The Difference Between Pagan and Sacred Ritual", youtubeId: "29OXOl57Tl8" },
+    { order: 7, title: "Are You in Egypt, the Desert, or the Promised Land?", youtubeId: "IkKMJPgALmI" },
+    { order: 8, title: "Why Moses Climbed Mount Sinai", youtubeId: "hDT32GJd2Ms" },
+    { order: 9, title: "10 Rules For Life", youtubeId: "ZNplOLbanz8" },
+    { order: 10, title: "\"I Have Been Convinced of The Existence of the Devil\"", youtubeId: "CDTFRTBWA28" },
+    { order: 12, title: "The Importance of Sacrifice and Ritual", youtubeId: "L4tHBpX0_UQ" },
+    { order: 13, title: "When You Worship What You Should Sacrifice", youtubeId: "DCJAYRPSpTA" },
+    { order: 14, title: "The Fire of Hell and the Love of God", youtubeId: "4VDRYKd3FZc" },
+    { order: 15, title: "Was Egypt the Land of Milk and Honey?", youtubeId: "I3C4ci-N21M" },
+    { order: 16, title: "Authority Hails From Above, Not From Within", youtubeId: "CTIP5i-jyBs" },
+    { order: 17, title: "Wisdom Begins With The Fear of the Lord", youtubeId: "hp1mobf6u9s" },
+  ];
+
+  for (const clip of exodusClips) {
+    await prisma.petersonVideo.upsert({
+      where: { youtubeId: clip.youtubeId },
+      update: { title: `Exodus Episode ${clip.order}: ${clip.title}`, seriesId: exodusSeries.id, seriesOrder: clip.order },
+      create: {
+        youtubeId: clip.youtubeId,
+        title: `Exodus Episode ${clip.order}: ${clip.title}`,
+        seriesId: exodusSeries.id,
+        seriesOrder: clip.order,
+      },
+    });
+  }
+
+  // YouTube-ID:n verifierade 2026-08-21 mot Petersons officiella kanal
+  // (author_name "Jordan B Peterson") via YouTubes oEmbed-endpoint —
+  // se README "Källor". Alla 15 bekräftade.
+  const genesisEpisodes: Array<{ order: number; title: string; youtubeId: string }> = [
+    { order: 1, title: "Introduction to the Idea of God", youtubeId: "f-wWBGo6a2w" },
+    { order: 2, title: "Genesis 1: Chaos & Order", youtubeId: "hdrLQ7DpiWs" },
+    { order: 3, title: "God and the Hierarchy of Authority", youtubeId: "R_GPAl_q2QQ" },
+    { order: 4, title: "Adam and Eve: Self-Consciousness, Evil, and Death", youtubeId: "Ifi5KkXig3s" },
+    { order: 5, title: "Cain and Abel: The Hostile Brothers", youtubeId: "44f3mxcsI50" },
+    { order: 6, title: "The Psychology of the Flood", youtubeId: "wNjbasba-Qw" },
+    { order: 7, title: "Walking with God: Noah and the Flood", youtubeId: "6gFjB9FTN58" },
+    { order: 8, title: "The Phenomenology of the Divine", youtubeId: "UoQdp2prfmM" },
+    { order: 9, title: "The Call to Abraham", youtubeId: "GmuzUZTJ0GA" },
+    { order: 10, title: "Abraham: Father of Nations", youtubeId: "3Y6bCqT85Pc" },
+    { order: 11, title: "Sodom and Gomorrah", youtubeId: "SKzpj0Ev8Xs" },
+    { order: 12, title: "The Great Sacrifice: Abraham and Isaac", youtubeId: "-yUP40gwht0" },
+    { order: 13, title: "Jacob's Ladder", youtubeId: "A9JtQN_GoVI" },
+    { order: 14, title: "Jacob: Wrestling with God", youtubeId: "DRJKwDfDbco" },
+    { order: 15, title: "Joseph and the Coat of Many Colors", youtubeId: "B7V8eZ1BLiI" },
   ];
 
   for (const ep of genesisEpisodes) {
     await prisma.petersonVideo.upsert({
-      where: { youtubeId: `PENDING-genesis-${ep.order}` },
-      update: {},
+      where: { youtubeId: ep.youtubeId },
+      update: { title: `Biblical Series ${ep.order}: ${ep.title}`, seriesId: genesisSeries.id, seriesOrder: ep.order },
       create: {
-        youtubeId: `PENDING-genesis-${ep.order}`, // ersätts i Phase 2 med riktigt YouTube-ID
+        youtubeId: ep.youtubeId,
         title: `Biblical Series ${ep.order}: ${ep.title}`,
         seriesId: genesisSeries.id,
         seriesOrder: ep.order,
@@ -123,26 +164,30 @@ async function main() {
     });
   }
 
-  const christEpisodes: Array<{ order: number; title: string }> = [
-    { order: 1, title: "The Nature of Experience" },
-    { order: 2, title: "Some Axioms of the Christian Revolutionary Story" },
-    { order: 3, title: "Narratives and Sacrifice" },
-    { order: 4, title: "On the Ark of the Covenant, the Cathedral and the Cross" },
-    { order: 5, title: "The Psychological Meaning of the Death and Resurrection of Christ" },
+  // Till skillnad från Genesis-serien är detta INTE fem separata videor —
+  // Peterson lade ut de fem delarna som EN sammanslagen video med
+  // kapitelmarkeringar. youtubeId bekräftad mot officiella kanalen.
+  // Exakta kapitel-tidsstämplar (chapterStartSec) är TODO — kräver att
+  // videobeskrivningen/kapitellistan hämtas manuellt, se README.
+  const christVideo = await prisma.petersonVideo.upsert({
+    where: { youtubeId: "xPIanlF6IwM" },
+    update: {},
+    create: {
+      youtubeId: "xPIanlF6IwM",
+      title: "Compilation: The Death and Resurrection of Christ: A Commentary in Five Parts",
+      seriesId: christSeries.id,
+      seriesOrder: 1,
+    },
+  });
+  const christParts = [
+    "The Nature of Experience",
+    "Some Axioms of the Christian Revolutionary Story",
+    "Narratives and Sacrifice",
+    "On the Ark of the Covenant, the Cathedral and the Cross",
+    "The Psychological Meaning of the Death and Resurrection of Christ",
   ];
-
-  for (const ep of christEpisodes) {
-    await prisma.petersonVideo.upsert({
-      where: { youtubeId: `PENDING-christ-${ep.order}` },
-      update: {},
-      create: {
-        youtubeId: `PENDING-christ-${ep.order}`,
-        title: `The Death and Resurrection of Christ, Part ${ep.order}: ${ep.title}`,
-        seriesId: christSeries.id,
-        seriesOrder: ep.order,
-      },
-    });
-  }
+  void christVideo;
+  void christParts; // dokumenterar delarna tills kapitel-segment finns, se README
 
   // --- Karaktärer ------------------------------------------------------
   const characterNames = [
@@ -381,7 +426,7 @@ async function main() {
 
   console.log(
     `Seedat: ${stories.length} stories i Genesis, ` +
-      `${genesisEpisodes.length + christEpisodes.length} Peterson-videor, ` +
+      `${genesisEpisodes.length + 1 + exodusClips.length} Peterson-videor, ` +
       `1 exempel-Parallel.`
   );
 }
