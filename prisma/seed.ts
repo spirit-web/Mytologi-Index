@@ -9,11 +9,28 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  // --- Korpus + bok --------------------------------------------------
+  // --- Korpusar --------------------------------------------------
   const bible = await prisma.corpus.upsert({
     where: { slug: "bible" },
     update: {},
-    create: { slug: "bible", name: "Bibeln" },
+    create: { slug: "bible", name: "Bibeln", kind: "scripture" },
+  });
+
+  // Placeholder-korpus för framework-blocket. Inga stories seedade ännu —
+  // se README "Nästa steg" (kräver research av kapitel-/föreläsningslista).
+  await prisma.corpus.upsert({
+    where: { slug: "maps-of-meaning" },
+    update: {},
+    create: {
+      slug: "maps-of-meaning",
+      name: "Maps of Meaning",
+      kind: "framework",
+      description:
+        "Petersons eget teoretiska ramverk (boken + 2017 University of " +
+        "Toronto-föreläsningarna) samt 12 Rules for Life som dess populära " +
+        "uppföljare. Kapitel/föreläsningar blir Story-poster vars " +
+        "Reference-länkar visar vilka myter/tänkare han illustrerar med.",
+    },
   });
 
   const genesis = await prisma.book.upsert({
@@ -28,8 +45,54 @@ async function main() {
     },
   });
 
-  // --- Peterson-videometadata (inga segment/tidsstämplar ännu) -------
-  const genesisSeries: Array<{ order: number; title: string }> = [
+  // --- Peterson-serier -------------------------------------------
+  const genesisSeries = await prisma.petersonSeries.upsert({
+    where: { slug: "biblical-series-genesis" },
+    update: {},
+    create: {
+      slug: "biblical-series-genesis",
+      title: "Biblical Series: Genesis",
+      requiresPaidAccess: false,
+      isPanelDiscussion: false,
+      enabledByDefault: true,
+      notes: "Solo-föreläsningar, fritt på YouTube (2017).",
+    },
+  });
+
+  const christSeries = await prisma.petersonSeries.upsert({
+    where: { slug: "death-resurrection-of-christ" },
+    update: {},
+    create: {
+      slug: "death-resurrection-of-christ",
+      title: "The Death and Resurrection of Christ: A Commentary in Five Parts",
+      requiresPaidAccess: false,
+      isPanelDiscussion: false,
+      enabledByDefault: true,
+      notes: "Fristående föreläsning i fem delar, fritt på YouTube (2018).",
+    },
+  });
+
+  // Exodus: togglebar modul enligt beslut i chatten — av som standard
+  // p.g.a. betalvägg + panelformat, men aktiverbar. Bygger struktur runt
+  // vilka stories PANELEN diskuterar (fler röster än bara Peterson är ok).
+  await prisma.petersonSeries.upsert({
+    where: { slug: "exodus" },
+    update: {},
+    create: {
+      slug: "exodus",
+      title: "Exodus",
+      requiresPaidAccess: true,
+      isPanelDiscussion: true,
+      panelists: "Douglas Hedley, Os Guinness, James Orr, Dennis Prager, Stephen Blackwood, Jonathan Pageau",
+      enabledByDefault: false,
+      notes:
+        "16 avsnitt, DailyWire+ (betalvägg), 2021–2023. PetersonSegment.speaker " +
+        "används för att markera vem i panelen som pratar i respektive segment. " +
+        "Avsnittstitlar/tidsstämplar TODO — se README.",
+    },
+  });
+
+  const genesisEpisodes: Array<{ order: number; title: string }> = [
     { order: 1, title: "Introduction to the Idea of God" },
     { order: 2, title: "Genesis 1: Chaos & Order" },
     { order: 3, title: "God and the Hierarchy of Authority" },
@@ -47,20 +110,20 @@ async function main() {
     { order: 15, title: "Joseph and the Coat of Many Colors" },
   ];
 
-  for (const ep of genesisSeries) {
+  for (const ep of genesisEpisodes) {
     await prisma.petersonVideo.upsert({
       where: { youtubeId: `PENDING-genesis-${ep.order}` },
       update: {},
       create: {
         youtubeId: `PENDING-genesis-${ep.order}`, // ersätts i Phase 2 med riktigt YouTube-ID
         title: `Biblical Series ${ep.order}: ${ep.title}`,
-        seriesTitle: "Biblical Series: Genesis",
+        seriesId: genesisSeries.id,
         seriesOrder: ep.order,
       },
     });
   }
 
-  const christSeries: Array<{ order: number; title: string }> = [
+  const christEpisodes: Array<{ order: number; title: string }> = [
     { order: 1, title: "The Nature of Experience" },
     { order: 2, title: "Some Axioms of the Christian Revolutionary Story" },
     { order: 3, title: "Narratives and Sacrifice" },
@@ -68,14 +131,14 @@ async function main() {
     { order: 5, title: "The Psychological Meaning of the Death and Resurrection of Christ" },
   ];
 
-  for (const ep of christSeries) {
+  for (const ep of christEpisodes) {
     await prisma.petersonVideo.upsert({
       where: { youtubeId: `PENDING-christ-${ep.order}` },
       update: {},
       create: {
         youtubeId: `PENDING-christ-${ep.order}`,
         title: `The Death and Resurrection of Christ, Part ${ep.order}: ${ep.title}`,
-        seriesTitle: "The Death and Resurrection of Christ: A Commentary in Five Parts",
+        seriesId: christSeries.id,
         seriesOrder: ep.order,
       },
     });
@@ -282,7 +345,45 @@ async function main() {
     }
   }
 
-  console.log(`Seedat: ${stories.length} stories i Genesis, ${genesisSeries.length + christSeries.length} Peterson-videor.`);
+  // --- Exempel-Parallel (visar konceptet med en enda post) -----------
+  // Fler tvärtext-jämförelser (särskilt Bibeln↔Koranen) läggs till när
+  // Koranen är indexerad, se README.
+  const sacrificeTheme = themes["sacrifice"];
+  const isaacStory = await prisma.story.findFirstOrThrow({ where: { slug: "binding-of-isaac" } });
+  const cainAbelStory = await prisma.story.findFirstOrThrow({ where: { slug: "cain-and-abel" } });
+
+  const sacrificeParallel = await prisma.parallel.upsert({
+    where: { id: "seed-parallel-sacrifice" },
+    update: {},
+    create: {
+      id: "seed-parallel-sacrifice",
+      title: "Uppoffring som återkommande arketyp",
+      description:
+        "Peterson menar att gamla testamentet återkommande kretsar kring " +
+        "uppoffringens psykologi: att medvetet ge upp något värdefullt nu " +
+        "för något bättre senare. Kain & Abels offer och Abrahams offer av " +
+        "Isak är två varianter av samma grundmönster — en 'rätt' vs. en " +
+        "'fel'/ofullständig uppoffring.",
+      themeId: sacrificeTheme.id,
+    },
+  });
+
+  for (const [storyId, note] of [
+    [cainAbelStory.id, "Kains bristfälliga offer vs. Abels fullständiga — vad som gör en uppoffring 'giltig'."],
+    [isaacStory.id, "Abrahams villighet att offra det käraste han har, som yttersta prövning av tro."],
+  ] as const) {
+    await prisma.parallelStory.upsert({
+      where: { parallelId_storyId: { parallelId: sacrificeParallel.id, storyId } },
+      update: {},
+      create: { parallelId: sacrificeParallel.id, storyId, note },
+    });
+  }
+
+  console.log(
+    `Seedat: ${stories.length} stories i Genesis, ` +
+      `${genesisEpisodes.length + christEpisodes.length} Peterson-videor, ` +
+      `1 exempel-Parallel.`
+  );
 }
 
 main()

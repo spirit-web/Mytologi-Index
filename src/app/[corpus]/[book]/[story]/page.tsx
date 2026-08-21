@@ -18,7 +18,9 @@ export default async function StoryPage({
       book: { include: { corpus: true } },
       characters: { include: { character: true } },
       themes: { include: { theme: true } },
-      petersonSegments: { include: { video: true } },
+      petersonSegments: { include: { video: { include: { series: true } } } },
+      referencesAsTarget: { include: { video: { include: { series: true } } } },
+      parallelLinks: { include: { parallel: { include: { theme: true, stories: { include: { story: { include: { book: true } } } } } } } },
     },
   });
 
@@ -116,7 +118,9 @@ export default async function StoryPage({
                 <li key={v.id} className="text-sm text-stone-700">
                   {v.title}
                   <span className="ml-2 text-xs text-stone-400">
-                    ({v.seriesTitle}, ej annoterad)
+                    ({v.series.title}
+                    {v.series.isPanelDiscussion ? " · panel" : ""}
+                    {v.series.requiresPaidAccess ? " · betalvägg" : ""}, ej annoterad)
                   </span>
                 </li>
               ))}
@@ -128,6 +132,56 @@ export default async function StoryPage({
           </p>
         )}
       </section>
+
+      {story.parallelLinks.length > 0 && (
+        <section className="mt-6 rounded-lg border border-sky-200 bg-sky-50/40 p-5">
+          <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-sky-700">
+            Liknande berättelser (arketyp)
+          </h2>
+          <ul className="space-y-4">
+            {story.parallelLinks.map((link) => (
+              <li key={link.parallel.id} className="text-sm">
+                <p className="font-medium text-sky-900">
+                  {link.parallel.title}
+                  {link.parallel.theme && (
+                    <span className="ml-2 text-xs font-normal text-sky-600">
+                      #{link.parallel.theme.name}
+                    </span>
+                  )}
+                </p>
+                <p className="mt-1 text-stone-600">{link.parallel.description}</p>
+                <ul className="mt-2 space-y-1">
+                  {link.parallel.stories
+                    .filter((ps) => ps.storyId !== story.id)
+                    .map((ps) => (
+                      <li key={ps.storyId} className="text-stone-500">
+                        ↳ <span className="text-stone-700">{ps.story.title}</span>{" "}
+                        ({ps.story.book.name}){ps.note ? ` — ${ps.note}` : ""}
+                      </li>
+                    ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {story.referencesAsTarget.length > 0 && (
+        <section className="mt-6 rounded-lg border border-stone-200 p-5">
+          <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-stone-400">
+            Peterson refererar hit från
+          </h2>
+          <ul className="space-y-2">
+            {story.referencesAsTarget.map((ref) => (
+              <li key={ref.id} className="text-sm text-stone-600">
+                {ref.video ? `${ref.video.series.title} — ${ref.video.title}` : ref.bookSourceRef}
+                {": "}
+                {ref.note}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </main>
   );
 }
@@ -149,7 +203,12 @@ async function findCandidateVideos(storyTitle: string, _bookName: string) {
 
   if (keywords.length === 0) return [];
 
-  const all = await prisma.petersonVideo.findMany();
+  // Bara serier som är aktiverade (togglebar Exodus-modul är av som
+  // standard, se PetersonSeries.enabledByDefault).
+  const all = await prisma.petersonVideo.findMany({
+    where: { series: { enabledByDefault: true } },
+    include: { series: true },
+  });
   return all.filter((v) => {
     const t = v.title.toLowerCase();
     return keywords.some((k) => t.includes(k));

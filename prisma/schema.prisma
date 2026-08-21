@@ -1,5 +1,8 @@
 // Datamodell för Biblisk berättelseindex + Jordan Peterson-guide
-// Se README.md för bakgrund och plan.
+// Se README.md för bakgrund och plan (uppdaterad efter feedback 2026-08-21:
+// Exodus in som togglebar modul, Maps of Meaning/12 Rules som eget
+// "framework"-block, referens-index över JP:s källor, samt tvärtext-
+// jämförelser/arketyper).
 
 generator client {
   provider = "prisma-client-js"
@@ -10,25 +13,31 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-// En text-tradition, t.ex. "Bibeln" eller "Koranen".
-// Håller isär de olika korpusarna så UI:t kan visa dem separat.
+// En text-tradition ELLER ett Peterson-ramverk, t.ex. "Bibeln", "Koranen",
+// eller "Maps of Meaning". `kind` skiljer på om det är en analyserad
+// källtext (scripture) eller Petersons eget teoretiska ramverk (framework),
+// så UI:t kan visa dem i olika sektioner men med samma navigeringsmönster.
 model Corpus {
-  id    String @id @default(cuid())
-  slug  String @unique // t.ex. "bible", "quran"
-  name  String // t.ex. "Bibeln"
+  id   String @id @default(cuid())
+  slug String @unique // t.ex. "bible", "quran", "maps-of-meaning"
+  name String // t.ex. "Bibeln"
+  kind String @default("scripture") // "scripture" | "framework"
+  description String?
 
   books Book[]
 }
 
-// En bok inom korpusen, t.ex. "Genesis", "Exodus", "Matteusevangeliet".
+// En bok/delverk inom korpusen, t.ex. "Genesis", "Exodus",
+// "Matteusevangeliet" — eller inom ett framework: "Maps of Meaning" resp.
+// "12 Rules for Life" som två Book under samma Corpus.
 model Book {
   id       String @id @default(cuid())
   corpusId String
   corpus   Corpus @relation(fields: [corpusId], references: [id])
 
-  slug     String // t.ex. "genesis"
-  name     String // t.ex. "Första Moseboken (Genesis)"
-  order    Int    // ordning inom korpusen (kanonisk ordning)
+  slug      String // t.ex. "genesis"
+  name      String // t.ex. "Första Moseboken (Genesis)"
+  order     Int    // ordning inom korpusen (kanonisk ordning)
   testament String? // "old" | "new" | null (för icke-bibliska korpusar)
 
   stories Story[]
@@ -36,10 +45,15 @@ model Book {
   @@unique([corpusId, slug])
 }
 
-// En berättelseenhet — den centrala byggstenen i indexet.
-// Referensintervallet pekar till verstext som hämtas on-demand från en
-// öppen bibel-API (se README) istället för att lagras här, för att slippa
-// äga/distribuera copyrightad översättningstext.
+// En berättelseenhet — den centrala byggstenen i indexet. För
+// scripture-böcker: en bibel-/koran-berättelse. För framework-böcker
+// (Maps of Meaning, 12 Rules for Life): ett kapitel/en regel, vars
+// "referenser" (se Reference nedan) pekar ut vilka myter/berättelser/
+// tänkare Peterson använder för att illustrera den.
+//
+// Referensintervallet (startRef/endRef) pekar bara till en textreferens;
+// själva versen/kapitlet hämtas on-demand från en öppen bibel-API eller
+// visas som egen sammanfattning — vi lagrar inte copyrightad källtext.
 model Story {
   id     String @id @default(cuid())
   bookId String
@@ -47,7 +61,7 @@ model Story {
 
   slug        String // t.ex. "cain-and-abel"
   title       String // t.ex. "Kain och Abel"
-  startRef    String // t.ex. "Genesis 4:1"
+  startRef    String // t.ex. "Genesis 4:1" eller "Kapitel 3"
   endRef      String // t.ex. "Genesis 4:16"
   summary     String? // kort egen sammanfattning (ej copyright-text)
   orderInBook Int
@@ -58,21 +72,26 @@ model Story {
   seriesTitle String?
   seriesOrder Int?
 
-  characters       StoryCharacter[]
-  petersonSegments PetersonSegment[]
-  themes           StoryTheme[]
+  characters        StoryCharacter[]
+  petersonSegments  PetersonSegment[]
+  themes            StoryTheme[]
+  referencesAsTarget Reference[]
+  parallelLinks     ParallelStory[]
 
   @@unique([bookId, slug])
 }
 
 // Karaktärsregister — gör att "återkommande karaktär" blir en härledd
-// egenskap (finns i >=2 Story) istället för manuellt satt flagga.
+// egenskap (finns i >=2 Story) istället för manuellt satt flagga. Används
+// även som mål för Reference (t.ex. "Peterson nämner Abraham" utan att
+// peka på en specifik story).
 model Character {
   id   String @id @default(cuid())
   slug String @unique // t.ex. "abraham"
   name String // t.ex. "Abraham"
 
   appearances StoryCharacter[]
+  references  Reference[]
 }
 
 model StoryCharacter {
@@ -87,13 +106,14 @@ model StoryCharacter {
 
 // Tema-taggar, t.ex. "sacrifice", "chaos-order" — används både för
 // filtrering i UI:t och för att koppla ihop med Petersons återkommande
-// teman över flera berättelser.
+// teman över flera berättelser, samt för att gruppera Parallel-jämförelser.
 model Theme {
   id   String @id @default(cuid())
   slug String @unique
   name String
 
-  stories StoryTheme[]
+  stories   StoryTheme[]
+  parallels Parallel[]
 }
 
 model StoryTheme {
@@ -105,24 +125,48 @@ model StoryTheme {
   @@id([storyId, themeId])
 }
 
-// En källvideo (bara fritt tillgängliga YouTube-videor, se README om
-// upphovsrättsgränser för t.ex. den betalvägg-skyddade Exodus-serien).
+// En namngiven Peterson-videoserie: "Biblical Series: Genesis", "Exodus"
+// (DailyWire+, panel), "The Death and Resurrection of Christ", "Maps of
+// Meaning: The Architecture of Belief" (universitetsföreläsningar), etc.
+// `requiresPaidAccess`/`isPanelDiscussion` styr hur vi visar/varnar för
+// serien, `enabledByDefault` är vad UI-togglen läser (t.ex. Exodus av som
+// standard eftersom den är betalvägg + flera röster, men aktiverbar).
+model PetersonSeries {
+  id                 String  @id @default(cuid())
+  slug               String  @unique // t.ex. "biblical-series-genesis", "exodus"
+  title              String
+  requiresPaidAccess Boolean @default(false)
+  isPanelDiscussion  Boolean @default(false)
+  panelists          String? // kommaseparerad lista, utöver Peterson själv
+  enabledByDefault   Boolean @default(true)
+  notes              String? // t.ex. upphovsrättsgräns/källa
+
+  videos PetersonVideo[]
+}
+
+// En källvideo. Bara metadata + länk sparas — inget fullt transkript
+// (se README, upphovsrättsgräns).
 model PetersonVideo {
-  id          String @id @default(cuid())
-  youtubeId   String @unique
-  title       String
-  seriesTitle String // t.ex. "Biblical Series: Genesis"
+  id        String @id @default(cuid())
+  youtubeId String @unique
+  title     String
+
+  seriesId    String
+  series      PetersonSeries @relation(fields: [seriesId], references: [id])
   seriesOrder Int?
+
   publishedAt String? // ISO-datum om känt
   lengthSec   Int? // total videolängd i sekunder, om känt
 
-  segments PetersonSegment[]
+  segments   PetersonSegment[]
+  references Reference[]
 }
 
-// Ett tidsstämplat segment i en video där Peterson pratar om en specifik
-// Story. En video kan innehålla flera segment (t.ex. om han återkommer
-// till samma berättelse senare i föreläsningen), och en Story kan ha
-// segment i flera videor.
+// Ett tidsstämplat segment i en video där Peterson (eller, för panel-
+// serier som Exodus, någon i panelen) pratar om en specifik Story. En
+// video kan innehålla flera segment, och en Story kan ha segment i flera
+// videor/serier — det är själva grunden för att jämföra "hur länge
+// pratar han om olika berättelser".
 model PetersonSegment {
   id      String @id @default(cuid())
   videoId String
@@ -132,11 +176,71 @@ model PetersonSegment {
 
   startSec Int // sekunder in i videon
   endSec   Int? // null = "till videons slut" (ej ännu annoterat)
+  speaker  String? // vem som pratar i just detta segment (viktigt för panelserier som Exodus)
 
-  // Egen kort sammanfattning av vad Peterson säger i segmentet — inte ett
+  // Egen kort sammanfattning av vad som sägs i segmentet — inte ett
   // fullständigt transkript (se README, upphovsrättsgräns).
   keyPoints String?
 
   @@index([storyId])
   @@index([videoId])
+}
+
+// Referens-index: varje gång Peterson (i en video ELLER i ett kapitel av
+// Maps of Meaning/12 Rules for Life) tar upp en person, berättelse eller
+// ett verk för att illustrera en poäng. Detta är svaret på "vilka källor
+// utgår han ifrån och vilka stories/karaktärer illustrerar han sina
+// poänger med" — oavsett om målet redan finns indexerat (storyId/
+// characterId) eller inte (externalLabel, t.ex. "Nietzsche",
+// "Raskolnikov", "Bhagavad Gita" innan de har egna Corpus-poster).
+model Reference {
+  id String @id @default(cuid())
+
+  // Källan: antingen en video (+ ev. tidsstämpel) eller ett
+  // framework-kapitel (bookSourceRef, fri text, t.ex. "12 Rules for Life,
+  // Rule 7").
+  videoId       String?
+  video         PetersonVideo? @relation(fields: [videoId], references: [id])
+  atSec         Int?
+  bookSourceRef String?
+
+  // Målet: en redan indexerad Story/Character, eller en fri etikett för
+  // sådant vi inte byggt ut ännu.
+  storyId       String?
+  story         Story?     @relation(fields: [storyId], references: [id])
+  characterId   String?
+  character     Character? @relation(fields: [characterId], references: [id])
+  externalLabel String? // t.ex. "Nietzsche", "Dostojevskij – Raskolnikov"
+
+  note String // vad poängen/illustrationen handlar om
+
+  @@index([storyId])
+  @@index([characterId])
+}
+
+// En tvärtext-jämförelse: samma budskap/arketyp som återkommer i flera
+// berättelser, ev. över olika Corpus (t.ex. Bibeln vs. Koranen). Kopplas
+// ihop via ParallelStory, och kan ha ett Peterson-segment som förklarar
+// den arketypiska kopplingen.
+model Parallel {
+  id          String  @id @default(cuid())
+  title       String // t.ex. "Syndafloden som återkommande arketyp"
+  description String // vad är gemensamt, vad skiljer
+
+  themeId String?
+  theme   Theme?  @relation(fields: [themeId], references: [id])
+
+  stories ParallelStory[]
+}
+
+model ParallelStory {
+  parallelId String
+  parallel   Parallel @relation(fields: [parallelId], references: [id])
+  storyId    String
+  story      Story    @relation(fields: [storyId], references: [id])
+
+  // Vad just den här berättelsen bidrar med i jämförelsen.
+  note String?
+
+  @@id([parallelId, storyId])
 }
