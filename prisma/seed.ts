@@ -19,9 +19,8 @@ async function main() {
     create: { slug: "bible", name: "Bibeln", kind: "scripture" },
   });
 
-  // Placeholder-korpus för framework-blocket. Inga stories seedade ännu —
-  // se README "Nästa steg" (kräver research av kapitel-/föreläsningslista).
-  await prisma.corpus.upsert({
+  // Framework-korpusen — fylld i Fas 7, se längre ner i filen.
+  const mapsOfMeaningCorpus = await prisma.corpus.upsert({
     where: { slug: "maps-of-meaning" },
     update: {},
     create: {
@@ -1526,6 +1525,239 @@ async function main() {
   }
 
   console.log(`Seedat Andra Moseboken: ${exStories.length} stories, ${exSegmentLinks.length} Peterson-segment (titel-baserade, ej vers-nivå).`);
+
+  // ======================================================================
+  // FAS 7: Maps of Meaning + 12 Rules for Life (framework-korpusen)
+  // ======================================================================
+  // Till skillnad från Bibeln är det här Petersons EGET material — inte
+  // en text han kommenterar. Varje "Story" är alltså ett kapitel/en
+  // föreläsning i sig själv, med ett self-referentiellt PetersonSegment
+  // (videon ÄR kapitlet, startSec 0) snarare än en vers-kommentar till en
+  // extern text. Ingen bibeltext hämtas (kind: "framework", se bible.ts).
+  //
+  // "Maps of Meaning"-boken (1999) har bara 5 kapitel + för-/efterord —
+  // för kort för ett meningsfullt index. Använder istället 2017 års
+  // University of Toronto-föreläsningsserie (samma titel, 12 delar),
+  // fritt på YouTube utan inloggningskrav (verifierat). YouTube-ID:n
+  // hämtade direkt ur den officiella spellistan via `yt-dlp
+  // --flat-playlist` (inte gissade/sökta som för Exodus-klippen).
+  // Beskrivningarna bygger på att faktiskt läsa öppningen (~5–10 min)
+  // av transkriptet för 11 av 12 föreläsningar — INTE en fullständig
+  // genomlyssning av alla ~2,5 timmar per avsnitt. Avsnitt 7 hade inga
+  // undertexter alls tillgängliga (yt-dlp: "no subtitles") — dess
+  // beskrivning är därför enbart titel-baserad, tydligt markerad som
+  // sådan.
+  const mapsSeries = await prisma.petersonSeries.upsert({
+    where: { slug: "maps-of-meaning-2017" },
+    update: {},
+    create: {
+      slug: "maps-of-meaning-2017",
+      title: "Maps of Meaning: The Architecture of Belief (2017)",
+      requiresPaidAccess: false,
+      isPanelDiscussion: false,
+      enabledByDefault: true,
+      notes: "12 universitetsföreläsningar (University of Toronto), fritt på YouTube.",
+    },
+  });
+
+  const mapsOfMeaningBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: mapsOfMeaningCorpus.id, slug: "maps-of-meaning-2017" } },
+    update: {},
+    create: {
+      corpusId: mapsOfMeaningCorpus.id,
+      slug: "maps-of-meaning-2017",
+      name: "Maps of Meaning (2017 års föreläsningsserie)",
+      order: 1,
+    },
+  });
+
+  const rulesBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: mapsOfMeaningCorpus.id, slug: "12-rules-for-life" } },
+    update: {},
+    create: {
+      corpusId: mapsOfMeaningCorpus.id,
+      slug: "12-rules-for-life",
+      name: "12 Rules for Life",
+      order: 2,
+    },
+  });
+
+  type MomLecture = { order: number; slug: string; title: string; youtubeId: string; summary: string };
+  const momLectures: MomLecture[] = [
+    {
+      order: 1, slug: "context-and-background", title: "Kontext och bakgrund", youtubeId: "I8Xc2_FtpHI",
+      summary:
+        "Berättar teorins ursprungshistoria: sin generations kärnvapenrädsla " +
+        "under kalla kriget och ett besök i en nedlagd amerikansk robotsilo, " +
+        "som fick honom att fundera på varför människor är beredda att " +
+        "riskera världen för sina trosuppfattningar. Introducerar även " +
+        "hierarki/ojämlikhet (Pareto-fördelningen) som ett återkommande " +
+        "naturligt mönster.",
+    },
+    {
+      order: 2, slug: "marionettes-and-individuals-1", title: "Marionetter och individer (del 1)", youtubeId: "EN2lyN7rM4E",
+      summary:
+        "Går igenom Disneys Pinocchio scen för scen som en karta över hur " +
+        "en 'marionett' (styrd utifrån/av sina impulser) förvandlas till " +
+        "ett verkligt, autonomt subjekt. Utgångspunkt: vi uppfattar " +
+        "världen genom ett narrativt raster, eftersom grundproblemet är " +
+        "hur man ska HANDLA, inte bara vad som objektivt finns.",
+    },
+    {
+      order: 3, slug: "marionettes-and-individuals-2", title: "Marionetter och individer (del 2)", youtubeId: "Us979jCjHu8",
+      summary:
+        "Fortsätter Pinocchio-analysen: Blå Fen, Jeppe, och Räven/Katten/" +
+        "Kusken som avslöjar sig som något demoniskt. Kopplar det till " +
+        "Jungs idé om att människans 'skugga' sträcker sig ända ner till " +
+        "det ondskefulla — att bli medveten om egna destruktiva impulser " +
+        "är nödvändigt snarare än farligt att förneka.",
+    },
+    {
+      order: 4, slug: "marionettes-and-individuals-3", title: "Marionetter och individer (del 3)", youtubeId: "bV16NEWld8Q",
+      summary:
+        "Avslutar Pinocchio-genomgången och binder ihop filmens narrativa " +
+        "struktur med föreläsningsseriens större ramverk innan mer " +
+        "konkreta/tekniska detaljer introduceras i nästa avsnitt.",
+    },
+    {
+      order: 5, slug: "story-and-metastory-1", title: "Berättelse och metaberättelse (del 1)", youtubeId: "RudKmwzDpNY",
+      summary:
+        "Introducerar berättelsen som 'den enklaste användbara " +
+        "informationsenheten' för handling och perception, och " +
+        "metaberättelsen som en berättelse om HUR berättelser förändras. " +
+        "Går igenom sovjetisk psykofysiologisk forskning (Sokolov, " +
+        "Vinogradova, byggt på Lurias arbete) om hjärnans reaktion på " +
+        "avvikelser från förväntan.",
+    },
+    {
+      order: 6, slug: "story-and-metastory-2", title: "Berättelse och metaberättelse (del 2)", youtubeId: "nsZ8XqHPjI4",
+      summary:
+        "Fortsätter bygga ut modellen för hur berättelser fungerar som " +
+        "kartor över handling, med fler exempel på hur metaberättelser " +
+        "beskriver övergången mellan olika sådana kartor.",
+    },
+    {
+      order: 7, slug: "images-of-story-and-metastory", title: "Bilder av berättelse och metaberättelse", youtubeId: "F3n5qtj89QE",
+      summary:
+        "(Ej transkriberad — inga undertexter tillgängliga för just detta " +
+        "avsnitt.) Beskrivningen bygger enbart på titeln och sammanhanget " +
+        "mellan föreläsning 6 och 8 — troligen bildmässiga/visuella " +
+        "exempel som brygga mellan de teoretiska avsnitten och den " +
+        "kommande neuropsykologiska genomgången. Inte verifierad mot " +
+        "faktiskt innehåll.",
+    },
+    {
+      order: 8, slug: "neuropsychology-of-symbolic-representation", title: "Symbolers neuropsykologi", youtubeId: "Nb5cBkbQpGY",
+      summary:
+        "Om hur trossystem reglerar känslor — inte genom att direkt " +
+        "minska dödsångest, utan genom att orientera individen så att " +
+        "handling matchar det sociala samspelet med andra. Går in på " +
+        "varför människor är beredda att försvara och strida för sina " +
+        "trossystem.",
+    },
+    {
+      order: 9, slug: "patterns-of-symbolic-representation", title: "Mönster i symbolisk representation", youtubeId: "yXZSeiAl4PI",
+      summary:
+        "Fördjupar sig i Jungs arketyp-begrepp (med rötter i Platons " +
+        "idélära) och hur arketyper kan förstås biologiskt, socialt och " +
+        "individuellt samtidigt — och varför Jung själv aldrig gav en " +
+        "helt entydig definition av begreppet.",
+    },
+    {
+      order: 10, slug: "genesis-and-the-buddha", title: "Genesis och Buddha", youtubeId: "7XtEZvLo-Sc",
+      summary:
+        "Tolkar skapelseberättelserna i Första Moseboken (det finns två) " +
+        "parallellt med berättelsen om Buddha, som exempel på samma " +
+        "arketypiska berättelsestruktur: ett fungerande utgångsläge, " +
+        "uppkomsten av ett problem, och en förändring/lösning — kopplat " +
+        "till en pragmatisk sanningsteori (mot bakgrund av en debatt med " +
+        "Sam Harris).",
+    },
+    {
+      order: 11, slug: "the-flood-and-the-tower", title: "Floden och tornet", youtubeId: "T4fjSrVCDvA",
+      summary:
+        "Bygger vidare på trossystemens psykologi efter tre månaders " +
+        "undervisning: vad ett trossystem egentligen är, varför människor " +
+        "är beredda att strida för det, och om det finns ett sätt att " +
+        "bedöma olika trossystems relativa kvalitet (kopplat till frågan " +
+        "om moralisk relativism kontra kalla krigets ideologiska konflikt).",
+    },
+    {
+      order: 12, slug: "final-the-divinity-of-the-individual", title: "Final: individens gudomlighet", youtubeId: "6V1eMvGGcXQ",
+      summary:
+        "Föreläsningsseriens avslutning — binder ihop terminen kring " +
+        "idén om den enskilda individens värde/helighet som den yttersta " +
+        "motvikten till totalitära system.",
+    },
+  ];
+
+  for (const lecture of momLectures) {
+    const video = await prisma.petersonVideo.upsert({
+      where: { youtubeId: lecture.youtubeId },
+      update: { title: `2017 Maps of Meaning ${lecture.order}: ${lecture.title}`, seriesId: mapsSeries.id, seriesOrder: lecture.order },
+      create: {
+        youtubeId: lecture.youtubeId,
+        title: `2017 Maps of Meaning ${lecture.order}: ${lecture.title}`,
+        seriesId: mapsSeries.id,
+        seriesOrder: lecture.order,
+      },
+    });
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: mapsOfMeaningBook.id, slug: lecture.slug } },
+      update: {},
+      create: {
+        bookId: mapsOfMeaningBook.id,
+        slug: lecture.slug,
+        title: lecture.title,
+        startRef: `Föreläsning ${lecture.order}`,
+        endRef: `Föreläsning ${lecture.order}`,
+        summary: lecture.summary,
+        orderInBook: lecture.order,
+      },
+    });
+    await prisma.petersonSegment.upsert({
+      where: { videoId_storyId: { videoId: video.id, storyId: story.id } },
+      update: { startSec: 0, keyPoints: lecture.summary },
+      create: { videoId: video.id, storyId: story.id, startSec: 0, keyPoints: lecture.summary },
+    });
+  }
+
+  // --- 12 Rules for Life -------------------------------------------
+  // Ingen enskild kanonisk video per regel (Peterson diskuterar dem " +
+  // spritt över hundratals poddavsnitt/intervjuer) — se README
+  // "discovery-fas" för Nietzsche/Dostojevskij-liknande material. Bara
+  // textindex än så länge, ingen PetersonSegment-koppling.
+  const rules: Array<{ order: number; slug: string; title: string; summary: string }> = [
+    { order: 1, slug: "stand-up-straight", title: "Stå rak i ryggen med axlarna tillbaka", summary: "Om att möta livet med rest hållning — kopplat till hierarkiforskning på hummer och serotonin/status." },
+    { order: 2, slug: "treat-yourself-like-someone-you-are-responsible-for", title: "Behandla dig själv som någon du är ansvarig för att hjälpa", summary: "Om att bry sig lika mycket om sig själv som om andra man tycker om." },
+    { order: 3, slug: "make-friends-with-people-who-want-the-best-for-you", title: "Skaffa dig vänner som vill dig väl", summary: "Om att inte acceptera destruktiva relationer av missriktad lojalitet." },
+    { order: 4, slug: "compare-yourself-to-who-you-were-yesterday", title: "Jämför dig med den du var igår, inte med någon annan idag", summary: "Om att sätta realistiska, personliga mått på framsteg istället för att jämföra sig med andra." },
+    { order: 5, slug: "do-not-let-your-children-do-anything-that-makes-you-dislike-them", title: "Låt inte dina barn göra sånt som gör att du ogillar dem", summary: "Om föräldraskap, gränssättning och barns sociala kompetens." },
+    { order: 6, slug: "set-your-house-in-order", title: "Sätt ditt eget hus i fullständig ordning innan du kritiserar världen", summary: "Om att ta tag i sitt eget liv innan man dömer andra eller samhället i stort." },
+    { order: 7, slug: "pursue-what-is-meaningful", title: "Sträva efter det som är meningsfullt, inte det som är bekvämt", summary: "Om uppoffring och långsiktig mening framför kortsiktig bekvämlighet." },
+    { order: 8, slug: "tell-the-truth", title: "Tala sanning — eller åtminstone ljug inte", summary: "Om språkets och ärlighetens roll för att hålla verkligheten sammanhållen." },
+    { order: 9, slug: "assume-the-person-you-are-listening-to-might-know-something", title: "Utgå från att den du lyssnar på kanske vet något du inte vet", summary: "Om ödmjukhet i samtal och terapeutiskt lyssnande." },
+    { order: 10, slug: "be-precise-in-your-speech", title: "Var precis i ditt tal", summary: "Om att definiera problem noggrant istället för att låta dem vaga ut till något överväldigande." },
+    { order: 11, slug: "do-not-bother-children-skateboarding", title: "Stör inte barn som åker skateboard", summary: "Om risktagande, mod och att inte överbeskydda unga." },
+    { order: 12, slug: "pet-a-cat", title: "Klappa en katt när du möter en på gatan", summary: "Om att uppmärksamma små stunder av glädje mitt i livets svårigheter." },
+  ];
+  for (const r of rules) {
+    await prisma.story.upsert({
+      where: { bookId_slug: { bookId: rulesBook.id, slug: r.slug } },
+      update: {},
+      create: {
+        bookId: rulesBook.id,
+        slug: r.slug,
+        title: `Regel ${r.order}: ${r.title}`,
+        startRef: `Regel ${r.order}`,
+        endRef: `Regel ${r.order}`,
+        summary: r.summary,
+        orderInBook: r.order,
+      },
+    });
+  }
+
+  console.log(`Seedat Maps of Meaning: ${momLectures.length} föreläsningar, 12 Rules for Life: ${rules.length} regler.`);
 
   // --- Exempel-Parallel (visar konceptet med en enda post) -----------
   // Fler tvärtext-jämförelser (särskilt Bibeln↔Koranen) läggs till när
