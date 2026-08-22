@@ -390,6 +390,84 @@ async function main() {
     }
   }
 
+  // --- Story-bilder ----------------------------------------------------
+  // Källa: FreeBibleimages.org (se README "Bildkällor" för fullständig
+  // researchlogg + licensanmärkningar). Filerna är nedladdade till
+  // public/images/genesis/<story-slug>/ — INTE hotlänkade mot deras CDN
+  // (se README för resonemang). CC BY-NC (personligt bruk tillåtet,
+  // kommersiellt bruk EJ tillåtet) — kolla licensen per set på nytt om
+  // appen någonsin blir delad/publik.
+  const lambsongsCredit = {
+    credit: "Lambsongs / Jill Kemp & Richard Gunther (freebibleimages.org), CC BY-NC",
+  };
+  const storyImageSets: Array<{
+    storySlug: string;
+    count: number;
+    offset: number;
+    credit: string;
+    creditUrl: string;
+  }> = [
+    { storySlug: "creation", count: 8, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-creation-days/" },
+    { storySlug: "garden-of-eden", count: 11, offset: 0, credit: "Fishnet Bible Stories (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/fn-adam-eve/" },
+    { storySlug: "cain-and-abel", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-cain-abel/" },
+    { storySlug: "cain-and-abel", count: 9, offset: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-cain-anger/" },
+    { storySlug: "noahs-flood", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-noah-ark/" },
+    { storySlug: "tower-of-babel", count: 8, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-tower-babel/" },
+    { storySlug: "call-of-abram", count: 21, offset: 0, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rp-abraham-calling/" },
+    { storySlug: "abraham-and-lot", count: 9, offset: 0, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-lot/" },
+    { storySlug: "covenant-with-abram", count: 8, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-abram/" },
+    { storySlug: "sodom-and-gomorrah", count: 9, offset: 0, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-lot/" },
+    { storySlug: "binding-of-isaac", count: 10, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-abraham-isaac/" },
+    { storySlug: "jacobs-ladder", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jacob-ladder/" },
+    { storySlug: "jacob-wrestling", count: 8, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jacob-israel/" },
+    { storySlug: "joseph-and-his-brothers", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-joseph-dreams/" },
+    { storySlug: "joseph-and-his-brothers", count: 10, offset: 9, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-joseph-coat/" },
+    { storySlug: "joseph-and-his-brothers", count: 9, offset: 19, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-joseph-brothers/" },
+  ];
+
+  for (const set of storyImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: genesis.id, slug: set.storySlug } });
+    for (let i = 1; i <= set.count; i++) {
+      const order = i + set.offset;
+      const path = `/images/genesis/${set.storySlug}/${String(order).padStart(2, "0")}.jpg`;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order } },
+        update: { path, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order, path, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+
+  // --- Karaktärsporträtt -------------------------------------------
+  // Arkivet erbjuder scenbilder, inga fristående porträtt — återanvänder
+  // därför bildnr. 1 från en story där karaktären är central. Första
+  // gissning, byt gärna ut manuellt (Prisma Studio) mot en bättre bild.
+  const portraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
+    { slug: "adam", storySlug: "garden-of-eden", imgOrder: 1 },
+    { slug: "eve", storySlug: "garden-of-eden", imgOrder: 1 },
+    { slug: "cain", storySlug: "cain-and-abel", imgOrder: 1 },
+    { slug: "abel", storySlug: "cain-and-abel", imgOrder: 1 },
+    { slug: "noah", storySlug: "noahs-flood", imgOrder: 1 },
+    { slug: "abraham", storySlug: "covenant-with-abram", imgOrder: 1 },
+    { slug: "sarah", storySlug: "sodom-and-gomorrah", imgOrder: 1 },
+    { slug: "lot", storySlug: "abraham-and-lot", imgOrder: 1 },
+    { slug: "isaac", storySlug: "binding-of-isaac", imgOrder: 1 },
+    { slug: "jacob", storySlug: "jacobs-ladder", imgOrder: 1 },
+    { slug: "esau", storySlug: "jacob-wrestling", imgOrder: 1 },
+    { slug: "joseph", storySlug: "joseph-and-his-brothers", imgOrder: 1 },
+  ];
+
+  for (const p of portraits) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: genesis.id, slug: p.storySlug } });
+    const img = await prisma.storyImage.findUniqueOrThrow({
+      where: { storyId_order: { storyId: story.id, order: p.imgOrder } },
+    });
+    await prisma.character.update({
+      where: { slug: p.slug },
+      data: { portraitPath: img.path, portraitCredit: img.credit, portraitCreditUrl: img.creditUrl },
+    });
+  }
+
   // --- PetersonSegment: verkliga tidsstämplar från Genesis-serien ----
   // Hittade genom att ladda ner auto-genererade undertexter (yt-dlp) för
   // alla 15 videor och söka efter var Peterson faktiskt börjar läsa/

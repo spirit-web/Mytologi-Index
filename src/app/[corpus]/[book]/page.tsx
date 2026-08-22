@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -18,6 +19,7 @@ export default async function BookPage({
         include: {
           characters: { include: { character: true } },
           themes: { include: { theme: true } },
+          images: { where: { order: 1 }, take: 1 },
         },
       },
     },
@@ -111,40 +113,52 @@ function StoryRow({
     endRef: string;
     characters: { character: { name: string } }[];
     themes: { theme: { name: string } }[];
+    images: { path: string }[];
   };
 }) {
   return (
     <Link
       href={`/${book.corpus.slug}/${book.slug}/${story.slug}`}
-      className="flex flex-col gap-1.5 px-5 py-4 transition hover:bg-[var(--accent-bg)]"
+      className="flex items-center gap-3 px-5 py-4 transition hover:bg-[var(--accent-bg)]"
     >
-      <div className="flex items-center justify-between">
-        <span className="font-medium text-[var(--text)]">{story.title}</span>
-        <span className="text-xs text-[var(--text-faint)]">
-          {story.startRef}
-          {story.endRef !== story.startRef ? `–${story.endRef.replace(/^.*?(\d)/, "$1")}` : ""}
-        </span>
-      </div>
-      {(story.characters.length > 0 || story.themes.length > 0) && (
-        <div className="flex flex-wrap gap-1.5">
-          {story.characters.map((c) => (
-            <span
-              key={c.character.name}
-              className="rounded-full border border-[var(--border)] px-2 py-0.5 text-xs text-[var(--text-muted)]"
-            >
-              {c.character.name}
-            </span>
-          ))}
-          {story.themes.map((t) => (
-            <span
-              key={t.theme.name}
-              className="rounded-full border border-[var(--accent-border)] bg-[var(--accent-bg)] px-2 py-0.5 text-xs text-[var(--accent)]"
-            >
-              {t.theme.name}
-            </span>
-          ))}
-        </div>
+      {story.images[0] && (
+        <Image
+          src={story.images[0].path}
+          alt=""
+          width={56}
+          height={42}
+          className="h-[42px] w-14 shrink-0 rounded-md border border-[var(--border)] object-cover"
+        />
       )}
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+        <div className="flex items-center justify-between gap-2">
+          <span className="font-medium text-[var(--text)]">{story.title}</span>
+          <span className="shrink-0 text-xs text-[var(--text-faint)]">
+            {story.startRef}
+            {story.endRef !== story.startRef ? `–${story.endRef.replace(/^.*?(\d)/, "$1")}` : ""}
+          </span>
+        </div>
+        {(story.characters.length > 0 || story.themes.length > 0) && (
+          <div className="flex flex-wrap gap-1.5">
+            {story.characters.map((c) => (
+              <span
+                key={c.character.name}
+                className="rounded-full border border-[var(--border)] px-2 py-0.5 text-xs text-[var(--text-muted)]"
+              >
+                {c.character.name}
+              </span>
+            ))}
+            {story.themes.map((t) => (
+              <span
+                key={t.theme.name}
+                className="rounded-full border border-[var(--accent-border)] bg-[var(--accent-bg)] px-2 py-0.5 text-xs text-[var(--accent)]"
+              >
+                {t.theme.name}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
     </Link>
   );
 }

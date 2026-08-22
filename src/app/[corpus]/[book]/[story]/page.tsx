@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -19,6 +20,7 @@ export default async function StoryPage({
       book: { include: { corpus: true } },
       characters: { include: { character: true } },
       themes: { include: { theme: true } },
+      images: { orderBy: { order: "asc" } },
       petersonSegments: {
         include: { video: { include: { series: true } }, verseNotes: { orderBy: { order: "asc" } } },
       },
@@ -82,13 +84,50 @@ export default async function StoryPage({
         {story.seriesTitle ? ` · Del av ${story.seriesTitle}` : ""}
       </p>
 
+      {story.images.length > 0 && (
+        <div className="mb-8">
+          <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2">
+            {story.images.map((img) => (
+              <Image
+                key={img.id}
+                src={img.path}
+                alt=""
+                width={220}
+                height={165}
+                className="h-[130px] w-auto shrink-0 snap-start rounded-lg border border-[var(--border)] object-cover"
+              />
+            ))}
+          </div>
+          <p className="mt-1.5 text-xs text-[var(--text-faint)]">
+            Bilder:{" "}
+            <a
+              href={story.images[0].creditUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="underline underline-offset-2"
+            >
+              {story.images[0].credit}
+            </a>
+          </p>
+        </div>
+      )}
+
       {(story.characters.length > 0 || story.themes.length > 0) && (
         <div className="mb-8 flex flex-wrap gap-1.5">
           {story.characters.map((c) => (
             <span
               key={c.character.name}
-              className="rounded-full border border-[var(--border)] px-2.5 py-1 text-xs text-[var(--text-muted)]"
+              className="flex items-center gap-1.5 rounded-full border border-[var(--border)] py-1 pl-1 pr-2.5 text-xs text-[var(--text-muted)]"
             >
+              {c.character.portraitPath && (
+                <Image
+                  src={c.character.portraitPath}
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="h-5 w-5 rounded-full object-cover"
+                />
+              )}
               {c.character.name}
             </span>
           ))}

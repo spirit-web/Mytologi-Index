@@ -77,8 +77,29 @@ model Story {
   themes            StoryTheme[]
   referencesAsTarget Reference[]
   parallelLinks     ParallelStory[]
+  images            StoryImage[]
 
   @@unique([bookId, slug])
+}
+
+// Illustrerade scenbilder för en story, hämtade från öppna bildarkiv (i
+// dagsläget FreeBibleimages.org, se README "Bildkällor"). Flera bilder per
+// story ger en liten scen-för-scen-bildberättelse, inte bara en enda
+// omslagsbild. `path` pekar in i /public (lokalt nedladdat, inte hotlänkat
+// — se README om varför). `credit`/`creditUrl` krävs av CC BY-NC-licensen.
+model StoryImage {
+  id      String @id @default(cuid())
+  storyId String
+  story   Story  @relation(fields: [storyId], references: [id])
+
+  path  String // t.ex. "/images/genesis/cain-and-abel/01.jpg"
+  order Int
+
+  credit    String // t.ex. "Lambsongs (freebibleimages.org), CC BY-NC"
+  creditUrl String // länk till källsidan
+
+  @@unique([storyId, order])
+  @@index([storyId])
 }
 
 // Karaktärsregister — gör att "återkommande karaktär" blir en härledd
@@ -89,6 +110,13 @@ model Character {
   id   String @id @default(cuid())
   slug String @unique // t.ex. "abraham"
   name String // t.ex. "Abraham"
+
+  // Porträttbild — återanvänder helt enkelt en lämplig StoryImage-bild
+  // (arkivet erbjuder scenbilder, inga fristående porträtt) snarare än
+  // en separat crop, se README.
+  portraitPath      String?
+  portraitCredit    String?
+  portraitCreditUrl String?
 
   appearances StoryCharacter[]
   references  Reference[]

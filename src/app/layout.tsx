@@ -51,6 +51,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </div>
         </header>
         <div className="flex-1">{children}</div>
+        <footer className="border-t border-[var(--border-soft)] px-6 py-6 text-center text-xs text-[var(--text-faint)]">
+          Berättelseillustrationer:{" "}
+          <a
+            href="https://www.freebibleimages.org/"
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2"
+          >
+            FreeBibleimages.org
+          </a>{" "}
+          (huvudsakligen Lambsongs / Jill Kemp &amp; Richard Gunther), CC BY-NC.
+          Bibeltext: World English Bible (public domain) via bible-api.com.
+        </footer>
       </body>
     </html>
   );
