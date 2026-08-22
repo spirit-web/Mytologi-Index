@@ -1759,6 +1759,104 @@ async function main() {
 
   console.log(`Seedat Maps of Meaning: ${momLectures.length} föreläsningar, 12 Rules for Life: ${rules.length} regler.`);
 
+  // --- Bokpresentationer -----------------------------------------
+  // Traditionell attribuering (judisk/kristen tolkningstradition), inte
+  // nödvändigtvis modern bibelforsknings-konsensus (som ofta ser flera
+  // författare/senare sammanställning, t.ex. den "dokumentära hypotesen"
+  // för Genesis/Exodus, eller daterar Matteus till ca 80–90 e.Kr. av en
+  // okänd sammanställare snarare än aposteln själv). Båda perspektiven
+  // nämns kort. Se README "Bokpresentationer" för avgränsning.
+  const bookInfo: Array<{ id: string; description: string; authorship: string; traditions: string }> = [
+    {
+      id: genesis.id,
+      description:
+        "Skapelsen, mänsklighetens tidiga historia (syndafallet, Kain och " +
+        "Abel, floden, Babel) och sedan patriarkernas historia — Abraham, " +
+        "Isak, Jakob och Josef — fram till att israeliterna hamnar i Egypten.",
+      authorship:
+        "Traditionellt tillskriven Mose (ca 1200-talet f.Kr.), skriven för " +
+        "att ge det framväxande israelitiska folket en ursprungsberättelse " +
+        "och identitet. Modern bibelforskning ser den ofta som en " +
+        "sammanställning av flera äldre källor, redigerad långt senare " +
+        "(den s.k. dokumentära hypotesen).",
+      traditions:
+        "Judendom: första boken i Toran, central. Kristendom: första boken " +
+        "i Gamla testamentet. Islam: Adam, Ibrahim (Abraham), Ishaq (Isak), " +
+        "Yaqub (Jakob) och Yusuf (Josef) förekommer i Koranen med delvis " +
+        "andra detaljer — Josefs historia återges särskilt utförligt i " +
+        "sura 12 (Yusuf).",
+    },
+    {
+      id: exodus.id,
+      description:
+        "Israeliternas slaveri i Egypten, Moses födelse och kallelse, de " +
+        "tio plågorna, uttåget och vandringen genom Röda havet, mötet med " +
+        "Gud vid Sinai (de tio budorden och förbundet), och guldkalvs-" +
+        "avfallet.",
+      authorship:
+        "Traditionellt tillskriven Mose, som deltagare i händelserna. " +
+        "Modern forskning ser den, liksom Genesis, som en senare " +
+        "sammanställning av flera källor.",
+      traditions:
+        "Judendom: central i Toran — påsken (Pesach) firas till minne av " +
+        "just uttåget. Kristendom: del av Gamla testamentet. Islam: Musa " +
+        "(Mose) är den mest omnämnda profeten i Koranen — Farao, plågorna, " +
+        "havsundret och kalv-avfallet (där Samiri snarare än Aron pekas ut " +
+        "som skyldig) återkommer i flera suror, bl.a. Al-Baqarah, Al-A'raf " +
+        "och Ta-Ha.",
+    },
+    {
+      id: matthew.id,
+      description:
+        "Jesu födelse och släkttavla, hans undervisning, liknelser och " +
+        "under, och till sist passionsveckan — tillfångatagande, rättegång, " +
+        "korsfästelse och uppståndelse. Första av de fyra evangelierna i " +
+        "Nya testamentets kanoniska ordning.",
+      authorship:
+        "Traditionellt tillskriven aposteln Matteus (Levi), en före detta " +
+        "tullindrivare bland Jesu tolv lärjungar, skriven för en huvudsakligen " +
+        "judisk-kristen läsekrets (starkt fokus på uppfyllda profetior från " +
+        "Gamla testamentet). Modern forskning daterar den ofta till ca " +
+        "80–90 e.Kr. och ifrågasätter direkt apostolisk författarskap, " +
+        "möjligen byggd på Markusevangeliet plus en hypotetisk källa (\"Q\").",
+      traditions:
+        "Kristendom: central, en av de fyra evangelierna. Judendom: ingår " +
+        "inte i judisk skrift (Nya testamentet är specifikt kristet). " +
+        "Islam: Jesus (Isa) är en av de viktigaste profeterna i Koranen — " +
+        "jungfrufödelsen och flera under nämns — men Koranen (sura 4:157) " +
+        "förnekar att han korsfästes eller dog på korset, och Islam ser " +
+        "honom som profet, inte Guds son. Matteusevangeliet som text ingår " +
+        "alltså inte i islamsk skrift, även om huvudpersonen gör det.",
+    },
+    {
+      id: mapsOfMeaningBook.id,
+      description:
+        "Petersons psykologiska tolkningsramverk för myt, religion och " +
+        "berättelsestruktur — inte en religiös text i sig, utan en teori " +
+        "om VARFÖR sådana texter fångar mänsklig erfarenhet.",
+      authorship: "Jordan B. Peterson, föreläsningar hållna 2017 vid University of Toronto.",
+      traditions:
+        "Inte kopplad till någon specifik religiös tradition — men " +
+        "diskuterar och drar på berättelser från många (kristendom, " +
+        "judendom, buddhism m.fl.) som exempel på återkommande mönster.",
+    },
+    {
+      id: rulesBook.id,
+      description:
+        "Petersons populära självhjälpsbok (2018) — tolv livsregler, var " +
+        "och en utvecklad i ett eget kapitel, byggda på samma psykologiska " +
+        "grundtankar som Maps of Meaning.",
+      authorship: "Jordan B. Peterson, utgiven 2018.",
+      traditions: "Inte en religiös text, men starkt påverkad av Petersons bibeltolkning.",
+    },
+  ];
+  for (const b of bookInfo) {
+    await prisma.book.update({
+      where: { id: b.id },
+      data: { description: b.description, authorship: b.authorship, traditions: b.traditions },
+    });
+  }
+
   // --- Exempel-Parallel (visar konceptet med en enda post) -----------
   // Fler tvärtext-jämförelser (särskilt Bibeln↔Koranen) läggs till när
   // Koranen är indexerad, se README.

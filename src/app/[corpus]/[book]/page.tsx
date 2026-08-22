@@ -20,6 +20,7 @@ export default async function BookPage({
           characters: { include: { character: true } },
           themes: { include: { theme: true } },
           images: { where: { order: 1 }, take: 1 },
+          petersonSegments: { include: { video: true } },
         },
       },
     },
@@ -37,6 +38,16 @@ export default async function BookPage({
     seriesMap.set(s.seriesSlug, list);
   }
 
+  // Härledda siffror för bokpresentationen: unika karaktärer och unika
+  // Peterson-videor kopplade till någon story i boken (inte hårdkodat,
+  // uppdateras automatiskt när fler stories/segment läggs till).
+  const characterMap = new Map<string, string>(); // slug -> namn
+  const videoMap = new Map<string, string>(); // youtubeId -> titel
+  for (const s of book.stories) {
+    for (const c of s.characters) characterMap.set(c.character.slug, c.character.name);
+    for (const seg of s.petersonSegments) videoMap.set(seg.video.youtubeId, seg.video.title);
+  }
+
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
       <Link
@@ -48,10 +59,40 @@ export default async function BookPage({
       <h1 className="mt-2 mb-1 font-serif text-4xl font-semibold tracking-tight text-[var(--text)]">
         {book.name}
       </h1>
-      <p className="mb-10 text-sm text-[var(--text-muted)]">
+      <p className="mb-6 text-sm text-[var(--text-muted)]">
         {standalone.length} enskilda berättelser · {seriesMap.size} berättelsecykler
         ({[...seriesMap.values()].reduce((n, l) => n + l.length, 0)} avsnitt)
       </p>
+
+      {(book.description || book.authorship || book.traditions) && (
+        <section className="mb-10 space-y-3 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6 text-sm shadow-sm">
+          <h2 className="text-xs font-medium uppercase tracking-wide text-[var(--text-faint)]">
+            Om boken
+          </h2>
+          {book.description && <p className="text-[var(--text)]">{book.description}</p>}
+          {book.authorship && (
+            <p className="text-[var(--text-muted)]">
+              <span className="font-medium text-[var(--text)]">Författarskap: </span>
+              {book.authorship}
+            </p>
+          )}
+          {book.traditions && (
+            <p className="text-[var(--text-muted)]">
+              <span className="font-medium text-[var(--text)]">Religiös koppling: </span>
+              {book.traditions}
+            </p>
+          )}
+          <p className="flex flex-wrap gap-x-4 gap-y-1 border-t border-[var(--border-soft)] pt-3 text-xs text-[var(--text-faint)]">
+            <span>
+              {characterMap.size} karaktär{characterMap.size === 1 ? "" : "er"}
+              {characterMap.size > 0 && ": " + [...characterMap.values()].join(", ")}
+            </span>
+          </p>
+          <p className="text-xs text-[var(--text-faint)]">
+            {videoMap.size} Peterson-video{videoMap.size === 1 ? "" : "r"} kopplade till böckens berättelser
+          </p>
+        </section>
+      )}
 
       {seriesMap.size > 0 && (
         <section className="mb-10">

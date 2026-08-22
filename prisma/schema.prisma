@@ -40,6 +40,11 @@ model Book {
   order     Int    // ordning inom korpusen (kanonisk ordning)
   testament String? // "old" | "new" | null (för icke-bibliska korpusar)
 
+  // Bokpresentation (se README "Bokpresentationer" för källor/avgränsning).
+  description String? // vad boken handlar om/går igenom
+  authorship  String? // vem som (traditionellt) skrivit den och varför
+  traditions  String? // koppling till judendom/kristendom/islam
+
   stories Story[]
 
   @@unique([corpusId, slug])
