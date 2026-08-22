@@ -86,18 +86,21 @@ export default async function StoryPage({
 
       {story.images.length > 0 && (
         <div className="mb-8">
+          <p className="mb-2 text-xs uppercase tracking-wide text-[var(--text-faint)]">
+            Bildberättelse (parafras från bildkällan — inte bibeltext, se "Text" nedan för det)
+          </p>
           <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">
             {story.images.map((img) => (
-              <figure key={img.id} className="w-[190px] shrink-0 snap-start">
+              <figure key={img.id} className="w-[240px] shrink-0 snap-start">
                 <Image
                   src={img.path}
                   alt={img.caption ?? ""}
-                  width={220}
-                  height={165}
-                  className="h-[130px] w-full rounded-lg border border-[var(--border)] object-cover"
+                  width={240}
+                  height={180}
+                  className="h-[150px] w-full rounded-lg border border-[var(--border)] object-cover"
                 />
                 {img.caption && (
-                  <figcaption className="mt-1 line-clamp-2 text-xs text-[var(--text-muted)]">
+                  <figcaption className="mt-1.5 text-xs leading-snug text-[var(--text-muted)]">
                     {img.caption}
                   </figcaption>
                 )}
@@ -105,7 +108,7 @@ export default async function StoryPage({
             ))}
           </div>
           <p className="mt-1.5 text-xs text-[var(--text-faint)]">
-            Bilder:{" "}
+            Bilder och bildtexter (översatta):{" "}
             <a
               href={story.images[0].creditUrl}
               target="_blank"
