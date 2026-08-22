@@ -70,6 +70,22 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 8 (2026-08-22): Referens-index + klickbara etiketter
+
+`Reference`-modellen (fanns i schemat sen tidigare men var oanvänd) fylld
+med 8 verifierade citeringar — hämtade ur transkript vi redan läst i
+tidigare faser, ingen ny research. Refererade tänkare (Dostojevskij, Jung,
+Freud, Platon, Sam Harris, Alexander Luria, Michelangelo) modelleras som
+riktiga `Character`-poster (inte fri text) så de får en egen sida precis
+som bibliska karaktärer. Nietzsche är MEDVETET inte med — ingen verifierad
+referens hittad i det vi faktiskt läst, hellre utelämna än gissa.
+
+Nya globala sidor: `/personer` + `/personer/[slug]`, `/teman` +
+`/teman/[slug]`. Alla karaktärs- och tema-etiketter i appen är nu
+klickbara länkar dit. **Detta fungerar automatiskt för alla framtida
+böcker/korpusar** (Koranen m.fl.) utan extra arbete — sidorna är inte
+knutna till en specifik bok, de listar tvärs över hela databasen.
+
 ## Bokpresentationer (2026-08-22)
 
 Varje bok visar nu en "Om boken"-sektion: vad den täcker, traditionell
