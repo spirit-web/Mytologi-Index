@@ -70,6 +70,55 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Bildkällor (2026-08-22)
+
+Alla 13 Genesis-stories har nu illustrerade scenbilder (156 st totalt),
+nedladdade från [FreeBibleimages.org](https://www.freebibleimages.org/)
+till `public/images/genesis/<story-slug>/` — **inte hotlänkade** mot deras
+CDN (de har inte gett explicit tillåtelse att vi belastar deras servrar
+löpande, och lokala filer är mer robusta för ett offline-vänligt personligt
+verktyg). Bildernas CDN-URL:er följer ett förutsägbart mönster
+(`media.freebibleimages.org/stories/<KOD>/overview-thumbnails/NN_<KOD>_Thumbnail.jpg`,
+480×360px) som verifierades med `curl` innan nedladdning.
+
+De flesta stories använder **Lambsongs** (Jill Kemp, text / Richard
+Gunther, konst — lambsongs.co.nz) för en sammanhållen visuell stil över
+hela Genesis. Två stories (Adam & Eva, Kallelsen av Abram) fick inget
+Lambsongs-set och använder andra krediterade konstnärer istället — märks
+i UI:t per bild.
+
+| Story | Källkod(er) | Konstnär |
+|---|---|---|
+| creation | FB_LS_Creation_Days | Lambsongs |
+| garden-of-eden | FB_FN_Adam_Eve | Fishnet Bible Stories |
+| cain-and-abel | FB_LS_Cain_Abel + FB_LS_Cain_Anger | Lambsongs |
+| noahs-flood | FB_LS_Noah_Ark | Lambsongs |
+| tower-of-babel | FB_LS_Tower_Babel | Lambsongs |
+| call-of-abram | FB_RP_Abraham_Calling | freebibleimages.org |
+| abraham-and-lot | FB_RG_Lot | Richard Gunther |
+| covenant-with-abram | FB_LS_Abram | Lambsongs |
+| sodom-and-gomorrah | FB_RG_Lot (samma set som ovan, sena bilder) | Richard Gunther |
+| binding-of-isaac | FB_LS_Abraham_Isaac | Lambsongs |
+| jacobs-ladder | FB_LS_Jacob_Ladder | Lambsongs |
+| jacob-wrestling | FB_LS_Jacob_Israel | Lambsongs |
+| joseph-and-his-brothers | FB_LS_Joseph_Dreams + _Coat + _Brothers | Lambsongs |
+
+**Licens: CC BY-NC** (kontrollerad på `ls-cain-abel`-setet: personligt/
+undervisningsbruk tillåtet, kommersiellt bruk EJ tillåtet, härledda verk
+och AI-bearbetning tillåtet på just det setet — **licensdetaljer varierar
+per set**, kolla om appen någonsin blir delad/publik). Fullt okej för
+nuvarande personliga-bruk-status.
+
+**Karaktärsporträtt** återanvänder bild nr. 1 från en relevant story
+(arkivet har inga fristående porträtt, bara scenbilder) — en första
+gissning per karaktär, byt gärna manuellt via `npm run db:studio` mot en
+bättre bild när du bläddrat igenom galleriet.
+
+**Uppslag som gjordes bilden av**: `Bash`/`curl` för att gissa och
+verifiera CDN-koder (t.ex. `FB_LS_Noah_Ark`, `FB_RG_Lot`) direkt utan att
+behöva öppna varje sida i webbläsaren — snabbare än att klicka igenom
+16 story-sidor för hand.
+
 ## Källor (för research bakom seed-datat)
 
 - Genesis-seriens 15 titlar: korsverifierat mot flera oberoende sidor
