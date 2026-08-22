@@ -115,9 +115,13 @@ stället för bara hela berättelsen):
   in på extra djupt, visas nu — direkt inline efter just den versen — ett
   kort utvalt citat + en egen sammanfattning av poängen. Detta är en
   djupare nivå än `PetersonSegment.quote`/`keyPoints` (som gäller hela
-  berättelsen). **Proof-of-concept-täckning**, inte komplett: Kain och
-  Abel (v4–5), Jakobs stege (v12–13), Isaks offer (v5). Kräver mycket
-  transkript-grävande per vers — se "Nästa steg".
+  berättelsen). **Utökad täckning** (fortfarande inte komplett — täcker
+  9 av 13 stories, en eller ett par verser per story): Skapelsen (v1:14),
+  Adam och Eva (v2:25, v3:7), Kain och Abel (v4:4–5), Babels torn
+  (v11:7–9), Kallelsen av Abram (v12:1), Noa (v6:9), Sodom och Gomorra
+  (v18:23–32), Isaks offer (v22:5), Jakobs stege (v28:12–13), Jakob
+  brottas (v32:28), Josef (v37:3–4). Saknas ännu: förbundet med Abram.
+  Kräver mycket transkript-grävande per vers — se "Nästa steg".
 - **Avvägning kring fullständiga transkript**: användaren efterfrågade
   Petersons ord "ordagrant" om varje mening — vi bygger medvetet bara
   korta utvalda citat (1–2 meningar), inte hela transkriptsegment, eftersom
