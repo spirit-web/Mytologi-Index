@@ -62,7 +62,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             FreeBibleimages.org
           </a>{" "}
           (huvudsakligen Lambsongs / Jill Kemp &amp; Richard Gunther), CC BY-NC.
-          Bibeltext: World English Bible (public domain) via bible-api.com.
+          Bibeltext: 1917 års kyrkobibel (upphovsrättsfri), data från{" "}
+          <a
+            href="https://spraakbanken.gu.se/en/resources/bibel1917"
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2"
+          >
+            Språkbanken
+          </a>
+          , CC BY 4.0. Gudsnamnet normaliserat till "Gud" genomgående.
         </footer>
       </body>
     </html>

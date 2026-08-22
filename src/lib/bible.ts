@@ -1,6 +1,15 @@
-// Hämtar bibeltext on-demand från bible-api.com (World English Bible,
-// public domain) — vi lagrar aldrig själva versstexten i databasen, se
-// README "Viktig avgränsning: upphovsrätt".
+// Bibeltext: 1917 års kyrkobibel (svenska, upphovsrättsfri — se README
+// "Bibeltextkälla"). Data extraherad ur Språkbankens ordannoterade
+// bibel1917-korpus (CC-BY-4.0, https://spraakbanken.gu.se/en/resources/bibel1917)
+// och normaliserad ("HERREN"/"Herren" → "Gud", enligt användarens önskemål)
+// i förväg — se scriptet i den chatt-session som skapade filerna, loggat
+// i README. Ligger som statiska JSON-filer i src/data/bible-sv-1917/,
+// EN gång per bok, indexerad kapitel → vers → text. Vi lagrar alltså
+// bibeltexten själva (till skillnad från tidigare, då vi hämtade engelsk
+// text on-demand från en extern API) — okej eftersom 1917 års översättning
+// är fri från upphovsrätt, se README.
+import genesisData from "@/data/bible-sv-1917/genesis.json";
+import matthewData from "@/data/bible-sv-1917/matthew.json";
 
 export type BibleVerse = {
   chapter: number;
@@ -12,8 +21,8 @@ export type BiblePassage = {
   reference: string;
   translationName: string;
   verses: BibleVerse[];
-  // Satt om en eller flera kapitel-delhämtningar misslyckades (t.ex.
-  // tillfälligt nätverksfel) — visar vad vi ändå fick med.
+  // Satt om en eller flera efterfrågade verser saknas i vår lokala data
+  // (t.ex. om Story-referensen pekar utanför vad som extraherats än).
   partial?: boolean;
 };
 
@@ -25,34 +34,23 @@ function parseRef(ref: string): ParsedRef | null {
   return { book: m[1], chapter: Number(m[2]), verse: Number(m[3]) };
 }
 
-// Extern länk till en fullständig bibelläsare för exakt samma referens —
-// visas alltid bredvid texten, oavsett om vi lyckades hämta den själva.
+// Story.startRef/endRef skrivs med engelska boknamn (t.ex. "Genesis",
+// "Matthew") av historiska skäl (matchade tidigare en engelsk bibel-API).
+// Denna karta pekar dem mot rätt lokal datafil + svenskt visningsnamn.
+const BOOKS: Record<string, { data: Record<string, Record<string, string>>; svenskt: string }> = {
+  Genesis: { data: genesisData as Record<string, Record<string, string>>, svenskt: "Första Moseboken" },
+  Matthew: { data: matthewData as Record<string, Record<string, string>>, svenskt: "Matteusevangeliet" },
+};
+
+// Extern länk till en fullständig, fri bibelläsare för samma översättning
+// — visas alltid bredvid texten som referens/dubbelkoll.
 export function externalBibleUrl(startRef: string, endRef: string): string {
   const start = parseRef(startRef);
-  const end = parseRef(endRef);
-  const range =
-    start && end
-      ? start.chapter === end.chapter
-        ? `${start.book} ${start.chapter}:${start.verse}-${end.verse}`
-        : `${start.book} ${start.chapter}-${end.chapter}`
-      : `${startRef}-${endRef}`;
-  return `https://www.biblegateway.com/passage/?search=${encodeURIComponent(range)}&version=WEB`;
-}
-
-async function fetchChapter(book: string, chapter: number) {
-  const url = `https://bible-api.com/${encodeURIComponent(`${book} ${chapter}`)}?translation=web`;
-  const res = await fetch(url, {
-    // Bibeltexten ändras aldrig — cacha länge lokalt.
-    next: { revalidate: 60 * 60 * 24 * 30 },
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  if (!data?.verses?.length) return null;
-  return data as {
-    reference: string;
-    translation_name: string;
-    verses: Array<{ chapter: number; verse: number; text: string }>;
-  };
+  const book = start ? BOOKS[start.book] : undefined;
+  if (!book) return "https://www.bibeln.se/1917-ars-kyrkobibel";
+  // Ingen pålitlig djuplänknings-URL hittad för 1917 års text hos någon
+  // fri källa — länkar till den allmänna infosidan om översättningen.
+  return "https://www.bibeln.se/1917-ars-kyrkobibel";
 }
 
 export async function fetchBiblePassage(
@@ -63,44 +61,39 @@ export async function fetchBiblePassage(
   const end = parseRef(endRef);
   if (!start || !end) return null;
 
-  try {
-    // bible-api.com tillåter bara en hel kapitel-referens eller en range
-    // inom EN kapitelgräns per anrop — så för berättelser som spänner
-    // över flera kapitel (Noa: 6–9, Josef: 37–45) hämtar vi varje kapitel
-    // för sig och klipper bort verserna utanför start/slut, och slår sen
-    // ihop allt till en sammanhängande text.
-    const chapters: Array<{ chapter: number; verse: number; text: string }> = [];
-    let translationName = "";
-    let anySucceeded = false;
-    let anyFailed = false;
+  const book = BOOKS[start.book];
+  if (!book) return null;
 
-    for (let ch = start.chapter; ch <= end.chapter; ch++) {
-      const data = await fetchChapter(start.book, ch);
-      if (!data) {
-        anyFailed = true;
-        continue;
-      }
-      anySucceeded = true;
-      translationName = data.translation_name;
-      for (const v of data.verses) {
-        if (ch === start.chapter && v.verse < start.verse) continue;
-        if (ch === end.chapter && v.verse > end.verse) continue;
-        chapters.push(v);
-      }
+  const verses: BibleVerse[] = [];
+  let anyFound = false;
+  let anyMissing = false;
+
+  for (let ch = start.chapter; ch <= end.chapter; ch++) {
+    const chapterData = book.data[String(ch)];
+    if (!chapterData) {
+      anyMissing = true;
+      continue;
     }
-
-    if (!anySucceeded) return null;
-
-    return {
-      reference:
-        start.chapter === end.chapter
-          ? `${start.book} ${start.chapter}:${start.verse}-${end.verse}`
-          : `${start.book} ${start.chapter}:${start.verse}-${end.chapter}:${end.verse}`,
-      translationName,
-      verses: chapters.map((v) => ({ chapter: v.chapter, verse: v.verse, text: v.text.trim() })),
-      partial: anyFailed,
-    };
-  } catch {
-    return null;
+    const verseNums = Object.keys(chapterData)
+      .map(Number)
+      .sort((a, b) => a - b);
+    for (const vNum of verseNums) {
+      if (ch === start.chapter && vNum < start.verse) continue;
+      if (ch === end.chapter && vNum > end.verse) continue;
+      verses.push({ chapter: ch, verse: vNum, text: chapterData[String(vNum)] });
+      anyFound = true;
+    }
   }
+
+  if (!anyFound) return null;
+
+  return {
+    reference:
+      start.chapter === end.chapter
+        ? `${book.svenskt} ${start.chapter}:${start.verse}-${end.verse}`
+        : `${book.svenskt} ${start.chapter}:${start.verse}-${end.chapter}:${end.verse}`,
+    translationName: "1917 års kyrkobibel",
+    verses,
+    partial: anyMissing,
+  };
 }

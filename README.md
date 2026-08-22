@@ -70,6 +70,44 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 5.5 (2026-08-22): Bibeltexten på svenska — 1917 års kyrkobibel
+
+Bytte bort World English Bible (engelska, hämtad live från bible-api.com)
+mot **1917 års kyrkobibel** på svenska, efter uttrycklig önskan. Källa:
+[Språkbankens bibel1917-korpus](https://spraakbanken.gu.se/en/resources/bibel1917)
+(Göteborgs universitet, CC BY 4.0) — en ordannoterad XML-korpus (161 MB
+uppackad). Extraherade bara de ~37 kapitel vår story-index faktiskt
+använder (26 i Genesis, 11 i Matteus) med ett Python-skript
+(`extract_1917.py`, körd engångs i sessionens scratchpad, inte sparad i
+repot) som bygger ihop `<w>`-token till löptext per vers.
+
+**Gudsnamnet normaliserat**: enligt uttrycklig önskan ("använd Gud som
+namn för Gud") körs all extraherad text igenom en regex-normalisering
+(`normalize_divine_name.py`) som ersätter "HERREN"/"Herren"/"HERRENS"/
+"Herrens" med "Gud"/"Guds" — inklusive att kollapsa "HERREN Gud" (vanligt
+i Gen 2–3) till bara "Gud" istället för "Gud Gud". Verifierat: noll
+kvarvarande träffar på "Herren" i hela datasetet efter körning.
+
+**Data lagras nu lokalt** i `src/data/bible-sv-1917/{genesis,matthew}.json`
+(kapitel → vers → text) — `src/lib/bible.ts` läser därifrån istället för
+att anropa en extern API. Det innebär att vi nu FAKTISKT lagrar bibeltext
+i repot (till skillnad från tidigare avgränsning), men det är okej: 1917
+års översättning är fri från upphovsrätt (utgiven 1917, ingen upphovsman
+i livet), och källkorpusen (Språkbankens digitalisering) är uttryckligen
+CC BY 4.0 — tillåter både lagring och bearbetning (t.ex. gudsnamns-
+normaliseringen) med attribution.
+
+**Övervägt och avfärdat**: "Svenska Kärnbibeln" (via wldeh/bible-api,
+`sv-skb`) hittades också och fungerar tekniskt, men är licensierad
+**CC BY-NC-**ND** 4.0 — "No Derivatives" förbjuder uttryckligen att ändra
+ord/interpunktion**, vilket hade gjort gudsnamns-normaliseringen till ett
+licensbrott. Valde bort den av det skälet, inte kvalitet (den är faktiskt
+en rikare, mer kommenterad översättning).
+
+Jordan Petersons egna citat (`quote`-fälten) påverkas INTE av detta —
+de är fortsatt på engelska, oavsett bibeltextens språk, enligt tidigare
+beslut om att inte omformulera hans ord.
+
 ## Fas 5 (2026-08-22): Nya testamentet — Matteusevangeliet
 
 Nytt bokobjekt `matthew` (testament: "new"), 13 stories från födelsen till
