@@ -77,14 +77,38 @@ med 8 verifierade citeringar — hämtade ur transkript vi redan läst i
 tidigare faser, ingen ny research. Refererade tänkare (Dostojevskij, Jung,
 Freud, Platon, Sam Harris, Alexander Luria, Michelangelo) modelleras som
 riktiga `Character`-poster (inte fri text) så de får en egen sida precis
-som bibliska karaktärer. Nietzsche är MEDVETET inte med — ingen verifierad
-referens hittad i det vi faktiskt läst, hellre utelämna än gissa.
+som bibliska karaktärer.
 
 Nya globala sidor: `/personer` + `/personer/[slug]`, `/teman` +
 `/teman/[slug]`. Alla karaktärs- och tema-etiketter i appen är nu
 klickbara länkar dit. **Detta fungerar automatiskt för alla framtida
 böcker/korpusar** (Koranen m.fl.) utan extra arbete — sidorna är inte
 knutna till en specifik bok, de listar tvärs över hela databasen.
+
+## Fas 8.1 (2026-08-23): Rättelse — Nietzsche, + fler referenser med tidsstämplar
+
+Fas 8 påstod felaktigt att Nietzsche INTE nämns i Maps of Meaning. Det var
+fel, och byggde bara på att bara de första ~5–10 minuterna av varje
+föreläsnings transkript hade lästs, inte hela. En riktad textsökning
+("grep" på kända namn/verk) genom samtliga redan nedladdade transkript —
+följt av att faktiskt läsa varje träff i sitt sammanhang innan den skrevs
+in — hittade en verifierad Nietzsche-referens (föreläsning 8, 01:50:42:
+kopplar den mesopotamiska skapelsemyten till "Gud är död" och en kritik av
+postmodernismen) plus 12 till: Milton, Dante, Piaget, Darwin, och fem
+Disney-filmer/bokserier (Lejonkungen, Törnrosa, Den lilla sjöjungfrun,
+Peter Pan, Harry Potter, Sagan om ringen/Bilbo).
+
+Referens-indexet har nu **18 refererade personer/verk och 20 referenser**
+(upp från 7/8), och varje ny post har en exakt, transkript-verifierad
+`atSec`-tidsstämpel som länkar direkt till rätt sekund på YouTube.
+
+**Medveten avgränsning**, för öppenhets skull: det här är fortfarande INTE
+en fullständig genomgång av alla ~30 timmar Maps of Meaning-material — det
+vore inte rimligt att läsa rad för rad. Freud, Piaget och Darwin nämns
+alla upprepade gånger genom hela serien; här finns EN representativ,
+verifierad referens per person, inte varje enskild förekomst. Fler träffar
+finns kvar i redan nedladdade transkript (bl.a. ytterligare Freud- och
+Harry Potter-omnämnanden) som kan läggas till senare vid behov.
 
 ## Bokpresentationer (2026-08-22)
 

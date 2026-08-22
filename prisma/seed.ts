@@ -1863,17 +1863,32 @@ async function main() {
   // ======================================================================
   // Byggd genom att gå tillbaka genom transkripten som redan lästs för
   // tidigare faser och plocka ut varje gång Peterson namnger en person
-  // utanför själva bibeltexten. INGEN ny transkript-genomgång gjord för
-  // just den här fasen — bara det som redan hittats i förbifarten.
-  // Modellerar de refererade personerna som riktiga Character-poster
-  // (inte bara Reference.externalLabel) så de får en egen indexsida
-  // precis som bibliska karaktärer, även om de har noll story-framträdanden.
-  // Nietzsche är INTE med trots att han är central för Peterson — hittade
-  // ingen verifierad Nietzsche-referens i det transkript vi faktiskt läst
-  // hittills (bara i inte-transkriberade avsnitt/klipp). Bättre att
-  // utelämna än att gissa. En "Al Albert Barn"-referens i ep10 (troligen
+  // utanför själva bibeltexten. Modellerar de refererade personerna/verken
+  // som riktiga Character-poster (inte bara Reference.externalLabel) så de
+  // får en egen indexsida precis som bibliska karaktärer, även om de har
+  // noll story-framträdanden.
+  //
+  // RÄTTELSE (2026-08-23): tidigare version av denna kommentar påstod att
+  // Nietzsche INTE nämns i Maps of Meaning. Det var fel — det påståendet
+  // byggde bara på att ha läst de första ~5–10 minuterna av varje
+  // föreläsnings transkript, inte hela. En fullständig textsökning
+  // ("grep") genom samtliga redan nedladdade transkript hittade en
+  // verifierad Nietzsche-referens i föreläsning 8 (se nedan), plus en lång
+  // rad andra namngivna referenser (Freud, Piaget, Darwin, Milton, Dante,
+  // och flera Disney-filmer/bokserier) som inte heller fångades upp första
+  // gången. De mest substantiella av dessa är nu tillagda nedan.
+  //
+  // Omfattning: det här är INTE en fullständig genomgång av alla ~30
+  // timmar Maps of Meaning-material — det vore inte rimligt att läsa rad
+  // för rad. Det är en riktad textsökning efter kända namn/verk
+  // (filosofer, psykologer, Disney-filmer, kända bokserier) följt av att
+  // varje träff faktiskt lästs i sitt sammanhang innan den skrevs in här.
+  // Freud, Piaget och Darwin nämns alla upprepade gånger genom hela
+  // serien som återkommande referenspunkter — här finns EN representativ,
+  // verifierad referens per person/verk, inte varje enskild gång namnet
+  // nämns. En "Al Albert Barn"-referens i föreläsning 10 (troligen
   // bibelforskaren Robert Alter, men ASR-texten är för förvrängd för att
-  // vara säker) utelämnad av samma skäl.
+  // vara säker) är fortsatt utelämnad av samma försiktighetsskäl.
   const refCharacterDefs: Array<{ slug: string; name: string }> = [
     { slug: "dostojevskij", name: "Fjodor Dostojevskij" },
     { slug: "carl-jung", name: "Carl Jung" },
@@ -1882,6 +1897,17 @@ async function main() {
     { slug: "sam-harris", name: "Sam Harris" },
     { slug: "alexander-luria", name: "Alexander Luria" },
     { slug: "michelangelo", name: "Michelangelo" },
+    { slug: "nietzsche", name: "Friedrich Nietzsche" },
+    { slug: "john-milton", name: "John Milton" },
+    { slug: "dante", name: "Dante Alighieri" },
+    { slug: "jean-piaget", name: "Jean Piaget" },
+    { slug: "charles-darwin", name: "Charles Darwin" },
+    { slug: "lejonkungen", name: "Lejonkungen (Disneyfilm)" },
+    { slug: "tornrosa", name: "Törnrosa (Disneyfilm)" },
+    { slug: "den-lilla-sjojungfrun", name: "Den lilla sjöjungfrun (Disneyfilm)" },
+    { slug: "peter-pan-film", name: "Peter Pan (Disneyfilm)" },
+    { slug: "harry-potter", name: "Harry Potter (bokserie/filmer)" },
+    { slug: "sagan-om-ringen", name: "Sagan om ringen / Bilbo (bokserie/filmer)" },
   ];
   const refCharacters: Record<string, { id: string }> = {};
   for (const c of refCharacterDefs) {
@@ -1896,6 +1922,7 @@ async function main() {
     videoYoutubeId: string;
     storySlug?: string; // om referensen görs i samband med en specifik story
     characterSlug: string;
+    atSec?: number; // exakt tidsstämpel, verifierad mot transkript
     note: string;
   };
   const references: RefDef[] = [
@@ -1955,6 +1982,116 @@ async function main() {
         "en mors villighet att låta sitt barn komma till världen trots att " +
         "hon vet vad som väntar.",
     },
+
+    // --- Tillagda 2026-08-23 efter en riktad textsökning genom samtliga
+    // redan nedladdade Maps of Meaning-transkript, se kommentaren ovan. ---
+    {
+      videoYoutubeId: "Nb5cBkbQpGY", storySlug: "neuropsychology-of-symbolic-representation",
+      characterSlug: "nietzsche", atSec: 6642,
+      note:
+        "Kopplar den mesopotamiska skapelsemyten om Elde-gudarna (Tiamat) " +
+        "till Nietzsches 'Gud är död' — kallar det 'ingen skillnad' från " +
+        "vad Nietzsche förkunnade, och använder det som språngbräda för en " +
+        "kritik av postmodernismen. Följs direkt av Törnrosa-exemplet nedan.",
+    },
+    {
+      videoYoutubeId: "Nb5cBkbQpGY", storySlug: "neuropsychology-of-symbolic-representation",
+      characterSlug: "tornrosa", atSec: 6720,
+      note:
+        "Går igenom scenen där Onda Drottningen fängslat prinsen i " +
+        "fängelsehålan (innan hon förvandlas till drake) som bild för den " +
+        "'uppslukande modern' — en förälder som håller kvar sitt barn i " +
+        "beroende istället för att släppa taget.",
+    },
+    {
+      videoYoutubeId: "Us979jCjHu8", storySlug: "marionettes-and-individuals-2",
+      characterSlug: "john-milton", atSec: 6981,
+      note:
+        "Rekommenderar att läsa Dantes Inferno tillsammans med Miltons " +
+        "Paradise Lost som metafysiska utforskningar av vilka fruktansvärda " +
+        "platser förräderi (som Räven och Kattens svek mot Pinocchio) kan " +
+        "leda en människa till.",
+    },
+    {
+      videoYoutubeId: "Us979jCjHu8", storySlug: "marionettes-and-individuals-2",
+      characterSlug: "dante", atSec: 6978,
+      note:
+        "Beskriver förräderi som en av de värsta sakerna en människa kan " +
+        "göra en annan — 'det var Dantes idé' — och kopplar det till " +
+        "Inferno, läst tillsammans med Miltons Paradise Lost.",
+    },
+    {
+      videoYoutubeId: "EN2lyN7rM4E", storySlug: "marionettes-and-individuals-1",
+      characterSlug: "lejonkungen", atSec: 6218,
+      note:
+        "Använder babianen/schamanen i Lejonkungen — som börjar som en " +
+        "komisk 'dåre'-figur och utvecklas till en fullvärdig " +
+        "shaman/präst-gestalt — som exempel på Jungs idé att 'dåren' ofta " +
+        "förvandlas till frälsaren.",
+    },
+    {
+      videoYoutubeId: "bV16NEWld8Q", storySlug: "marionettes-and-individuals-3",
+      characterSlug: "den-lilla-sjojungfrun", atSec: 6955,
+      note:
+        "Jämför Ursulas förvandling till ett jättelikt drakliknande " +
+        "sjöodjur i Den lilla sjöjungfrun med Monstro-valen i Pinocchio — " +
+        "båda som symboler för det okända/Kaos i drakform.",
+    },
+    {
+      videoYoutubeId: "bV16NEWld8Q", storySlug: "marionettes-and-individuals-3",
+      characterSlug: "harry-potter", atSec: 4736,
+      note:
+        "Använder Harrys två föräldrapar (familjen Dursley och de " +
+        "'magiska' döda föräldrarna) som bild för skillnaden mellan de " +
+        "faktiska föräldrarna och natur/kultur som symboliska föräldrar — " +
+        "med Freuds/Jungs idé om faderns symboliska död som direkt " +
+        "uppföljning (se referensen till Freud nedan).",
+    },
+    {
+      videoYoutubeId: "bV16NEWld8Q", storySlug: "marionettes-and-individuals-3",
+      characterSlug: "sigmund-freud", atSec: 4739,
+      note:
+        "Refererar till Freuds idé att 'ingen kan bli en (fullvärdig) man " +
+        "förrän hans far har dött', och Jungs vidareutveckling att det " +
+        "dödandet kan — och bör — ske symboliskt snarare än bokstavligt.",
+    },
+    {
+      videoYoutubeId: "bV16NEWld8Q", storySlug: "marionettes-and-individuals-3",
+      characterSlug: "sagan-om-ringen", atSec: 7215,
+      note:
+        "Läser Bilbos resa i Bilbo — En hobbits äventyr (inledningen till " +
+        "Sagan om ringen) som samma mönster: en överbeskyddad, passiv " +
+        "figur som måste utveckla sina 'mörkare' sidor (bli tjuv, modig) " +
+        "för att växa till en fullvärdig individ.",
+    },
+    {
+      videoYoutubeId: "yXZSeiAl4PI", storySlug: "patterns-of-symbolic-representation",
+      characterSlug: "peter-pan-film", atSec: 6217,
+      note:
+        "Läser Peter Pan i Neverland (det arketypiska riket) som en figur " +
+        "som vägrar växa upp eftersom alternativet — att bli den " +
+        "'dödsbesatte tyrannen' Captain Hook — verkar värre; Tinkerbell " +
+        "som den inbillade/overkliga kvinnliga motparten till den " +
+        "verkliga Wendy.",
+    },
+    {
+      videoYoutubeId: "RudKmwzDpNY", storySlug: "story-and-metastory-1",
+      characterSlug: "jean-piaget", atSec: 2763,
+      note:
+        "Föredrar Piagets idé att ett fungerande trossystem/kultur i grunden " +
+        "är ett gemensamt SPEL alla deltagare spelar (inte i första hand " +
+        "en samling föreställningar) — det är därför ingen behöver bli " +
+        "upprörd så länge alla spelar samma spel.",
+    },
+    {
+      videoYoutubeId: "RudKmwzDpNY", storySlug: "story-and-metastory-1",
+      characterSlug: "charles-darwin", atSec: 446,
+      note:
+        "Berättar anekdoten om Darwin som om och om igen gick fram till " +
+        "kobran i terrariet och blev lika förskräckt varje gång trots att " +
+        "han visste att glaset skyddade honom — inledning till Sokolovs " +
+        "forskning om hjärnans orienteringsreflex.",
+    },
   ];
 
   for (const r of references) {
@@ -1963,8 +2100,8 @@ async function main() {
     const characterId = refCharacters[r.characterSlug].id;
     await prisma.reference.upsert({
       where: { videoId_storyId_characterId: { videoId: video.id, storyId: story?.id ?? "", characterId } },
-      update: { note: r.note },
-      create: { videoId: video.id, storyId: story?.id, characterId, note: r.note },
+      update: { note: r.note, atSec: r.atSec },
+      create: { videoId: video.id, storyId: story?.id, characterId, atSec: r.atSec, note: r.note },
     });
   }
   console.log(`Seedat referens-index: ${refCharacterDefs.length} refererade personer, ${references.length} referenser.`);
