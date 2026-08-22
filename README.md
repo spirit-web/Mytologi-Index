@@ -85,6 +85,42 @@ klickbara länkar dit. **Detta fungerar automatiskt för alla framtida
 böcker/korpusar** (Koranen m.fl.) utan extra arbete — sidorna är inte
 knutna till en specifik bok, de listar tvärs över hela databasen.
 
+## Fas 10 (2026-08-23): Jakob/Laban-sagan + bok-interna referenser i 12 Rules for Life
+
+**Jakob-cykeln fylld ut ytterligare** — nu 6 avsnitt: "Jakob arbetar för
+Rakel — men får Lea" (Genesis 29:1–30:24) och "Jakob blir rik och flyr
+från Laban" (30:25–31:55), insorterade mellan Jakobs stege och
+brottningsscenen. Samma arbetssätt som Fas 9: ett redan nedladdat
+transkript (Bibelseriens avsnitt 14, "Wrestling with God") visade sig
+täcka hela Laban-sagan i detalj. Nya karaktärer: Laban, Rakel, Lea — alla
+med porträttbilder. En tredje, fristående Dostojevskij-referens hittades
+(Raskolnikov/Brott och straff kopplat till Jakobs "karmiska" bestraffning
+— att bli lurad av Laban på samma sätt han lurade Esau).
+
+**Ny funktion: bok-interna referenser i 12 Rules for Life.** Boken
+refererar inte bara till Petersons egna YouTube-föreläsningar utan också
+till andra verk/personer/berättelser INOM boktexten själv — t.ex.
+syndafallsberättelsen i Regel 2, Solzjenitsyns Gulagarkipelagen i Regel
+6/8/11, Kain och Abel i Regel 7, Viktor Frankl i Regel 8. Detta
+återanvänder `Reference`-modellen (byggd i Fas 8) med `bookSourceRef`
+som källa istället för en video — målet kan vara antingen en redan
+indexerad `Story` (länkar tvärs över till Genesis, t.ex. "Adam och Eva i
+Edens lustgård" direkt från Regel 2-sidan) eller en `Character` (ny
+egen sida per refererad person, t.ex. Solzjenitsyn samlar nu automatiskt
+ihop alla tre kapitel som nämner honom på sin `/personer/`-sida). Ny
+sektion "Referenser i det här kapitlet" visas på varje rule-sida där det
+finns data.
+
+Sex referenser tillagda, korskontrollerade mot minst två oberoende
+sekundärkällor (främst LitCharts karaktärs-/kapitelanalyser) 2026-08-23
+eftersom boken — till skillnad från YouTube-materialet — saknar
+transkript att verifiera mot. **Medveten avgränsning**: det här är EN
+riktad research-insats, inte en fullständig genomgång av alla tolv
+kapitel. Solzjenitsyn är den enda referens som med säkerhet återkommer i
+flera kapitel; regel 1, 3, 4, 5, 9, 10 och 12 saknar här en lika tydligt
+verifierbar, namngiven extern referens och är utelämnade snarare än
+gissade — kan byggas ut senare om fler verifierbara källor hittas.
+
 ## Fas 9 (2026-08-23): Jakob köper förstfödslorätten + lurar till sig välsignelsen
 
 Två nya Genesis-berättelser insorterade i Jakob-cykeln, i kronologisk
