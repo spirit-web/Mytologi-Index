@@ -6,6 +6,7 @@
 
 import { PrismaClient } from "@prisma/client";
 import captionsByCode from "./image-captions.json";
+import matthewCaptionsByCode from "./image-captions-matthew.json";
 
 const prisma = new PrismaClient();
 
@@ -1021,6 +1022,341 @@ async function main() {
       });
     }
   }
+
+  // ======================================================================
+  // FAS 5: Nya testamentet — Matteusevangeliet (passionsberättelsen)
+  // ======================================================================
+  // Peterson har ingen vers-för-vers-genomgång av evangelierna (till
+  // skillnad från Genesis-serien) — "The Death and Resurrection of
+  // Christ"-videon är EN sammanslagen, tematisk essä (byggd av äldre
+  // blogginlägg) snarare än en bibelläsning. Verifierat genom att ladda
+  // ner och grep:a transkriptet efter narrativa ankare (Gethsemane,
+  // Judas, Pilatus, Golgota, tomma graven m.m.) — inga träffar alls
+  // förutom EN riktig bibelverscitering: Matteus 27:46 ("Eli Eli lama
+  // sabaktani"), som han läser rakt upp i slutet av kapitlet "Narratives
+  // and Sacrifice". Resten av videons fem kapitel är tematiska
+  // reflektioner, inte scenvis textgenomgång — kopplas därför in på
+  // segment-nivå (helt kapitel → hel story) snarare än vers-för-vers.
+  const matthew = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "matthew" } },
+    update: {},
+    create: {
+      corpusId: bible.id,
+      slug: "matthew",
+      name: "Matteusevangeliet",
+      order: 2,
+      testament: "new",
+    },
+  });
+
+  const ntCharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "jesus", name: "Jesus" },
+    { slug: "maria", name: "Maria" },
+    { slug: "josef-ny", name: "Josef (Jesu fosterfar)" },
+    { slug: "johannes-doparen", name: "Johannes Döparen" },
+    { slug: "judas", name: "Judas Iskariot" },
+    { slug: "petrus", name: "Petrus" },
+    { slug: "pontius-pilatus", name: "Pontius Pilatus" },
+    { slug: "maria-magdalena", name: "Maria Magdalena" },
+  ];
+  const ntCharacters: Record<string, { id: string }> = {};
+  for (const c of ntCharacterDefs) {
+    ntCharacters[c.slug] = await prisma.character.upsert({
+      where: { slug: c.slug },
+      update: {},
+      create: c,
+    });
+  }
+
+  const ntThemeDefs = [
+    { slug: "betrayal", name: "Förräderi" },
+    { slug: "compassion", name: "Medkänsla" },
+    { slug: "kingdom-of-god", name: "Guds rike" },
+  ] as const;
+  const ntThemes: Record<string, { id: string }> = {};
+  for (const t of ntThemeDefs) {
+    ntThemes[t.slug] = await prisma.theme.upsert({
+      where: { slug: t.slug },
+      update: {},
+      create: t,
+    });
+  }
+
+  type NtStoryDef = {
+    slug: string;
+    title: string;
+    startRef: string;
+    endRef: string;
+    orderInBook: number;
+    characterSlugs: string[];
+    themeSlugs: string[];
+    seriesSlug?: string;
+    seriesTitle?: string;
+    seriesOrder?: number;
+  };
+
+  const ntStories: NtStoryDef[] = [
+    {
+      slug: "nativity", title: "Jesu födelse",
+      startRef: "Matthew 1:18", endRef: "Matthew 2:12", orderInBook: 1,
+      characterSlugs: ["jesus", "maria", "josef-ny"], themeSlugs: [],
+    },
+    {
+      slug: "baptism-of-jesus", title: "Johannes döper Jesus",
+      startRef: "Matthew 3:1", endRef: "Matthew 3:17", orderInBook: 2,
+      characterSlugs: ["jesus", "johannes-doparen"], themeSlugs: [],
+    },
+    {
+      slug: "temptation-in-wilderness", title: "Jesus frestas i öknen",
+      startRef: "Matthew 4:1", endRef: "Matthew 4:11", orderInBook: 3,
+      characterSlugs: ["jesus"], themeSlugs: ["testing-of-faith"],
+    },
+    {
+      slug: "sermon-on-the-mount", title: "Bergspredikan (saligprisningarna)",
+      startRef: "Matthew 5:1", endRef: "Matthew 5:12", orderInBook: 4,
+      characterSlugs: ["jesus"], themeSlugs: ["kingdom-of-god"],
+    },
+    {
+      slug: "parable-of-the-sower", title: "Liknelsen om såningsmannen",
+      startRef: "Matthew 13:1", endRef: "Matthew 13:23", orderInBook: 5,
+      characterSlugs: ["jesus"], themeSlugs: [],
+    },
+    {
+      slug: "calming-the-storm", title: "Jesus stillar stormen",
+      startRef: "Matthew 8:18", endRef: "Matthew 8:27", orderInBook: 6,
+      characterSlugs: ["jesus"], themeSlugs: ["chaos-order"],
+    },
+    {
+      slug: "triumphal-entry", title: "Intåget i Jerusalem",
+      startRef: "Matthew 21:1", endRef: "Matthew 21:11", orderInBook: 7,
+      characterSlugs: ["jesus"], themeSlugs: [],
+      seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 1,
+    },
+    {
+      slug: "last-supper", title: "Den sista måltiden",
+      startRef: "Matthew 26:17", endRef: "Matthew 26:30", orderInBook: 8,
+      characterSlugs: ["jesus", "judas", "petrus"], themeSlugs: [],
+      seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 2,
+    },
+    {
+      slug: "gethsemane", title: "Getsemane och tillfångatagandet",
+      startRef: "Matthew 26:36", endRef: "Matthew 26:56", orderInBook: 9,
+      characterSlugs: ["jesus", "judas", "petrus"], themeSlugs: ["betrayal"],
+      seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 3,
+    },
+    {
+      slug: "trial-before-pilate", title: "Rättegången inför Pilatus",
+      startRef: "Matthew 27:11", endRef: "Matthew 27:31", orderInBook: 10,
+      characterSlugs: ["jesus", "pontius-pilatus"], themeSlugs: [],
+      seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 4,
+    },
+    {
+      slug: "crucifixion", title: "Korsfästelsen",
+      startRef: "Matthew 27:32", endRef: "Matthew 27:44", orderInBook: 11,
+      characterSlugs: ["jesus"], themeSlugs: ["sacrifice"],
+      seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 5,
+    },
+    {
+      slug: "death-and-burial", title: "Jesu död och begravning",
+      startRef: "Matthew 27:45", endRef: "Matthew 27:66", orderInBook: 12,
+      characterSlugs: ["jesus", "maria-magdalena"], themeSlugs: ["sacrifice"],
+      seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 6,
+    },
+    {
+      slug: "resurrection", title: "Uppståndelsen",
+      startRef: "Matthew 28:1", endRef: "Matthew 28:20", orderInBook: 13,
+      characterSlugs: ["jesus", "maria-magdalena", "petrus"], themeSlugs: [],
+      seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 7,
+    },
+  ];
+
+  for (const s of ntStories) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: matthew.id, slug: s.slug } },
+      update: {},
+      create: {
+        bookId: matthew.id,
+        slug: s.slug,
+        title: s.title,
+        startRef: s.startRef,
+        endRef: s.endRef,
+        orderInBook: s.orderInBook,
+        seriesSlug: s.seriesSlug,
+        seriesTitle: s.seriesTitle,
+        seriesOrder: s.seriesOrder,
+      },
+    });
+    for (const charSlug of s.characterSlugs) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: ntCharacters[charSlug].id } },
+        update: {},
+        create: { storyId: story.id, characterId: ntCharacters[charSlug].id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      const theme = themes[themeSlug] ?? ntThemes[themeSlug];
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: theme.id } },
+        update: {},
+        create: { storyId: story.id, themeId: theme.id },
+      });
+    }
+  }
+
+  // --- NT story-bilder (samma FreeBibleimages-mönster som Genesis) ---
+  const ntCaptions = matthewCaptionsByCode as Record<string, string[]>;
+  const ntImageSets: Array<{ storySlug: string; code: string; count: number; credit: string; creditUrl: string }> = [
+    { storySlug: "nativity", code: "FB_LS_Jesus_Born", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jesus-born/" },
+    { storySlug: "baptism-of-jesus", code: "FB_LS_John_Baptist", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-john-baptist/" },
+    { storySlug: "temptation-in-wilderness", code: "FB_LS_Jesus_Tempted", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jesus-tempted/" },
+    { storySlug: "sermon-on-the-mount", code: "FB_GNPI_033_Beatitudes", count: 12, credit: "Good News Productions Int. (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/gnpi-033-beatitudes/" },
+    { storySlug: "parable-of-the-sower", code: "FB_LS_Parable_Sower", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-parable-sower/" },
+    { storySlug: "calming-the-storm", code: "FB_GNPI_043_Jesus_Storm", count: 8, credit: "Good News Productions Int. (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/gnpi-043-jesus-storm/" },
+    { storySlug: "triumphal-entry", code: "FB_LS_Palm_Sunday", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-palm-sunday/" },
+    { storySlug: "last-supper", code: "FB_LS_Last_Supper", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-last-supper/" },
+    { storySlug: "gethsemane", code: "FB_LS_Jesus_Gethsemane", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jesus-gethsemane/" },
+    { storySlug: "trial-before-pilate", code: "FB_LS_Pontius_Pilate", count: 11, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-pontius-pilate/" },
+    { storySlug: "crucifixion", code: "FB_GNPI_096_Jesus_Crucifixion", count: 11, credit: "Good News Productions Int. (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/gnpi-096-jesus-crucifixion/" },
+    { storySlug: "death-and-burial", code: "FB_GNPI_098_Jesus_Dies", count: 11, credit: "Good News Productions Int. (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/gnpi-098-jesus-dies/" },
+    { storySlug: "resurrection", code: "FB_LS_Jesus_Alive_2", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jesus-alive-2/" },
+  ];
+
+  for (const set of ntImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: matthew.id, slug: set.storySlug } });
+    for (let fileNum = 1; fileNum <= set.count; fileNum++) {
+      const path = `/images/matthew/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const caption = ntCaptions[set.code]?.[fileNum - 1] ?? null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order: fileNum } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order: fileNum, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+
+  const ntPortraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
+    { slug: "jesus", storySlug: "baptism-of-jesus", imgOrder: 6 },
+    { slug: "maria", storySlug: "nativity", imgOrder: 7 },
+    { slug: "josef-ny", storySlug: "nativity", imgOrder: 2 },
+    { slug: "johannes-doparen", storySlug: "baptism-of-jesus", imgOrder: 2 },
+    { slug: "judas", storySlug: "gethsemane", imgOrder: 6 },
+    { slug: "petrus", storySlug: "gethsemane", imgOrder: 7 },
+    { slug: "pontius-pilatus", storySlug: "trial-before-pilate", imgOrder: 3 },
+    { slug: "maria-magdalena", storySlug: "resurrection", imgOrder: 4 },
+  ];
+  for (const p of ntPortraits) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: matthew.id, slug: p.storySlug } });
+    const img = await prisma.storyImage.findUniqueOrThrow({
+      where: { storyId_order: { storyId: story.id, order: p.imgOrder } },
+    });
+    await prisma.character.update({
+      where: { slug: p.slug },
+      data: { portraitPath: img.path, portraitCredit: img.credit, portraitCreditUrl: img.creditUrl },
+    });
+  }
+
+  // --- Peterson-koppling: "Death and Resurrection of Christ" ---------
+  // EN video, fem kapitelmarkeringar (verifierade via yt-dlp --print
+  // chapters). Bara kapitel 3 ("Narratives and Sacrifice") innehåller en
+  // konkret bibelverscitering — resten är tematisk, kopplas in ändå på
+  // segmentnivå men utan VerseCommentary.
+  const christSegments: Array<{
+    storySlug: string;
+    startSec: number;
+    keyPoints: string;
+    quote?: string;
+    verseNote?: { chapter: number; verse: number; quote: string; summary: string };
+  }> = [
+    {
+      storySlug: "death-and-burial",
+      startSec: 390, // kapitel "Narratives and Sacrifice"
+      keyPoints:
+        "Bygger upp en teori om uppoffring genom hela Gamla testamentet " +
+        "(Eden, Kain och Abel, Abraham) och landar i att Kristus offrar " +
+        "sig själv 'till förtvivlans yttersta punkt på korset' — " +
+        "jämför med Michelangelos Pietà (Maria som håller sin döda son) " +
+        "som bild för uppoffringens mest extrema form.",
+      quote:
+        "In turn, Mary's son Christ offers himself to God and the world " +
+        "to betrayal, torture and death, to the very point of despair on " +
+        "the cross, where he cries out those terrible words from Matthew " +
+        "27:46: my God, my God, why hast thou forsaken me?",
+      verseNote: {
+        chapter: 27,
+        verse: 46,
+        quote:
+          "That is the archetypal story of the man who gives his all for " +
+          "the sake of the better, who offers up his life for the " +
+          "advancement of being.",
+        summary:
+          "Läser ropet på korset som den arketypiska formuleringen av " +
+          "total uppoffring — 'ett skede vid gränsen, där inget mer " +
+          "extremt kan föreställas', och menar att just därför blir " +
+          "berättelsen arketypisk: Gud offrar samtidigt sin son medan " +
+          "sonen offrar sig själv.",
+      },
+    },
+    {
+      storySlug: "crucifixion",
+      startSec: 2056, // kapitel "Ark of the Covenant, Cathedral, Cross"
+      keyPoints:
+        "Tematisk (inte scenvis) essä om korset som arkitektoniskt/" +
+        "symboliskt koncept: förbundsarken → templet → katedralen → " +
+        "korset, som alla markerar 'bron mellan det ändliga och det " +
+        "oändliga' — uppmanar lyssnaren att 'ta upp sitt eget korset " +
+        "tragedi och svek' snarare än att bara läsa berättelsen som historia.",
+      quote:
+        "Pick up the cross of your tragedy and betrayal, accept its " +
+        "terrible weight, hoist it onto your shoulders and struggle " +
+        "impossibly upward toward the kingdom of God on the hill.",
+    },
+    {
+      storySlug: "resurrection",
+      startSec: 2506, // kapitel "The Psychological Meaning of the Death and Resurrection of Christ"
+      keyPoints:
+        "Sista, mest utbyggda kapitlet — en psykologisk tolkning av " +
+        "uppståndelsen som arketyp för förmågan att acceptera lidande " +
+        "och död utan att förfalla till bitterhet och hämndlystnad, " +
+        "snarare än en historisk återberättelse av påskmorgonen.",
+    },
+  ];
+
+  for (const seg of christSegments) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: matthew.id, slug: seg.storySlug } });
+    const petersonSegment = await prisma.petersonSegment.upsert({
+      where: { videoId_storyId: { videoId: christVideo.id, storyId: story.id } },
+      update: { startSec: seg.startSec, keyPoints: seg.keyPoints, quote: seg.quote },
+      create: {
+        videoId: christVideo.id,
+        storyId: story.id,
+        startSec: seg.startSec,
+        keyPoints: seg.keyPoints,
+        quote: seg.quote,
+      },
+    });
+    if (seg.verseNote) {
+      await prisma.verseCommentary.upsert({
+        where: {
+          segmentId_chapter_verse: {
+            segmentId: petersonSegment.id,
+            chapter: seg.verseNote.chapter,
+            verse: seg.verseNote.verse,
+          },
+        },
+        update: { order: 1, quote: seg.verseNote.quote, summary: seg.verseNote.summary },
+        create: {
+          segmentId: petersonSegment.id,
+          chapter: seg.verseNote.chapter,
+          verse: seg.verseNote.verse,
+          order: 1,
+          quote: seg.verseNote.quote,
+          summary: seg.verseNote.summary,
+        },
+      });
+    }
+  }
+
+  console.log(`Seedat Matteusevangeliet: ${ntStories.length} stories, ${christSegments.length} Peterson-segment.`);
 
   // --- Exempel-Parallel (visar konceptet med en enda post) -----------
   // Fler tvärtext-jämförelser (särskilt Bibeln↔Koranen) läggs till när
