@@ -70,6 +70,35 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 5 (2026-08-22): Nya testamentet — Matteusevangeliet
+
+Nytt bokobjekt `matthew` (testament: "new"), 13 stories från födelsen till
+uppståndelsen, grupperade i en "Passionsveckan"-cykel (intåg → uppståndelse,
+7 avsnitt) + 6 enskilda tidigare stories (dop, frestelse, bergspredikan,
+såningsmannen, stormen). 8 nya karaktärer, 130 bilder nedladdade (samma
+FreeBibleimages-mönster som Genesis).
+
+**Viktig skillnad mot Genesis-seriens Peterson-koppling**: "The Death and
+Resurrection of Christ"-videon är EN sammanslagen video (inte 5 separata
+som ursprungligen antaget) med riktiga kapitelmarkeringar (verifierat via
+`yt-dlp --print chapters`). Till skillnad från Genesis-föreläsningarna är
+det INTE en vers-för-vers-bibelläsning utan en tematisk essä byggd av
+äldre blogginlägg — bekräftat genom att ladda ner och grep:a hela
+transkriptet efter narrativa ankare (Gethsemane, Judas, Pilatus, Golgota,
+tomma graven) utan träffar. Enda direkta bibelscitatet i hela videon är
+Matteus 27:46 ("Eli Eli lama sabaktani"), som han läser i slutet av
+kapitlet "Narratives and Sacrifice" — det är den enda `VerseCommentary`
+på NT-sidan. De två andra segmenten (crucifixion, resurrection) är
+kopplade på ren segment-nivå utan versankare, ärligt reflekterande att
+källmaterialet inte ger mer precision än så.
+
+**Första innehåll skrivet direkt på svenska** (efter användarens önskan om
+att fortsätta på svenska): Matteus-bildtexterna i
+`image-captions-matthew.json` är översatta från källans engelska alt-text
+direkt till svenska, INTE bara kopierade på engelska som Genesis-
+bildtexterna. Genesis-bildtexterna (`image-captions.json`) väntar
+fortfarande på en översättningspass, se "Nästa steg".
+
 ## Bildkällor (2026-08-22)
 
 Alla 13 Genesis-stories har nu illustrerade scenbilder (156 st totalt),
