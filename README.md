@@ -85,6 +85,33 @@ klickbara länkar dit. **Detta fungerar automatiskt för alla framtida
 böcker/korpusar** (Koranen m.fl.) utan extra arbete — sidorna är inte
 knutna till en specifik bok, de listar tvärs över hela databasen.
 
+## Fas 9 (2026-08-23): Jakob köper förstfödslorätten + lurar till sig välsignelsen
+
+Två nya Genesis-berättelser insorterade i Jakob-cykeln, i kronologisk
+ordning FÖRE Jakobs stege: "Jakob köper Esaus förstfödslorätt" (Genesis
+25:19–34) och "Jakob lurar till sig Isaks välsignelse" (Genesis 27:1–45).
+Bygger på ett transkript som redan fanns nedladdat sedan tidigare
+(Bibelseriens avsnitt 13, "Jacob's Ladder") — det visade sig innehålla en
+lång, detaljerad genomgång av båda scenerna innan föreläsningen ens når
+själva stege-drömmen. Nya, verifierade citat och tidsstämplar, plus en ny
+Dante-referens (Peterson kopplar Esaus mordplan till Dantes Inferno, där
+förräderi rankas som värst av alla synder). Ny karaktär: Rebecka. Nytt
+tema: "Svek & bedrägeri". Esau och Rebecka fick porträttbilder för första
+gången (Esau saknade tidigare bild helt eftersom inget nedladdat bildset
+visade honom).
+
+Bildmaterial nedladdat och verifierat från FreeBibleimages: `ls-jacob-esau`
+(9 bilder, förstfödslorätten) + `jacob-deceives` (13 bilder, välsignelsen).
+Bibeltext: Genesis 25 och 27 extraherade från 1917 års kyrkobibel-XML och
+gudsnamn-normaliserade (inga Herre/HERREN-förekomster i just dessa kapitel).
+
+**Bugg hittad och fixad under arbetet**: alla fyra story-upsert-loopar
+(Genesis, Matteus, Exodus, Maps of Meaning) hade en `update: {}`
+no-op-klausul — ändringar av `seriesOrder`/`orderInBook` på redan seedade
+rader slog aldrig igenom vid omseedning, bara vid förstagångsskapande. Det
+gjorde att Jakob-cykeln initialt sorterades fel (nya kapitel korrekt, gamla
+kapitel kvar på sina ursprungliga positioner). Fixat i alla fyra loopar.
+
 ## Fas 8.2 (2026-08-23): 12 Rules for Life — riktiga citat + förklaringar
 
 `Story.quote` (nytt fält) håller ett kort, verbatim citat direkt ur boken
