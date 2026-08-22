@@ -1723,28 +1723,172 @@ async function main() {
   }
 
   // --- 12 Rules for Life -------------------------------------------
-  // Ingen enskild kanonisk video per regel (Peterson diskuterar dem " +
-  // spritt över hundratals poddavsnitt/intervjuer) — se README
-  // "discovery-fas" för Nietzsche/Dostojevskij-liknande material. Bara
-  // textindex än så länge, ingen PetersonSegment-koppling.
-  const rules: Array<{ order: number; slug: string; title: string; summary: string }> = [
-    { order: 1, slug: "stand-up-straight", title: "Stå rak i ryggen med axlarna tillbaka", summary: "Om att möta livet med rest hållning — kopplat till hierarkiforskning på hummer och serotonin/status." },
-    { order: 2, slug: "treat-yourself-like-someone-you-are-responsible-for", title: "Behandla dig själv som någon du är ansvarig för att hjälpa", summary: "Om att bry sig lika mycket om sig själv som om andra man tycker om." },
-    { order: 3, slug: "make-friends-with-people-who-want-the-best-for-you", title: "Skaffa dig vänner som vill dig väl", summary: "Om att inte acceptera destruktiva relationer av missriktad lojalitet." },
-    { order: 4, slug: "compare-yourself-to-who-you-were-yesterday", title: "Jämför dig med den du var igår, inte med någon annan idag", summary: "Om att sätta realistiska, personliga mått på framsteg istället för att jämföra sig med andra." },
-    { order: 5, slug: "do-not-let-your-children-do-anything-that-makes-you-dislike-them", title: "Låt inte dina barn göra sånt som gör att du ogillar dem", summary: "Om föräldraskap, gränssättning och barns sociala kompetens." },
-    { order: 6, slug: "set-your-house-in-order", title: "Sätt ditt eget hus i fullständig ordning innan du kritiserar världen", summary: "Om att ta tag i sitt eget liv innan man dömer andra eller samhället i stort." },
-    { order: 7, slug: "pursue-what-is-meaningful", title: "Sträva efter det som är meningsfullt, inte det som är bekvämt", summary: "Om uppoffring och långsiktig mening framför kortsiktig bekvämlighet." },
-    { order: 8, slug: "tell-the-truth", title: "Tala sanning — eller åtminstone ljug inte", summary: "Om språkets och ärlighetens roll för att hålla verkligheten sammanhållen." },
-    { order: 9, slug: "assume-the-person-you-are-listening-to-might-know-something", title: "Utgå från att den du lyssnar på kanske vet något du inte vet", summary: "Om ödmjukhet i samtal och terapeutiskt lyssnande." },
-    { order: 10, slug: "be-precise-in-your-speech", title: "Var precis i ditt tal", summary: "Om att definiera problem noggrant istället för att låta dem vaga ut till något överväldigande." },
-    { order: 11, slug: "do-not-bother-children-skateboarding", title: "Stör inte barn som åker skateboard", summary: "Om risktagande, mod och att inte överbeskydda unga." },
-    { order: 12, slug: "pet-a-cat", title: "Klappa en katt när du möter en på gatan", summary: "Om att uppmärksamma små stunder av glädje mitt i livets svårigheter." },
+  // Ingen enskild kanonisk video per regel (Peterson diskuterar dem
+  // spritt över hundratals poddavsnitt/intervjuer) — bara textindex,
+  // ingen PetersonSegment-koppling. `quote` är ett kort, verifierat
+  // citat direkt ur boken (behålls på engelska enligt instruktion) —
+  // varje citat är kontrollerat mot minst en oberoende sekundärkälla
+  // (Goodreads officiella citatsida, LitCharts kapitelsammanfattningar,
+  // m.fl.) 2026-08-23, INTE hämtat ur minnet utan sökning, eftersom boken
+  // är upphovsrättsskyddad och vi (till skillnad från YouTube-videorna)
+  // inte har transkript att verifiera mot. `summary` är en egen,
+  // omskriven sammanfattning av Petersons poäng/andemening i kapitlet.
+  const rules: Array<{ order: number; slug: string; title: string; quote: string; summary: string }> = [
+    {
+      order: 1, slug: "stand-up-straight", title: "Stå rak i ryggen med axlarna tillbaka",
+      quote: "To stand up straight with your shoulders back is to accept the terrible responsibility of life, with eyes wide open.",
+      summary:
+        "Peterson bygger regeln på forskning om hierarkier hos hummer (en av " +
+        "de evolutionärt äldsta djurarterna med ett dominanshierarki-system) " +
+        "och kopplingen mellan status, serotoninnivåer och hållning. Poängen " +
+        "är inte 'fake it till du blir det' i ytlig mening, utan att kroppen " +
+        "och nervsystemet läser av och signalerar underkastelse eller " +
+        "kompetens innan det medvetna sinnet hinner tänka en tanke — så att " +
+        "möta livet upprätt är att medvetet välja att bemöta tillvarons " +
+        "kaos och lidande med kompetens istället för att dra sig undan.",
+    },
+    {
+      order: 2, slug: "treat-yourself-like-someone-you-are-responsible-for", title: "Behandla dig själv som någon du är ansvarig för att hjälpa",
+      quote: "You should take care of, help and be good to yourself the same way you would take care of, help and be good to someone you loved and valued.",
+      summary:
+        "Utgångspunkten är ett kliniskt observerat mönster: människor är " +
+        "ofta mycket bättre på att ge medicin till sin hund än till sig " +
+        "själva, eftersom de (medvetet eller inte) inte anser sig själva " +
+        "värda samma omsorg som andra. Peterson menar att detta hänger ihop " +
+        "med syndafallsberättelsen — kunskapen om det egna medvetna jagets " +
+        "sårbarhet och skam gör det lätt att förakta sig själv — och att " +
+        "lösningen är att ta på sig samma ANSVAR för sitt eget välmående som " +
+        "man skulle ta för någon man älskar.",
+    },
+    {
+      order: 3, slug: "make-friends-with-people-who-want-the-best-for-you", title: "Skaffa dig vänner som vill dig väl",
+      quote: "If you have a friend whose friendship you wouldn't recommend to your sister, or your father, or your son, why would you have such a friend for yourself?",
+      summary:
+        "Peterson varnar för en särskild sorts missriktad lojalitet: att " +
+        "stanna kvar i destruktiva vänskaper av medlidande eller av rädsla " +
+        "för att verka kallsinnig, trots att relationen aktivt drar en " +
+        "nedåt. Han menar att den sortens 'lojalitet' inte är dygd utan " +
+        "ofta ett uttryck för bristande självrespekt — och att man bör " +
+        "ställa samma krav på sina egna relationer som man skulle ställa på " +
+        "en närståendes.",
+    },
+    {
+      order: 4, slug: "compare-yourself-to-who-you-were-yesterday", title: "Jämför dig med den du var igår, inte med någon annan idag",
+      quote: "Compare yourself to who you were yesterday, not to who someone else is today.",
+      summary:
+        "Bygger på idén att jämförelser med andra (särskilt i sociala " +
+        "mediers tidevarv) nästan alltid är orättvisa, eftersom man jämför " +
+        "hela sin egen inre erfarenhet med bara andras yttre framgångs-" +
+        "höjdpunkter. Peterson föreslår istället att bryta ner livet i " +
+        "hanterbara, personliga delmål — och mäta framsteg mot sitt eget " +
+        "förflutna, det enda rättvisa jämförelseobjektet man faktiskt har " +
+        "full insyn i.",
+    },
+    {
+      order: 5, slug: "do-not-let-your-children-do-anything-that-makes-you-dislike-them", title: "Låt inte dina barn göra sånt som gör att du ogillar dem",
+      quote: "It is an act of responsibility to discipline a child. It is not anger at misbehavior. It is not revenge for a misdeed. It is instead a careful combination of mercy and long-term judgment.",
+      summary:
+        "Peterson argumenterar mot både auktoritär bestraffning och total " +
+        "gränslöshet: ett barn som inte fostras blir socialt oacceptabelt " +
+        "för andra vuxna, vilket i praktiken berövar barnet vänner, lärare " +
+        "och framtida möjligheter. Disciplin ska enligt honom vara minimal, " +
+        "konsekvent och förutsägbar — inte ett utlopp för förälderns " +
+        "irritation — med det uttalade målet att barnet ska vara någon " +
+        "andra vuxna faktiskt VILL ha i sin närhet.",
+    },
+    {
+      order: 6, slug: "set-your-house-in-order", title: "Sätt ditt eget hus i fullständig ordning innan du kritiserar världen",
+      quote: "Set your house in perfect order before you criticize the world.",
+      summary:
+        "Skriven delvis som en reaktion på skolskjutningar och andra " +
+        "ungdomars nihilistiska hämndfantasier: innan man ger sig på att " +
+        "döma samhället, historien eller andra människor bör man ärligt " +
+        "granska sitt eget liv — sina olösta problem, sina brustna löften " +
+        "till sig själv — eftersom det är den enda plats där man faktiskt " +
+        "har makt att göra något. Peterson menar att detta inte är en " +
+        "uppmaning till passivitet utan tvärtom den enda hederliga " +
+        "utgångspunkten för att förändra något större.",
+    },
+    {
+      order: 7, slug: "pursue-what-is-meaningful", title: "Sträva efter det som är meningsfullt, inte det som är bekvämt",
+      quote: "Something better might be attained in the future by giving up something of value in the present.",
+      summary:
+        "Peterson läser urgamla offerritualer som mänsklighetens första " +
+        "insikt om orsak och verkan över tid: att medvetet ge upp något av " +
+        "värde NU (arbete, njutning, bekvämlighet) för att uppnå något " +
+        "bättre SENARE. Det bekväma/expedienta valet ger en kortsiktig " +
+        "belöning men urholkar på sikt både relationer och självrespekt — " +
+        "medan det meningsfulla valet, även när det är svårt eller " +
+        "obekvämt just nu, är det enda som håller över tid.",
+    },
+    {
+      order: 8, slug: "tell-the-truth", title: "Tala sanning — eller åtminstone ljug inte",
+      quote: "When you have something to say, silence is a lie.",
+      summary:
+        "Bygger på idén att varje litet vardagslögn — att undvika ett " +
+        "obekvämt samtal, att låtsas må bra, att välja en karriär för att " +
+        "imponera på andra istället för att den är rätt för en själv — " +
+        "gradvis förvränger ens egen relation till verkligheten och gör " +
+        "framtida kriser större. Peterson ser sanningsägande (även när det " +
+        "är obekvämt) som det verktyg som håller en persons liv och " +
+        "relationer sammanhållna över tid.",
+    },
+    {
+      order: 9, slug: "assume-the-person-you-are-listening-to-might-know-something", title: "Utgå från att den du lyssnar på kanske vet något du inte vet",
+      quote: "So, listen, to yourself and to those with whom you are speaking.",
+      summary:
+        "Hämtat direkt från Petersons erfarenhet som terapeut: ett riktigt " +
+        "samtal är inte att vänta på sin tur att prata eller att i förväg " +
+        "veta vad man tycker, utan ett sätt att TÄNKA — att formulera en " +
+        "tanke högt, höra hur den låter, och låta den korrigeras av vad den " +
+        "andra personen faktiskt säger. Att lyssna med genuin ödmjukhet, " +
+        "menar han, är både det mest respektfulla man kan göra för en " +
+        "annan människa och det mest effektiva sättet att själv bli klokare.",
+    },
+    {
+      order: 10, slug: "be-precise-in-your-speech", title: "Var precis i ditt tal",
+      quote: "Stop saying those things that make you weak and ashamed. Say only those things that make you strong.",
+      summary:
+        "Peterson menar att odefinierade problem sväller: ett vagt, " +
+        "outtalat obehag ('något är fel med mitt jobb/mitt äktenskap') " +
+        "expanderar i sinnet till att omfatta i princip allt, medan ett " +
+        "precist formulerat problem ('jag behöver be om en löneförhöjning " +
+        "senast fredag') blir hanterbart. Att våga sätta ord på det som " +
+        "faktiskt är fel — även om det känns skamligt eller obekvämt — är " +
+        "enligt honom vad som gör kaos till något man kan agera på.",
+    },
+    {
+      order: 11, slug: "do-not-bother-children-skateboarding", title: "Stör inte barn som åker skateboard",
+      quote: "If they're healthy, women don't want boys. They want men. They want someone to contend with; someone to grapple with.",
+      summary:
+        "Utgångspunkten är Petersons observation av hur skateboardkultur i " +
+        "Toronto (fram till dess den reglerades bort av säkerhetsskäl) lät " +
+        "unga killar frivilligt utsätta sig för verklig, hanterbar risk och " +
+        "därigenom bygga kompetens och mod. Han knyter det till ett bredare " +
+        "argument om att en överbeskyddande kultur — som premierar trygghet " +
+        "över allt annat och som ibland aktivt straffar 'manligt' " +
+        "risktagande — riskerar att producera passiva, oduglign vuxna " +
+        "istället för kompetenta.",
+    },
+    {
+      order: 12, slug: "pet-a-cat", title: "Klappa en katt när du möter en på gatan",
+      quote:
+        "If we didn't all attempt to make terrible things even worse than " +
+        "they are, then maybe we could tolerate terrible things that we " +
+        "have to put up with in order to exist.",
+      summary:
+        "Skrevs delvis under en period då Petersons dotter var svårt sjuk. " +
+        "Poängen är inte naiv optimism utan motsatsen: livet innehåller " +
+        "oundvikligt lidande och tragedi, och just därför är förmågan att " +
+        "lägga märke till och ta emot små, flyktiga stunder av skönhet — " +
+        "som en katt som råkar korsa ens väg — inte bagatellartat utan en " +
+        "form av motstånd mot att låta lidandet ta över helt.",
+    },
   ];
   for (const r of rules) {
     await prisma.story.upsert({
       where: { bookId_slug: { bookId: rulesBook.id, slug: r.slug } },
-      update: {},
+      update: { summary: r.summary, quote: r.quote },
       create: {
         bookId: rulesBook.id,
         slug: r.slug,
@@ -1752,6 +1896,7 @@ async function main() {
         startRef: `Regel ${r.order}`,
         endRef: `Regel ${r.order}`,
         summary: r.summary,
+        quote: r.quote,
         orderInBook: r.order,
       },
     });

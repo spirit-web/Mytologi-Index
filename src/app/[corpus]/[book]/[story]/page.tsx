@@ -204,11 +204,24 @@ export default async function StoryPage({
               })}
             </div>
           </div>
+        ) : story.book.corpus.kind === "scripture" ? (
+          <p className="text-sm text-[var(--text-muted)]">
+            Kunde inte hämta versstexten just nu (bible-api.com svarade inte). Prova ladda om sidan.
+          </p>
+        ) : story.quote || story.summary ? (
+          <div>
+            {story.quote && (
+              <blockquote className="mb-3 border-l-2 border-[var(--border)] pl-4 font-serif text-[1.05rem] italic leading-relaxed text-[var(--text)]">
+                "{story.quote}"
+              </blockquote>
+            )}
+            {story.summary && (
+              <p className="text-sm leading-relaxed text-[var(--text-muted)]">{story.summary}</p>
+            )}
+          </div>
         ) : (
           <p className="text-sm text-[var(--text-muted)]">
-            {story.book.corpus.kind === "scripture"
-              ? "Kunde inte hämta versstexten just nu (bible-api.com svarade inte). Prova ladda om sidan."
-              : "Ingen extern källtext kopplad för detta ramverkskapitel ännu."}
+            Ingen extern källtext kopplad för detta ramverkskapitel ännu.
           </p>
         )}
 

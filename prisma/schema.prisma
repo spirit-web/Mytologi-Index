@@ -69,6 +69,9 @@ model Story {
   startRef    String // t.ex. "Genesis 4:1" eller "Kapitel 3"
   endRef      String // t.ex. "Genesis 4:16"
   summary     String? // kort egen sammanfattning (ej copyright-text)
+  quote       String? // kort, verifierat verbatim-citat ur källverket (t.ex.
+  // en bokrad för 12 Rules for Life) — hålls medvetet kort av
+  // upphovsrättsskäl, se README "Viktig avgränsning: upphovsrätt"
   orderInBook Int
 
   // Är denna story del av en berättelsecykel (t.ex. "Abraham", "Jakob")?
