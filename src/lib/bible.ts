@@ -9,6 +9,7 @@
 // text on-demand från en extern API) — okej eftersom 1917 års översättning
 // är fri från upphovsrätt, se README.
 import genesisData from "@/data/bible-sv-1917/genesis.json";
+import exodusData from "@/data/bible-sv-1917/exodus.json";
 import matthewData from "@/data/bible-sv-1917/matthew.json";
 
 export type BibleVerse = {
@@ -39,6 +40,7 @@ function parseRef(ref: string): ParsedRef | null {
 // Denna karta pekar dem mot rätt lokal datafil + svenskt visningsnamn.
 const BOOKS: Record<string, { data: Record<string, Record<string, string>>; svenskt: string }> = {
   Genesis: { data: genesisData as Record<string, Record<string, string>>, svenskt: "Första Moseboken" },
+  Exodus: { data: exodusData as Record<string, Record<string, string>>, svenskt: "Andra Moseboken" },
   Matthew: { data: matthewData as Record<string, Record<string, string>>, svenskt: "Matteusevangeliet" },
 };
 

@@ -7,6 +7,7 @@
 import { PrismaClient } from "@prisma/client";
 import captionsByCode from "./image-captions.json";
 import matthewCaptionsByCode from "./image-captions-matthew.json";
+import exodusCaptionsByCode from "./image-captions-exodus.json";
 
 const prisma = new PrismaClient();
 
@@ -1357,6 +1358,174 @@ async function main() {
   }
 
   console.log(`Seedat Matteusevangeliet: ${ntStories.length} stories, ${christSegments.length} Peterson-segment.`);
+
+  // ======================================================================
+  // FAS 6: Andra Moseboken (Exodus) på djupet
+  // ======================================================================
+  // Bygger ett riktigt story-index för Exodus-narrativet (tidigare fanns
+  // bara video-metadata för de 16 fria panelklippen, ingen Story-koppling
+  // alls). Försökte hämta transkript för de tydligaste klippen (samma
+  // metod som för Genesis/Kristus-videorna) men fyra av dem kräver
+  // YouTube-inloggning (`yt-dlp`: "Please sign in") — vi har inga
+  // inloggningsuppgifter och ska inte försöka kringgå det. Segment-
+  // koppling görs därför bara för klipp där TITELN entydigt pekar på en
+  // specifik story (ingen gissning), med startSec=0 (ovverifierad exakt
+  // position) — ärligare än att låtsas ha grävt fram en tidsstämpel vi
+  // inte har. Övriga 12 klipp finns kvar som bläddringsbara videor i
+  // Exodus-serien (redan seedad ovan) utan tvingad story-koppling.
+  const exodus = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "exodus" } },
+    update: {},
+    create: {
+      corpusId: bible.id,
+      slug: "exodus",
+      name: "Andra Moseboken (Exodus)",
+      order: 2, // mellan Genesis (1) och Matteus (flyttad till 3 nedan)
+      testament: "old",
+    },
+  });
+  await prisma.book.update({ where: { id: matthew.id }, data: { order: 3 } });
+
+  const exCharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "mose", name: "Mose" },
+    { slug: "farao", name: "Farao" },
+    { slug: "aron", name: "Aron" },
+    { slug: "mirjam", name: "Mirjam" },
+  ];
+  const exCharacters: Record<string, { id: string }> = {};
+  for (const c of exCharacterDefs) {
+    exCharacters[c.slug] = await prisma.character.upsert({
+      where: { slug: c.slug },
+      update: {},
+      create: c,
+    });
+  }
+
+  type ExStoryDef = {
+    slug: string; title: string; startRef: string; endRef: string; orderInBook: number;
+    characterSlugs: string[]; themeSlugs: string[];
+  };
+  const exStories: ExStoryDef[] = [
+    { slug: "moses-in-the-basket", title: "Mose i vassen", startRef: "Exodus 2:1", endRef: "Exodus 2:10", orderInBook: 1, characterSlugs: ["mose", "mirjam"], themeSlugs: [] },
+    { slug: "burning-bush", title: "Den brinnande busken", startRef: "Exodus 3:1", endRef: "Exodus 4:17", orderInBook: 2, characterSlugs: ["mose"], themeSlugs: [] },
+    { slug: "ten-plagues", title: "De tio plågorna", startRef: "Exodus 7:14", endRef: "Exodus 11:10", orderInBook: 3, characterSlugs: ["mose", "aron", "farao"], themeSlugs: ["chaos-order"] },
+    { slug: "passover-and-exodus", title: "Påsken och uttåget", startRef: "Exodus 12:1", endRef: "Exodus 12:42", orderInBook: 4, characterSlugs: ["mose", "farao"], themeSlugs: ["sacrifice"] },
+    { slug: "crossing-the-red-sea", title: "Vandringen genom Röda havet", startRef: "Exodus 14:1", endRef: "Exodus 14:31", orderInBook: 5, characterSlugs: ["mose", "farao"], themeSlugs: ["chaos-order", "testing-of-faith"] },
+    { slug: "ten-commandments", title: "De tio budorden på Sinai", startRef: "Exodus 19:16", endRef: "Exodus 20:21", orderInBook: 6, characterSlugs: ["mose"], themeSlugs: ["kingdom-of-god"] },
+    { slug: "golden-calf", title: "Guldkalven", startRef: "Exodus 32:1", endRef: "Exodus 32:35", orderInBook: 7, characterSlugs: ["mose", "aron"], themeSlugs: ["betrayal"] },
+  ];
+
+  for (const s of exStories) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: exodus.id, slug: s.slug } },
+      update: {},
+      create: {
+        bookId: exodus.id, slug: s.slug, title: s.title,
+        startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook,
+      },
+    });
+    for (const charSlug of s.characterSlugs) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: exCharacters[charSlug].id } },
+        update: {},
+        create: { storyId: story.id, characterId: exCharacters[charSlug].id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      const theme = themes[themeSlug] ?? ntThemes[themeSlug];
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: theme.id } },
+        update: {},
+        create: { storyId: story.id, themeId: theme.id },
+      });
+    }
+  }
+
+  // --- Exodus story-bilder --------------------------------------------
+  const exCaptions = exodusCaptionsByCode as Record<string, string[]>;
+  const exImageSets: Array<{ storySlug: string; code: string; count: number; offset: number; credit: string; creditUrl: string }> = [
+    { storySlug: "moses-in-the-basket", code: "FB_LS_Baby_Moses", count: 8, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-baby-moses/" },
+    { storySlug: "burning-bush", code: "FB_LS_Burning_Bush", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-burning-bush/" },
+    { storySlug: "ten-plagues", code: "FB_LS_Plagues_1", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-plagues-1/" },
+    { storySlug: "ten-plagues", code: "FB_LS_Plagues_2", count: 9, offset: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-plagues-2/" },
+    { storySlug: "passover-and-exodus", code: "FB_LS_Passover", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-passover/" },
+    { storySlug: "crossing-the-red-sea", code: "FB_Moses_Red_Sea", count: 15, offset: 0, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/moses-red-sea/" },
+    { storySlug: "ten-commandments", code: "FB_RG_Moses_10_Commandments", count: 15, offset: 0, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-moses-10-commandments/" },
+    { storySlug: "golden-calf", code: "FB_LS_Golden_Calf", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-golden-calf/" },
+  ];
+  for (const set of exImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: exodus.id, slug: set.storySlug } });
+    for (let fileNum = 1; fileNum <= set.count; fileNum++) {
+      const order = set.offset + fileNum;
+      const path = `/images/exodus/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const caption = exCaptions[set.code]?.[fileNum - 1] ?? null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+
+  const exPortraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
+    { slug: "mose", storySlug: "burning-bush", imgOrder: 6 },
+    { slug: "mirjam", storySlug: "moses-in-the-basket", imgOrder: 5 },
+    { slug: "farao", storySlug: "ten-plagues", imgOrder: 3 },
+    { slug: "aron", storySlug: "golden-calf", imgOrder: 5 },
+  ];
+  for (const p of exPortraits) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: exodus.id, slug: p.storySlug } });
+    const img = await prisma.storyImage.findUniqueOrThrow({ where: { storyId_order: { storyId: story.id, order: p.imgOrder } } });
+    await prisma.character.update({
+      where: { slug: p.slug },
+      data: { portraitPath: img.path, portraitCredit: img.credit, portraitCreditUrl: img.creditUrl },
+    });
+  }
+
+  // --- Peterson-koppling: bara de klipp vars TITEL entydigt pekar på en
+  // specifik story (se motivering i kommentaren ovanför blocket).
+  const exSegmentLinks: Array<{ storySlug: string; clipOrder: number; keyPoints: string }> = [
+    {
+      storySlug: "ten-plagues", clipOrder: 4,
+      keyPoints:
+        "Panelklipp om de tio plågorna. Otranskriberat (klippet kräver " +
+        "YouTube-inloggning för undertexter) — kopplingen bygger bara på " +
+        "klippets egen titel, ej verifierad mot innehållet vers för vers.",
+    },
+    {
+      storySlug: "ten-commandments", clipOrder: 8,
+      keyPoints:
+        "Panelklipp om varför Mose klättrade berget Sinai. Otranskriberat " +
+        "(kräver inloggning) — kopplingen bygger bara på klippets titel.",
+    },
+    {
+      storySlug: "ten-commandments", clipOrder: 9,
+      keyPoints:
+        "Panelklipp kopplar de tio budorden till '10 Rules For Life'. " +
+        "Otranskriberat (kräver inloggning) — kopplingen bygger bara på " +
+        "klippets titel.",
+    },
+    {
+      storySlug: "golden-calf", clipOrder: 13,
+      keyPoints:
+        "Panelklipp om att dyrka det man borde offra — matchar " +
+        "guldkalvens tema (avgudadyrkan istället för uppoffring). " +
+        "Otranskriberat (kräver inloggning) — kopplingen bygger bara på " +
+        "klippets titel.",
+    },
+  ];
+  for (const link of exSegmentLinks) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: exodus.id, slug: link.storySlug } });
+    const clip = exodusClips.find((c) => c.order === link.clipOrder)!;
+    const video = await prisma.petersonVideo.findUniqueOrThrow({ where: { youtubeId: clip.youtubeId } });
+    await prisma.petersonSegment.upsert({
+      where: { videoId_storyId: { videoId: video.id, storyId: story.id } },
+      update: { startSec: 0, keyPoints: link.keyPoints },
+      create: { videoId: video.id, storyId: story.id, startSec: 0, keyPoints: link.keyPoints },
+    });
+  }
+
+  console.log(`Seedat Andra Moseboken: ${exStories.length} stories, ${exSegmentLinks.length} Peterson-segment (titel-baserade, ej vers-nivå).`);
 
   // --- Exempel-Parallel (visar konceptet med en enda post) -----------
   // Fler tvärtext-jämförelser (särskilt Bibeln↔Koranen) läggs till när
