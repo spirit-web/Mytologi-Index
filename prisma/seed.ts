@@ -1857,6 +1857,118 @@ async function main() {
     });
   }
 
+  // ======================================================================
+  // FAS 8: Referens-index — vilka källor/personer Peterson faktiskt
+  // använder för att illustrera sina poänger
+  // ======================================================================
+  // Byggd genom att gå tillbaka genom transkripten som redan lästs för
+  // tidigare faser och plocka ut varje gång Peterson namnger en person
+  // utanför själva bibeltexten. INGEN ny transkript-genomgång gjord för
+  // just den här fasen — bara det som redan hittats i förbifarten.
+  // Modellerar de refererade personerna som riktiga Character-poster
+  // (inte bara Reference.externalLabel) så de får en egen indexsida
+  // precis som bibliska karaktärer, även om de har noll story-framträdanden.
+  // Nietzsche är INTE med trots att han är central för Peterson — hittade
+  // ingen verifierad Nietzsche-referens i det transkript vi faktiskt läst
+  // hittills (bara i inte-transkriberade avsnitt/klipp). Bättre att
+  // utelämna än att gissa. En "Al Albert Barn"-referens i ep10 (troligen
+  // bibelforskaren Robert Alter, men ASR-texten är för förvrängd för att
+  // vara säker) utelämnad av samma skäl.
+  const refCharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "dostojevskij", name: "Fjodor Dostojevskij" },
+    { slug: "carl-jung", name: "Carl Jung" },
+    { slug: "sigmund-freud", name: "Sigmund Freud" },
+    { slug: "platon", name: "Platon" },
+    { slug: "sam-harris", name: "Sam Harris" },
+    { slug: "alexander-luria", name: "Alexander Luria" },
+    { slug: "michelangelo", name: "Michelangelo" },
+  ];
+  const refCharacters: Record<string, { id: string }> = {};
+  for (const c of refCharacterDefs) {
+    refCharacters[c.slug] = await prisma.character.upsert({
+      where: { slug: c.slug },
+      update: {},
+      create: c,
+    });
+  }
+
+  type RefDef = {
+    videoYoutubeId: string;
+    storySlug?: string; // om referensen görs i samband med en specifik story
+    characterSlug: string;
+    note: string;
+  };
+  const references: RefDef[] = [
+    {
+      videoYoutubeId: "44f3mxcsI50", storySlug: "cain-and-abel", characterSlug: "dostojevskij",
+      note:
+        "Rekommenderar Dostojevskijs Brott och straff som — enligt honom " +
+        "kanske den bästa skildringen som någonsin skrivits — av vad som " +
+        "psykologiskt händer med en person som begår det yttersta brottet, " +
+        "direkt kopplat till Kains mord på Abel.",
+    },
+    {
+      videoYoutubeId: "Us979jCjHu8", storySlug: "marionettes-and-individuals-2", characterSlug: "carl-jung",
+      note:
+        "Använder Jungs idé om att människans 'skugga' sträcker sig ända " +
+        "ner till det ondskefulla för att förklara varför Räven, Katten " +
+        "och Kusken i Pinocchio till slut avslöjar sig som något demoniskt.",
+    },
+    {
+      videoYoutubeId: "yXZSeiAl4PI", storySlug: "patterns-of-symbolic-representation", characterSlug: "carl-jung",
+      note:
+        "Går igenom hur Jung populariserade och vidareutvecklade " +
+        "arketyp-begreppet (med rötter i Platons idélära) och varför Jung " +
+        "själv aldrig gav en helt entydig definition av det.",
+    },
+    {
+      videoYoutubeId: "yXZSeiAl4PI", storySlug: "patterns-of-symbolic-representation", characterSlug: "sigmund-freud",
+      note:
+        "Nämner Freuds idé om att människan är sammansatt av flera " +
+        "'subpersonligheter' som en föregångare till Jungs arketyp-tänkande.",
+    },
+    {
+      videoYoutubeId: "yXZSeiAl4PI", storySlug: "patterns-of-symbolic-representation", characterSlug: "platon",
+      note: "Beskriver de platonska idéerna/formerna som i grunden själva arketyper.",
+    },
+    {
+      videoYoutubeId: "7XtEZvLo-Sc", storySlug: "genesis-and-the-buddha", characterSlug: "sam-harris",
+      note:
+        "Refererar till en offentlig debatt med Sam Harris om en pragmatisk " +
+        "sanningsteori — att en plan/karta 'valideras' genom att den " +
+        "fungerar i handling, inte bara genom att korrespondera med fakta.",
+    },
+    {
+      videoYoutubeId: "RudKmwzDpNY", storySlug: "story-and-metastory-1", characterSlug: "alexander-luria",
+      note:
+        "Beskriver Luria som 'kanske 1900-talets största neuropsykolog' " +
+        "och hur hans studier av krigsskadade soldater lade grunden för " +
+        "senare forskning (Sokolov, Vinogradova) om hjärnans reaktion på " +
+        "avvikelser från förväntan — som föreläsningsseriens 'berättelse'-" +
+        "begrepp bygger vidare på.",
+    },
+    {
+      videoYoutubeId: "xPIanlF6IwM", storySlug: "death-and-burial", characterSlug: "michelangelo",
+      note:
+        "Använder Michelangelos skulptur Pietà (Maria som håller sin döda, " +
+        "korsfäste son) som bild för den yttersta formen av uppoffring — " +
+        "en mors villighet att låta sitt barn komma till världen trots att " +
+        "hon vet vad som väntar.",
+    },
+  ];
+
+  for (const r of references) {
+    const video = await prisma.petersonVideo.findUniqueOrThrow({ where: { youtubeId: r.videoYoutubeId } });
+    const story = r.storySlug ? await prisma.story.findFirst({ where: { slug: r.storySlug } }) : null;
+    const characterId = refCharacters[r.characterSlug].id;
+    await prisma.reference.upsert({
+      where: { videoId_storyId_characterId: { videoId: video.id, storyId: story?.id ?? "", characterId } },
+      update: { note: r.note },
+      create: { videoId: video.id, storyId: story?.id, characterId, note: r.note },
+    });
+  }
+  console.log(`Seedat referens-index: ${refCharacterDefs.length} refererade personer, ${references.length} referenser.`);
+
   // --- Exempel-Parallel (visar konceptet med en enda post) -----------
   // Fler tvärtext-jämförelser (särskilt Bibeln↔Koranen) läggs till när
   // Koranen är indexerad, se README.

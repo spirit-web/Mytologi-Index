@@ -45,9 +45,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             >
               Berättelseindex
             </Link>
-            <span className="text-xs uppercase tracking-wide text-[var(--text-faint)]">
-              Bibeln · Peterson-guide
-            </span>
+            <nav className="flex items-center gap-4 text-xs uppercase tracking-wide text-[var(--text-faint)]">
+              <Link href="/personer" className="transition hover:text-[var(--text)]">
+                Personer
+              </Link>
+              <Link href="/teman" className="transition hover:text-[var(--text)]">
+                Teman
+              </Link>
+            </nav>
           </div>
         </header>
         <div className="flex-1">{children}</div>

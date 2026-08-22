@@ -286,6 +286,7 @@ model Reference {
 
   note String // vad poängen/illustrationen handlar om
 
+  @@unique([videoId, storyId, characterId])
   @@index([storyId])
   @@index([characterId])
 }

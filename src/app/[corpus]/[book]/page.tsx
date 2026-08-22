@@ -152,54 +152,58 @@ function StoryRow({
     title: string;
     startRef: string;
     endRef: string;
-    characters: { character: { name: string } }[];
-    themes: { theme: { name: string } }[];
+    characters: { character: { name: string; slug: string } }[];
+    themes: { theme: { name: string; slug: string } }[];
     images: { path: string }[];
   };
 }) {
   return (
-    <Link
-      href={`/${book.corpus.slug}/${book.slug}/${story.slug}`}
-      className="flex items-center gap-3 px-5 py-4 transition hover:bg-[var(--accent-bg)]"
-    >
-      {story.images[0] && (
-        <Image
-          src={story.images[0].path}
-          alt=""
-          width={56}
-          height={42}
-          className="h-[42px] w-14 shrink-0 rounded-md border border-[var(--border)] object-cover"
-        />
-      )}
-      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-        <div className="flex items-center justify-between gap-2">
-          <span className="font-medium text-[var(--text)]">{story.title}</span>
-          <span className="shrink-0 text-xs text-[var(--text-faint)]">
-            {story.startRef}
-            {story.endRef !== story.startRef ? `–${story.endRef.replace(/^.*?(\d)/, "$1")}` : ""}
-          </span>
-        </div>
-        {(story.characters.length > 0 || story.themes.length > 0) && (
-          <div className="flex flex-wrap gap-1.5">
-            {story.characters.map((c) => (
-              <span
-                key={c.character.name}
-                className="rounded-full border border-[var(--border)] px-2 py-0.5 text-xs text-[var(--text-muted)]"
-              >
-                {c.character.name}
-              </span>
-            ))}
-            {story.themes.map((t) => (
-              <span
-                key={t.theme.name}
-                className="rounded-full border border-[var(--accent-border)] bg-[var(--accent-bg)] px-2 py-0.5 text-xs text-[var(--accent)]"
-              >
-                {t.theme.name}
-              </span>
-            ))}
-          </div>
+    <div className="flex items-center gap-3 px-5 py-4 transition hover:bg-[var(--accent-bg)]">
+      <Link
+        href={`/${book.corpus.slug}/${book.slug}/${story.slug}`}
+        className="flex min-w-0 flex-1 items-center gap-3"
+      >
+        {story.images[0] && (
+          <Image
+            src={story.images[0].path}
+            alt=""
+            width={56}
+            height={42}
+            className="h-[42px] w-14 shrink-0 rounded-md border border-[var(--border)] object-cover"
+          />
         )}
-      </div>
-    </Link>
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-medium text-[var(--text)]">{story.title}</span>
+            <span className="shrink-0 text-xs text-[var(--text-faint)]">
+              {story.startRef}
+              {story.endRef !== story.startRef ? `–${story.endRef.replace(/^.*?(\d)/, "$1")}` : ""}
+            </span>
+          </div>
+        </div>
+      </Link>
+      {(story.characters.length > 0 || story.themes.length > 0) && (
+        <div className="hidden shrink-0 flex-wrap justify-end gap-1.5 sm:flex sm:max-w-[45%]">
+          {story.characters.map((c) => (
+            <Link
+              key={c.character.slug}
+              href={`/personer/${c.character.slug}`}
+              className="rounded-full border border-[var(--border)] px-2 py-0.5 text-xs text-[var(--text-muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            >
+              {c.character.name}
+            </Link>
+          ))}
+          {story.themes.map((t) => (
+            <Link
+              key={t.theme.slug}
+              href={`/teman/${t.theme.slug}`}
+              className="rounded-full border border-[var(--accent-border)] bg-[var(--accent-bg)] px-2 py-0.5 text-xs text-[var(--accent)] transition hover:bg-[var(--accent-border)]"
+            >
+              {t.theme.name}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

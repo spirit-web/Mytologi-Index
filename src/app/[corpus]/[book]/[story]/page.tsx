@@ -24,7 +24,7 @@ export default async function StoryPage({
       petersonSegments: {
         include: { video: { include: { series: true } }, verseNotes: { orderBy: { order: "asc" } } },
       },
-      referencesAsTarget: { include: { video: { include: { series: true } } } },
+      referencesAsTarget: { include: { video: { include: { series: true } }, character: true } },
       parallelLinks: {
         include: {
           parallel: {
@@ -124,9 +124,10 @@ export default async function StoryPage({
       {(story.characters.length > 0 || story.themes.length > 0) && (
         <div className="mb-8 flex flex-wrap gap-1.5">
           {story.characters.map((c) => (
-            <span
-              key={c.character.name}
-              className="flex items-center gap-1.5 rounded-full border border-[var(--border)] py-1 pl-1 pr-2.5 text-xs text-[var(--text-muted)]"
+            <Link
+              key={c.character.slug}
+              href={`/personer/${c.character.slug}`}
+              className="flex items-center gap-1.5 rounded-full border border-[var(--border)] py-1 pl-1 pr-2.5 text-xs text-[var(--text-muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
             >
               {c.character.portraitPath && (
                 <Image
@@ -138,15 +139,16 @@ export default async function StoryPage({
                 />
               )}
               {c.character.name}
-            </span>
+            </Link>
           ))}
           {story.themes.map((t) => (
-            <span
-              key={t.theme.name}
-              className="rounded-full border border-[var(--accent-border)] bg-[var(--accent-bg)] px-2.5 py-1 text-xs text-[var(--accent)]"
+            <Link
+              key={t.theme.slug}
+              href={`/teman/${t.theme.slug}`}
+              className="rounded-full border border-[var(--accent-border)] bg-[var(--accent-bg)] px-2.5 py-1 text-xs text-[var(--accent)] transition hover:bg-[var(--accent-border)]"
             >
               {t.theme.name}
-            </span>
+            </Link>
           ))}
         </div>
       )}
@@ -318,6 +320,15 @@ export default async function StoryPage({
           <ul className="space-y-2">
             {story.referencesAsTarget.map((ref) => (
               <li key={ref.id} className="text-sm text-[var(--text-muted)]">
+                {ref.character && (
+                  <Link
+                    href={`/personer/${ref.character.slug}`}
+                    className="font-medium text-[var(--text)] underline decoration-[var(--border)] underline-offset-2"
+                  >
+                    {ref.character.name}
+                  </Link>
+                )}
+                {ref.character && " — "}
                 {ref.video ? `${ref.video.series.title} — ${ref.video.title}` : ref.bookSourceRef}
                 {": "}
                 {ref.note}
