@@ -194,12 +194,12 @@ async function main() {
   // --- Karaktärer ------------------------------------------------------
   const characterNames = [
     "adam", "eve", "cain", "abel", "noah", "abraham", "sarah", "lot",
-    "isaac", "jacob", "esau", "joseph",
+    "isaac", "jacob", "esau", "joseph", "rebekah",
   ] as const;
   const displayName: Record<string, string> = {
     adam: "Adam", eve: "Eva", cain: "Kain", abel: "Abel", noah: "Noa",
     abraham: "Abraham", sarah: "Sara", lot: "Lot", isaac: "Isak",
-    jacob: "Jakob", esau: "Esau", joseph: "Josef",
+    jacob: "Jakob", esau: "Esau", joseph: "Josef", rebekah: "Rebecka",
   };
   const characters: Record<string, { id: string }> = {};
   for (const slug of characterNames) {
@@ -219,6 +219,7 @@ async function main() {
     { slug: "covenant", name: "Förbund/löfte" },
     { slug: "testing-of-faith", name: "Prövning av tro" },
     { slug: "self-consciousness", name: "Självmedvetenhet & skam" },
+    { slug: "deception", name: "Svek & bedrägeri" },
   ] as const;
   const themes: Record<string, { id: string }> = {};
   for (const t of themeDefs) {
@@ -331,11 +332,29 @@ async function main() {
       themeSlugs: ["sacrifice", "testing-of-faith"],
     },
     {
+      slug: "jacob-buys-birthright",
+      title: "Jakob köper Esaus förstfödslorätt",
+      startRef: "Genesis 25:19", endRef: "Genesis 25:34",
+      orderInBook: 11,
+      seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 1,
+      characterSlugs: ["jacob", "esau", "isaac", "rebekah"],
+      themeSlugs: ["sibling-rivalry", "deception"],
+    },
+    {
+      slug: "jacob-steals-blessing",
+      title: "Jakob lurar till sig Isaks välsignelse",
+      startRef: "Genesis 27:1", endRef: "Genesis 27:45",
+      orderInBook: 12,
+      seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 2,
+      characterSlugs: ["jacob", "esau", "isaac", "rebekah"],
+      themeSlugs: ["deception", "hierarchy"],
+    },
+    {
       slug: "jacobs-ladder",
       title: "Jakobs stege",
       startRef: "Genesis 28:10", endRef: "Genesis 28:22",
-      orderInBook: 11,
-      seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 1,
+      orderInBook: 13,
+      seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 3,
       characterSlugs: ["jacob"],
       themeSlugs: ["hierarchy"],
     },
@@ -343,8 +362,8 @@ async function main() {
       slug: "jacob-wrestling",
       title: "Jakob brottas med Gud",
       startRef: "Genesis 32:22", endRef: "Genesis 32:32",
-      orderInBook: 12,
-      seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 2,
+      orderInBook: 14,
+      seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 4,
       characterSlugs: ["jacob", "esau"],
       themeSlugs: ["testing-of-faith"],
     },
@@ -352,27 +371,31 @@ async function main() {
       slug: "joseph-and-his-brothers",
       title: "Josef och hans bröder",
       startRef: "Genesis 37:1", endRef: "Genesis 45:28",
-      orderInBook: 13,
+      orderInBook: 15,
       characterSlugs: ["joseph", "jacob"],
       themeSlugs: ["sibling-rivalry", "sacrifice"],
     },
   ];
 
   for (const s of stories) {
+    // OBS: `update` måste faktiskt sätta samma fält som `create` — annars
+    // no-opar upsert på redan seedade rader, vilket tidigare gjorde att
+    // omordning av en berättelsecykel (t.ex. seriesOrder/orderInBook) inte
+    // slog igenom på existerande rader (bara på nyskapade). Upptäckt och
+    // fixat 2026-08-23 när Jakob-cykeln fick två nya avsnitt insorterade.
+    const storyData = {
+      title: s.title,
+      startRef: s.startRef,
+      endRef: s.endRef,
+      orderInBook: s.orderInBook,
+      seriesSlug: s.seriesSlug,
+      seriesTitle: s.seriesTitle,
+      seriesOrder: s.seriesOrder,
+    };
     const story = await prisma.story.upsert({
       where: { bookId_slug: { bookId: genesis.id, slug: s.slug } },
-      update: {},
-      create: {
-        bookId: genesis.id,
-        slug: s.slug,
-        title: s.title,
-        startRef: s.startRef,
-        endRef: s.endRef,
-        orderInBook: s.orderInBook,
-        seriesSlug: s.seriesSlug,
-        seriesTitle: s.seriesTitle,
-        seriesOrder: s.seriesOrder,
-      },
+      update: storyData,
+      create: { bookId: genesis.id, slug: s.slug, ...storyData },
     });
 
     for (const charSlug of s.characterSlugs) {
@@ -431,6 +454,8 @@ async function main() {
     { storySlug: "sodom-and-gomorrah", code: "FB_RG_Lot", fileStart: 4, fileEnd: 9, orderStart: 1, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-lot/" },
     { storySlug: "covenant-with-abram", code: "FB_LS_Abram", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-abram/" },
     { storySlug: "binding-of-isaac", code: "FB_LS_Abraham_Isaac", fileStart: 1, fileEnd: 10, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-abraham-isaac/" },
+    { storySlug: "jacob-buys-birthright", code: "FB_LS_Jacob_Esau", fileStart: 1, fileEnd: 9, orderStart: 1, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-jacob-esau/" },
+    { storySlug: "jacob-steals-blessing", code: "FB_Jacob_Deceives", fileStart: 1, fileEnd: 13, orderStart: 1, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/jacob-deceives/" },
     { storySlug: "jacobs-ladder", code: "FB_LS_Jacob_Ladder", fileStart: 1, fileEnd: 9, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jacob-ladder/" },
     { storySlug: "jacob-wrestling", code: "FB_LS_Jacob_Israel", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jacob-israel/" },
     { storySlug: "joseph-and-his-brothers", code: "FB_LS_Joseph_Dreams", fileStart: 1, fileEnd: 9, orderStart: 1, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-joseph-dreams/" },
@@ -460,9 +485,9 @@ async function main() {
   // Arkivet erbjuder scenbilder, inga fristående porträtt — återanvänder
   // därför en lämplig bild ur en story där karaktären är central och
   // faktiskt syns (valda genom att läsa scenbeskrivningarna ovan, inte
-  // bara "bild nr. 1" rakt av). `esau` har ingen bra bild i nuvarande
-  // set (bara omnämnd, syns inte i bildmaterialet) — lämnas utan porträtt
-  // hellre än ett missvisande.
+  // bara "bild nr. 1" rakt av). `esau` fick tidigare ingen bild (inget
+  // set täckte honom då) — löst 2026-08-23 genom att lägga till
+  // birthright/välsignelse-berättelserna, som visar honom tydligt.
   const portraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
     { slug: "adam", storySlug: "garden-of-eden", imgOrder: 1 },
     { slug: "eve", storySlug: "garden-of-eden", imgOrder: 1 },
@@ -475,6 +500,8 @@ async function main() {
     { slug: "isaac", storySlug: "binding-of-isaac", imgOrder: 5 },
     { slug: "jacob", storySlug: "jacobs-ladder", imgOrder: 3 },
     { slug: "joseph", storySlug: "joseph-and-his-brothers", imgOrder: 2 },
+    { slug: "esau", storySlug: "jacob-buys-birthright", imgOrder: 2 },
+    { slug: "rebekah", storySlug: "jacob-steals-blessing", imgOrder: 3 },
   ];
 
   for (const p of portraits) {
@@ -839,6 +866,80 @@ async function main() {
       ],
     },
     {
+      storySlug: "jacob-buys-birthright",
+      youtubeId: "A9JtQN_GoVI",
+      startSec: 56 * 60 + 5,
+      keyPoints:
+        "Läser hur Jakob (mammas gosse, tältboende) utnyttjar att Esau " +
+        "(pappas favorit, tuff jägare) kommer hem utsvulten från jakten, " +
+        "och kräver hans förstfödslorätt i utbyte mot en skål linssoppa — " +
+        "beskriver det som en 'omvänd uppoffring': att offra framtiden för " +
+        "nuets begär, motsatsen till vad en sund uppoffring är.",
+      quote:
+        "Don't sell the future for the desires of the present, and don't " +
+        "be casual about what you have.",
+      verseNotes: [
+        {
+          chapter: 25,
+          verse: 34,
+          order: 1,
+          quote:
+            "It's sort of the opposite of a sacrifice, it's the reverse — " +
+            "he sacrifices the future for the present.",
+          summary:
+            "Läser Esaus förstfödslorätts-försäljning som en 'omvänd " +
+            "uppoffring': istället för att offra något i nuet för en bättre " +
+            "framtid (den sunda modellen från t.ex. Kain och Abel) offrar " +
+            "Esau framtiden för ett omedelbart begär — vilket enligt " +
+            "Peterson utesluter möjligheten att förverkliga sin fulla " +
+            "potential.",
+        },
+      ],
+    },
+    {
+      storySlug: "jacob-steals-blessing",
+      youtubeId: "A9JtQN_GoVI",
+      startSec: 65 * 60 + 55,
+      keyPoints:
+        "Läser hur Rebecka och Jakob i detalj lurar den nästan blinde Isak " +
+        "att välsigna Jakob istället för Esau (getskinn för att kännas " +
+        "hårig, Esaus kläder för lukten) — kallar det 'major-league " +
+        "betrayals' och lägger huvudansvaret hos Jakob, inte hos den lurade " +
+        "Esau.",
+      quote:
+        "These are major-league betrayals that he's engaging in, and it's " +
+        "not trivial — it's very treacherous behavior what he's doing.",
+      verseNotes: [
+        {
+          chapter: 27,
+          verse: 34,
+          order: 1,
+          quote:
+            "The fact that this reduces him to tears is an indication of " +
+            "the magnitude of the betrayal.",
+          summary:
+            "Påpekar att Esau, som annars framställs som en tuff, " +
+            "självständig jägare, brister ut i gråt när han inser vad som " +
+            "hänt — vilket Peterson läser som ett mått på hur allvarligt " +
+            "sveket faktiskt var, inte som en svaghet hos Esau.",
+        },
+        {
+          chapter: 27,
+          verse: 41,
+          order: 2,
+          quote:
+            "Dante put betrayal in the lowest part of hell — right beside " +
+            "Satan himself.",
+          summary:
+            "Kopplar Esaus mordplan mot Jakob till Dantes Inferno, där " +
+            "förräderi placeras som det värsta av alla brott — längst ner " +
+            "i helvetet, näst intill Satan själv — som ett sätt att " +
+            "förklara hur allvarligt Jakobs dubbla svek (förstfödslorätten " +
+            "OCH välsignelsen) faktiskt var.",
+        },
+      ],
+    },
+    {
       storySlug: "jacobs-ladder",
       youtubeId: "A9JtQN_GoVI",
       startSec: 60 * 60 + 14 * 60 + 44,
@@ -1171,20 +1272,21 @@ async function main() {
   ];
 
   for (const s of ntStories) {
+    // Se motsvarande OBS-kommentar vid Genesis story-loopen ovan — `update`
+    // måste spegla `create`, annars no-opar upsert på existerande rader.
+    const ntStoryData = {
+      title: s.title,
+      startRef: s.startRef,
+      endRef: s.endRef,
+      orderInBook: s.orderInBook,
+      seriesSlug: s.seriesSlug,
+      seriesTitle: s.seriesTitle,
+      seriesOrder: s.seriesOrder,
+    };
     const story = await prisma.story.upsert({
       where: { bookId_slug: { bookId: matthew.id, slug: s.slug } },
-      update: {},
-      create: {
-        bookId: matthew.id,
-        slug: s.slug,
-        title: s.title,
-        startRef: s.startRef,
-        endRef: s.endRef,
-        orderInBook: s.orderInBook,
-        seriesSlug: s.seriesSlug,
-        seriesTitle: s.seriesTitle,
-        seriesOrder: s.seriesOrder,
-      },
+      update: ntStoryData,
+      create: { bookId: matthew.id, slug: s.slug, ...ntStoryData },
     });
     for (const charSlug of s.characterSlugs) {
       await prisma.storyCharacter.upsert({
@@ -1415,13 +1517,13 @@ async function main() {
   ];
 
   for (const s of exStories) {
+    // Se motsvarande OBS-kommentar vid Genesis story-loopen ovan — `update`
+    // måste spegla `create`, annars no-opar upsert på existerande rader.
+    const exStoryData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
     const story = await prisma.story.upsert({
       where: { bookId_slug: { bookId: exodus.id, slug: s.slug } },
-      update: {},
-      create: {
-        bookId: exodus.id, slug: s.slug, title: s.title,
-        startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook,
-      },
+      update: exStoryData,
+      create: { bookId: exodus.id, slug: s.slug, ...exStoryData },
     });
     for (const charSlug of s.characterSlugs) {
       await prisma.storyCharacter.upsert({
@@ -1702,18 +1804,19 @@ async function main() {
         seriesOrder: lecture.order,
       },
     });
+    // Se motsvarande OBS-kommentar vid Genesis story-loopen ovan — `update`
+    // måste spegla `create`, annars no-opar upsert på existerande rader.
+    const momStoryData = {
+      title: lecture.title,
+      startRef: `Föreläsning ${lecture.order}`,
+      endRef: `Föreläsning ${lecture.order}`,
+      summary: lecture.summary,
+      orderInBook: lecture.order,
+    };
     const story = await prisma.story.upsert({
       where: { bookId_slug: { bookId: mapsOfMeaningBook.id, slug: lecture.slug } },
-      update: {},
-      create: {
-        bookId: mapsOfMeaningBook.id,
-        slug: lecture.slug,
-        title: lecture.title,
-        startRef: `Föreläsning ${lecture.order}`,
-        endRef: `Föreläsning ${lecture.order}`,
-        summary: lecture.summary,
-        orderInBook: lecture.order,
-      },
+      update: momStoryData,
+      create: { bookId: mapsOfMeaningBook.id, slug: lecture.slug, ...momStoryData },
     });
     await prisma.petersonSegment.upsert({
       where: { videoId_storyId: { videoId: video.id, storyId: story.id } },
@@ -2236,6 +2339,19 @@ async function main() {
         "kobran i terrariet och blev lika förskräckt varje gång trots att " +
         "han visste att glaset skyddade honom — inledning till Sokolovs " +
         "forskning om hjärnans orienteringsreflex.",
+    },
+
+    // --- Tillagd 2026-08-23, från Bibelseriens föreläsning om Jakobs
+    // stege (inte Maps of Meaning) — hittad i samband med att Jakob/Esau-
+    // berättelserna byggdes ut, se README Fas 9. ---
+    {
+      videoYoutubeId: "A9JtQN_GoVI", storySlug: "jacob-steals-blessing",
+      characterSlug: "dante", atSec: 4267,
+      note:
+        "Kopplar Esaus mordplan mot Jakob (efter att ha blivit lurad på " +
+        "både förstfödslorätt och välsignelse) till Dantes Inferno, där " +
+        "förräderi rankas som det allvarligaste av alla brott — placerat " +
+        "längst ner i helvetet, näst intill Satan själv.",
     },
   ];
 
