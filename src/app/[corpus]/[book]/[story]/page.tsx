@@ -86,16 +86,22 @@ export default async function StoryPage({
 
       {story.images.length > 0 && (
         <div className="mb-8">
-          <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2">
+          <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">
             {story.images.map((img) => (
-              <Image
-                key={img.id}
-                src={img.path}
-                alt=""
-                width={220}
-                height={165}
-                className="h-[130px] w-auto shrink-0 snap-start rounded-lg border border-[var(--border)] object-cover"
-              />
+              <figure key={img.id} className="w-[190px] shrink-0 snap-start">
+                <Image
+                  src={img.path}
+                  alt={img.caption ?? ""}
+                  width={220}
+                  height={165}
+                  className="h-[130px] w-full rounded-lg border border-[var(--border)] object-cover"
+                />
+                {img.caption && (
+                  <figcaption className="mt-1 line-clamp-2 text-xs text-[var(--text-muted)]">
+                    {img.caption}
+                  </figcaption>
+                )}
+              </figure>
             ))}
           </div>
           <p className="mt-1.5 text-xs text-[var(--text-faint)]">

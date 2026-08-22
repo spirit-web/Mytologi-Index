@@ -92,8 +92,9 @@ model StoryImage {
   storyId String
   story   Story  @relation(fields: [storyId], references: [id])
 
-  path  String // t.ex. "/images/genesis/cain-and-abel/01.jpg"
-  order Int
+  path    String // t.ex. "/images/genesis/cain-and-abel/01.jpg"
+  order   Int
+  caption String? // scenbeskrivning från källan, används som alt-text + bildtext
 
   credit    String // t.ex. "Lambsongs (freebibleimages.org), CC BY-NC"
   creditUrl String // länk till källsidan
