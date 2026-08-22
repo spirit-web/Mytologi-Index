@@ -70,6 +70,32 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 6 (2026-08-22): Andra Moseboken (Exodus) på djupet
+
+Nytt bokobjekt `exodus` (order 2, mellan Genesis och Matteus). 7 stories
+(Mose i vassen → Guldkalven), 4 karaktärer (Mose, Farao, Aron, Mirjam),
+83 bilder. Bibeltext extraherad från samma 1917-korpus (13 nya kapitel).
+
+**Peterson-koppling begränsad till säkra fall**: försökte samma
+transkript-metod som för Genesis/Kristus, men `yt-dlp` fick "Please sign
+in" på de fyra mest lovande klippen (10 plågorna, Sinai x2, guldkalven)
+— de kräver inloggning vi inte har och som vi inte ska försöka kringgå.
+Löste det genom att bara koppla klipp där TITELN entydigt namnger
+berättelsen (4 av 16 klipp), med `startSec: 0` och `keyPoints` som
+uttryckligen säger att kopplingen är titel-baserad, inte verifierad mot
+innehållet. Resterande 12 klipp finns kvar bläddringsbara i den
+togglebara Exodus-serien utan tvingad story-koppling.
+
+**Bugfix i gudsnamns-normaliseringen**: upptäckte via en live-sida att
+det vokativa "HERRE"/"Herre" (utan "-N", t.ex. "HERRE, varför skulle...")
+inte fångades av föregående regex (som bara matchade "HERREN"/"Herren").
+Kontrollerade sammanhanget för alla 9 träffar innan fix — alla var
+riktade till Gud. Gemena "herre"/"herres"/"herrar" (34 träffar totalt)
+lämnades AVSIKTLIGT orörda — de syftar genomgående på mänskliga herrar
+(Esau, Josefs egyptiske herre, Aron som tilltalar Mose "min herre"), inte
+Gud. Kört om på alla tre extraherade böcker, verifierat noll kvarvarande
+gudsnamnsläckor.
+
 ## Fas 5.5 (2026-08-22): Bibeltexten på svenska — 1917 års kyrkobibel
 
 Bytte bort World English Bible (engelska, hämtad live från bible-api.com)
