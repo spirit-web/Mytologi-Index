@@ -431,6 +431,24 @@ async function main() {
       quote:
         "This is a hard narrative section to get a handle on, because in " +
         "order to understand it properly you have to actually look behind it.",
+      verseNotes: [
+        {
+          chapter: 1,
+          verse: 14,
+          order: 1,
+          quote:
+            "That's a remarkable bit of writing there, too, because you " +
+            "just think about how bloody long it took our caveman " +
+            "ancestors to look at the night sky and start to figure out " +
+            "that there were repeating patterns across years.",
+          summary:
+            "Kopplar 'ljusen på himlavalvet till tecken och tider' till " +
+            "den enorma mänskliga prestationen att observera natthimlen " +
+            "tillräckligt noga för att kartlägga årstider — nämner " +
+            "megalitiska monument som Stonehenge som bevis på hur gammal " +
+            "den kunskapen är.",
+        },
+      ],
     },
     {
       storySlug: "garden-of-eden",
@@ -441,6 +459,37 @@ async function main() {
         "henne) och kopplar andetag/liv till begrepp som psyke, ande och " +
         "inspiration.",
       quote: "The breath is life, right? That's psyche, that's spirit, that's inspiration.",
+      verseNotes: [
+        {
+          chapter: 2,
+          verse: 25,
+          order: 1,
+          quote:
+            "Someone who wrote that would only write it like that if they " +
+            "were surprised that they weren't ashamed — because why would " +
+            "you point it out otherwise?",
+          summary:
+            "Läser meningen 'de var nakna och skämdes inte' som en subtil " +
+            "ledtråd: att författaren påpekar frånvaron av skam antyder " +
+            "att skam är det förväntade tillståndet — vilket sätter upp " +
+            "kontrasten till vad som händer efter syndafallet.",
+        },
+        {
+          chapter: 3,
+          verse: 7,
+          order: 2,
+          quote:
+            "What sort of eye-opening is that? What does it mean to " +
+            "realize that you're naked? It means to realize that you're " +
+            "vulnerable.",
+          summary:
+            "Tolkar 'ögonen öppnades' som uppkomsten av självmedvetenhet " +
+            "om den egna sårbarheten — jämför med hur ett djur i en hjord " +
+            "inte förstår skillnaden mellan ett liggande och ett jagande " +
+            "lejon, medan människan 'vaknar upp' till att vara permanent " +
+            "sårbar.",
+        },
+      ],
     },
     {
       storySlug: "cain-and-abel",
@@ -506,6 +555,19 @@ async function main() {
         "rättfärdighet) och lyfter fram frasen 'Noa vandrade med Gud' som " +
         "en 'Adam utan syndafallet'-parallel.",
       quote: "Noah is Adam without the fall, essentially.",
+      verseNotes: [
+        {
+          chapter: 6,
+          verse: 9,
+          order: 1,
+          quote: "Noah is Adam without the fall, essentially.",
+          summary:
+            "Läser 'Noa vandrade med Gud' som en direkt spegling av Adam " +
+            "innan syndafallet — Noa är vad en människa kan vara om hon " +
+            "förblir rättfärdig, och det är precis det som gör att Gud " +
+            "skonar honom undan floden.",
+        },
+      ],
     },
     {
       storySlug: "tower-of-babel",
@@ -516,6 +578,23 @@ async function main() {
         "hybris-projekt: ett försök att nå det gudomliga genom ren " +
         "teknisk/social makt istället för genom rätt relation till det " +
         "transcendenta.",
+      verseNotes: [
+        {
+          chapter: 11,
+          verse: 7,
+          verseEnd: 9,
+          order: 1,
+          quote:
+            "It's a very difficult story to understand — on the face of " +
+            "it, it doesn't seem to show God in a very good light, " +
+            "although that happens fairly frequently in the Old Testament.",
+          summary:
+            "Erkänner öppet att berättelsen är svårtolkad moraliskt " +
+            "(varför skulle Gud aktivt sabotera mänsklig enighet och " +
+            "kommunikation?) och uppmanar att läsa den 'i textens anda' " +
+            "snarare än bokstavligt som ett godtyckligt straff.",
+        },
+      ],
     },
     {
       storySlug: "call-of-abram",
@@ -526,6 +605,19 @@ async function main() {
         "att lämna det trygga och kända är kallelsens kärna, jämför med " +
         "1920-talets amerikanska exilförfattare i Paris.",
       quote: "Go somewhere you don't understand — that's the first thing.",
+      verseNotes: [
+        {
+          chapter: 12,
+          verse: 1,
+          order: 1,
+          quote: "Go somewhere you don't understand — that's the first thing. Get thee out of thy country.",
+          summary:
+            "Läser varje frasled i kallelsen som betydelsebärande: att " +
+            "lämna det man förstår och det trygga/kända är kallelsens " +
+            "absoluta kärna, snarare än en bokstavlig geografisk " +
+            "instruktion.",
+        },
+      ],
     },
     {
       storySlug: "covenant-with-abram",
@@ -543,6 +635,23 @@ async function main() {
       keyPoints:
         "Börjar följa Abraham och budbärarna mot Sodom, men gör ett längre " +
         "sidospår om 'potential' innan han fortsätter mot stadens öde.",
+      verseNotes: [
+        {
+          chapter: 18,
+          verse: 23,
+          verseEnd: 32,
+          order: 1,
+          quote:
+            "God who's dispensing a fair bit of harsh justice in the Old " +
+            "Testament is also someone who can be negotiated with — " +
+            "weirdly enough, and that's what happens here.",
+          summary:
+            "Pekar på att bilden av Gamla testamentets Gud som bara " +
+            "sträng och dömande är en 'för lågupplöst tolkning' — här " +
+            "förhandlar Abraham faktiskt ner antalet rättfärdiga som " +
+            "krävs för att skona staden, steg för steg från femtio.",
+        },
+      ],
     },
     {
       storySlug: "binding-of-isaac",
@@ -615,6 +724,23 @@ async function main() {
         "Läser brottningsscenen vid Jabbok: Jakob brottas hela natten med " +
         "'en man/ängel/Gud', får höften ur led men vägrar släppa taget " +
         "förrän han blir välsignad och får ett nytt namn.",
+      verseNotes: [
+        {
+          chapter: 32,
+          verse: 28,
+          order: 1,
+          quote:
+            "Israel means 'he who wrestles with God' or 'who struggles " +
+            "with God' — and it's also so interesting that he actually " +
+            "emerges victorious.",
+          summary:
+            "Tolkar namnbytet symboliskt: att brottas med det gudomliga " +
+            "(eller själva begreppet det gudomliga) är vad människor i " +
+            "grunden gör — och att Jakob faktiskt vinner tillräckligt för " +
+            "att få en välsignelse säger något om mod, eller om att ha " +
+            "sonat sina tidigare synder tillräckligt.",
+        },
+      ],
     },
     {
       storySlug: "joseph-and-his-brothers",
@@ -628,6 +754,36 @@ async function main() {
       quote:
         "Whenever there's marked preference on the part of parents for one " +
         "child over the other... that didn't work out so well.",
+      verseNotes: [
+        {
+          chapter: 37,
+          verse: 3,
+          order: 1,
+          quote:
+            "You should be able to go have a drink in the pub with the " +
+            "guys who are drywalling your house, and you should be able " +
+            "to have a sophisticated conversation with someone who's more " +
+            "educated — you should be equally comfortable in both " +
+            "situations.",
+          summary:
+            "Tolkar den mångfärgade kappan som en symbol för mångsidighet " +
+            "snarare än bara favorisering — bilden av en person som rör " +
+            "sig obehindrat mellan olika sociala världar.",
+        },
+        {
+          chapter: 37,
+          verse: 4,
+          order: 2,
+          quote:
+            "It isn't obvious that you do them any favors by overtly " +
+            "making them your favorite... you definitely set up a Cain " +
+            "and Abel-like scenario in the household.",
+          summary:
+            "Kopplar explicit ihop Josef-berättelsen med Kain och Abel: " +
+            "att öppet favorisera ett barn skapar samma sorts " +
+            "syskonrivalitet-scenario, oavsett tidsera eller kultur.",
+        },
+      ],
     },
   ];
 
