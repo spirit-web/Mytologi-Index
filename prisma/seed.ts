@@ -534,6 +534,21 @@ async function main() {
             "självrannsakan) är precis vad som leder honom vidare mot " +
             "katastrof.",
         },
+        {
+          chapter: 4,
+          verse: 9,
+          order: 3,
+          quote:
+            "If you want to understand that, I would recommend you read " +
+            "Dostoevsky's Crime and Punishment — it says what happens " +
+            "psychologically if you commit the ultimate crime. It's " +
+            "amazing, it's absolutely amazing.",
+          summary:
+            "Kopplar Kains undvikande svar ('är jag min brors väktare?') " +
+            "direkt till Dostojevskijs Brott och straff, som han kallar " +
+            "'kanske det bästa som någonsin skrivits' — båda skildrar den " +
+            "psykologiska konsekvensen av att begå det yttersta brottet.",
+        },
       ],
     },
     {
@@ -620,6 +635,39 @@ async function main() {
       ],
     },
     {
+      // Upptäckt vid uppföljande transkriptgenomgång: samma video (ep9)
+      // fortsätter förbi kallelsen och in i Genesis 13 (Lot-separationen)
+      // — tidigare saknade denna story helt Peterson-koppling.
+      storySlug: "abraham-and-lot",
+      youtubeId: "GmuzUZTJ0GA",
+      startSec: 89 * 60 + 33,
+      keyPoints:
+        "Läser striden mellan Abrams och Lots herdar (Genesis 13) som en " +
+        "'komisk mellanakt': båda har blivit rika, och just därför kan de " +
+        "inte längre samsas — en ironisk vändning snarare än ren tragedi, " +
+        "innan Abram löser det genom att låta Lot välja mark först.",
+      quote:
+        "He's wealthy, and so is his nephew — and now they can't get " +
+        "along because they have too much stuff. That's quite comical, " +
+        "actually — I think it's a comic interlude here.",
+      verseNotes: [
+        {
+          chapter: 13,
+          verse: 7,
+          verseEnd: 8,
+          order: 1,
+          quote:
+            "Now they can't get along because they have too much stuff — " +
+            "that's quite comical, actually. I think it's a comic " +
+            "interlude here.",
+          summary:
+            "Läser konflikten om betesmark som en ironisk, nästan komisk " +
+            "vändning: rikedom som borde vara en lösning blir istället " +
+            "källan till en ny konflikt mellan släktingar.",
+        },
+      ],
+    },
+    {
       storySlug: "covenant-with-abram",
       youtubeId: "3Y6bCqT85Pc",
       startSec: 57 * 60 + 52,
@@ -627,6 +675,22 @@ async function main() {
         "Läser förbundsceremonin i Genesis 15 (den rykande ugnen och den " +
         "brinnande lågan som passerar mellan de itudelade offerdjuren) som " +
         "ett förbund beseglat med liv-och-död-symbolik.",
+      verseNotes: [
+        {
+          chapter: 15,
+          verse: 12,
+          order: 1,
+          quote:
+            "There's a death that's associated with that, because you " +
+            "have to let that part of you that's wrong die — and that's " +
+            "the sacrifice.",
+          summary:
+            "Kopplar Abrahams djupa sömn och 'stora mörkrets fasa' till " +
+            "egen erfarenhet av att lära sig något verkligt djupt: att " +
+            "riktig insikt kräver att en del av en själv 'dör' — samma " +
+            "princip som förbundsritualens offerdjur symboliserar.",
+        },
+      ],
     },
     {
       storySlug: "sodom-and-gomorrah",
@@ -782,6 +846,33 @@ async function main() {
             "Kopplar explicit ihop Josef-berättelsen med Kain och Abel: " +
             "att öppet favorisera ett barn skapar samma sorts " +
             "syskonrivalitet-scenario, oavsett tidsera eller kultur.",
+        },
+        {
+          chapter: 37,
+          verse: 20,
+          order: 3,
+          quote:
+            "There's an echo of the Cain and Abel story there, obviously " +
+            "— it's so interesting how often that motif of pulling down " +
+            "an ideal manifests itself in these old stories. It's the " +
+            "pattern established in the Cain and Abel story, it just " +
+            "repeats and repeats.",
+          summary:
+            "Ser tydligt eko av Kain och Abel i böbrödernas komplott mot " +
+            "Josef: mönstret att vilja krossa den som uppfattas som " +
+            "gynnad eller 'utvald' återkommer gång på gång i dessa " +
+            "urgamla berättelser.",
+        },
+        {
+          chapter: 37,
+          verse: 21,
+          verseEnd: 22,
+          order: 4,
+          quote: "It's like Ruben's the good guy in this story.",
+          summary:
+            "Lyfter fram Ruben som den i brödraskaran som faktiskt " +
+            "försöker rädda Josef genom att övertala de andra att kasta " +
+            "honom i en tom brunn istället för att döda honom direkt.",
         },
       ],
     },
