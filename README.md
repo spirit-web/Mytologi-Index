@@ -85,6 +85,33 @@ klickbara länkar dit. **Detta fungerar automatiskt för alla framtida
 böcker/korpusar** (Koranen m.fl.) utan extra arbete — sidorna är inte
 knutna till en specifik bok, de listar tvärs över hela databasen.
 
+## Fas 8.2 (2026-08-23): 12 Rules for Life — riktiga citat + förklaringar
+
+`Story.quote` (nytt fält) håller ett kort, verbatim citat direkt ur boken
+per regel — hållet medvetet kort (en mening) av samma upphovsrättsskäl som
+gäller Peterson-videocitaten. Till skillnad från videomaterialet finns
+inget transkript att verifiera bokcitat mot, så varje citat är istället
+korskontrollerat mot minst en oberoende sekundärkälla (Goodreads
+officiella citatsida för boken, LitCharts kapitelsammanfattningar m.fl.)
+innan det skrevs in — se kommentaren i `seed.ts` ovanför `rules`-arrayen.
+Varje regel har också fått en omskriven, flerradig sammanfattning av
+Petersons poäng och andemening (istället för tidigare enradiga
+generiska beskrivning). Citat+sammanfattning visas nu i "Text"-sektionen
+på varje regels sida — samma yta som tidigare bara visade en
+platshållartext för ramverkskapitel. Samma yta gjorde även Maps of
+Meaning-föreläsningarnas sammanfattningar synliga för första gången.
+
+**Är 12 Rules for Life samma innehåll som Maps of Meaning/Bibelserierna?**
+Nej — samma underliggande världsbild och psykologiska ramverk (arketyper,
+kaos/ordning, ansvar, mening kontra bekvämlighet), men 12 Rules for Life
+är i grunden en NY, mer tillgänglig bok: kortare, anekdotdriven, riktad
+till en bredare publik, med långt mindre bibeltolkning och färre
+akademiska referenser. Vissa teman (t.ex. hierarki/hummar-forskningen i
+regel 1, syndafallet i regel 2) är omformuleringar av idéer som också
+finns i Maps of Meaning/Bibelserierna, men boken i sin helhet innehåller
+mycket nytt material (personliga anekdoter, kliniska fall från hans
+terapipraktik, konkreta livsråd) som inte täcks av föreläsningarna.
+
 ## Fas 8.1 (2026-08-23): Rättelse — Nietzsche, + fler referenser med tidsstämplar
 
 Fas 8 påstod felaktigt att Nietzsche INTE nämns i Maps of Meaning. Det var
