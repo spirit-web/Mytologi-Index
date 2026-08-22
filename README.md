@@ -70,6 +70,17 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Bokpresentationer (2026-08-22)
+
+Varje bok visar nu en "Om boken"-sektion: vad den täcker, traditionell
+författarskapsattribuering (+ kort not om modern forskningskonsensus där
+den skiljer sig, t.ex. dokumentära hypotesen för Genesis/Exodus), samt
+koppling till judendom/kristendom/islam — inklusive var Koranen har
+parallellt material (Ibrahim/Musa/Isa) och var den uttryckligen skiljer
+sig (t.ex. förnekandet av korsfästelsen, sura 4:157). Karaktärsantal och
+antal kopplade Peterson-videor är INTE hårdkodat — härleds live från
+befintliga relationer i databasen.
+
 ## Fas 7 (2026-08-22): Maps of Meaning + 12 Rules for Life
 
 Framework-korpusen (fanns bara som tom platshållare sen tidigare) fylld:
