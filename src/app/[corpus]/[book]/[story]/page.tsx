@@ -37,6 +37,21 @@ export default async function StoryPage({
 
   if (!story) notFound();
 
+  // Bok-interna referenser (t.ex. "12 Rules for Life, Regel 6" ->
+  // Solzjenitsyn): vilka andra personer/berättelser Jordan refererar till
+  // INOM just det här kapitlet. Bara relevant för 12 Rules for Life just
+  // nu (se seed.ts "Bok-interna referenser"-block för omfattning/källor).
+  const bookReferences =
+    story.book.slug === "12-rules-for-life"
+      ? await prisma.reference.findMany({
+          where: { bookSourceRef: `12 Rules for Life, ${story.startRef}` },
+          include: {
+            story: { include: { book: { include: { corpus: true } } } },
+            character: true,
+          },
+        })
+      : [];
+
   // Segment-nivå-koppling finns ännu inte (Phase 2). Tills vidare: visa en
   // grov, omärkt kandidatlista baserad på titel-matchning mot bokens
   // videoserier, så man ser vilka föreläsningar som *troligen* är relevanta.
@@ -239,7 +254,42 @@ export default async function StoryPage({
         )}
       </section>
 
-      <section className="rounded-xl border border-[var(--accent-border)] bg-[var(--accent-bg)] p-6 shadow-sm">
+      {bookReferences.length > 0 && (
+        <section className="mt-6 rounded-xl border border-[var(--link-border)] bg-[var(--link-bg)] p-6 shadow-sm">
+          <h2 className="mb-1 text-sm font-medium uppercase tracking-wide text-[var(--link)]">
+            Referenser i det här kapitlet
+          </h2>
+          <p className="mb-4 text-xs text-[var(--text-faint)]">
+            Andra personer, verk eller berättelser Jordan tar upp för att illustrera sin poäng.
+          </p>
+          <ul className="space-y-4">
+            {bookReferences.map((ref) => (
+              <li key={ref.id} className="text-sm">
+                {ref.character && (
+                  <Link
+                    href={`/personer/${ref.character.slug}`}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                  >
+                    {ref.character.name}
+                  </Link>
+                )}
+                {ref.story && (
+                  <Link
+                    href={`/${ref.story.book.corpus.slug}/${ref.story.book.slug}/${ref.story.slug}`}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                  >
+                    {ref.story.title}
+                    <span className="text-[var(--text-faint)]">({ref.story.book.name})</span>
+                  </Link>
+                )}
+                <p className="mt-2 leading-relaxed text-[var(--text-muted)]">{ref.note}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section className="mt-6 rounded-xl border border-[var(--accent-border)] bg-[var(--accent-bg)] p-6 shadow-sm">
         <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-[var(--accent)]">
           Jordan Peterson-guide
         </h2>

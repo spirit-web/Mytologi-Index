@@ -194,12 +194,13 @@ async function main() {
   // --- Karaktärer ------------------------------------------------------
   const characterNames = [
     "adam", "eve", "cain", "abel", "noah", "abraham", "sarah", "lot",
-    "isaac", "jacob", "esau", "joseph", "rebekah",
+    "isaac", "jacob", "esau", "joseph", "rebekah", "laban", "rachel", "leah",
   ] as const;
   const displayName: Record<string, string> = {
     adam: "Adam", eve: "Eva", cain: "Kain", abel: "Abel", noah: "Noa",
     abraham: "Abraham", sarah: "Sara", lot: "Lot", isaac: "Isak",
     jacob: "Jakob", esau: "Esau", joseph: "Josef", rebekah: "Rebecka",
+    laban: "Laban", rachel: "Rakel", leah: "Lea",
   };
   const characters: Record<string, { id: string }> = {};
   for (const slug of characterNames) {
@@ -359,11 +360,29 @@ async function main() {
       themeSlugs: ["hierarchy"],
     },
     {
+      slug: "jacob-serves-laban-for-rachel-and-leah",
+      title: "Jakob arbetar för Rakel — men får Lea",
+      startRef: "Genesis 29:1", endRef: "Genesis 30:24",
+      orderInBook: 14,
+      seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 4,
+      characterSlugs: ["jacob", "laban", "rachel", "leah"],
+      themeSlugs: ["deception", "sibling-rivalry"],
+    },
+    {
+      slug: "jacob-flees-laban",
+      title: "Jakob blir rik och flyr från Laban",
+      startRef: "Genesis 30:25", endRef: "Genesis 31:55",
+      orderInBook: 15,
+      seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 5,
+      characterSlugs: ["jacob", "laban", "rachel"],
+      themeSlugs: ["deception", "chaos-order"],
+    },
+    {
       slug: "jacob-wrestling",
       title: "Jakob brottas med Gud",
       startRef: "Genesis 32:22", endRef: "Genesis 32:32",
-      orderInBook: 14,
-      seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 4,
+      orderInBook: 16,
+      seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 6,
       characterSlugs: ["jacob", "esau"],
       themeSlugs: ["testing-of-faith"],
     },
@@ -371,7 +390,7 @@ async function main() {
       slug: "joseph-and-his-brothers",
       title: "Josef och hans bröder",
       startRef: "Genesis 37:1", endRef: "Genesis 45:28",
-      orderInBook: 15,
+      orderInBook: 17,
       characterSlugs: ["joseph", "jacob"],
       themeSlugs: ["sibling-rivalry", "sacrifice"],
     },
@@ -457,6 +476,8 @@ async function main() {
     { storySlug: "jacob-buys-birthright", code: "FB_LS_Jacob_Esau", fileStart: 1, fileEnd: 9, orderStart: 1, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-jacob-esau/" },
     { storySlug: "jacob-steals-blessing", code: "FB_Jacob_Deceives", fileStart: 1, fileEnd: 13, orderStart: 1, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/jacob-deceives/" },
     { storySlug: "jacobs-ladder", code: "FB_LS_Jacob_Ladder", fileStart: 1, fileEnd: 9, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jacob-ladder/" },
+    { storySlug: "jacob-serves-laban-for-rachel-and-leah", code: "FB_Jacob_Wedding", fileStart: 1, fileEnd: 14, orderStart: 1, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/jacob-wedding/" },
+    { storySlug: "jacob-flees-laban", code: "FB_Jacob_Returns", fileStart: 1, fileEnd: 16, orderStart: 1, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/jacob-returns/" },
     { storySlug: "jacob-wrestling", code: "FB_LS_Jacob_Israel", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jacob-israel/" },
     { storySlug: "joseph-and-his-brothers", code: "FB_LS_Joseph_Dreams", fileStart: 1, fileEnd: 9, orderStart: 1, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-joseph-dreams/" },
     { storySlug: "joseph-and-his-brothers", code: "FB_LS_Joseph_Coat", fileStart: 1, fileEnd: 10, orderStart: 10, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-joseph-coat/" },
@@ -502,6 +523,9 @@ async function main() {
     { slug: "joseph", storySlug: "joseph-and-his-brothers", imgOrder: 2 },
     { slug: "esau", storySlug: "jacob-buys-birthright", imgOrder: 2 },
     { slug: "rebekah", storySlug: "jacob-steals-blessing", imgOrder: 3 },
+    { slug: "rachel", storySlug: "jacob-serves-laban-for-rachel-and-leah", imgOrder: 4 },
+    { slug: "leah", storySlug: "jacob-serves-laban-for-rachel-and-leah", imgOrder: 9 },
+    { slug: "laban", storySlug: "jacob-serves-laban-for-rachel-and-leah", imgOrder: 5 },
   ];
 
   for (const p of portraits) {
@@ -936,6 +960,82 @@ async function main() {
             "i helvetet, näst intill Satan själv — som ett sätt att " +
             "förklara hur allvarligt Jakobs dubbla svek (förstfödslorätten " +
             "OCH välsignelsen) faktiskt var.",
+        },
+      ],
+    },
+    {
+      storySlug: "jacob-serves-laban-for-rachel-and-leah",
+      youtubeId: "DRJKwDfDbco",
+      startSec: 56 * 60 + 52,
+      keyPoints:
+        "Läser hur Jakob (som lurade Esau) själv blir lurad av sin morbror " +
+        "Laban — arbetar sju år för att få gifta sig med Rakel men blir " +
+        "istället gift med hennes äldre syster Lea — och läser det som en " +
+        "poetisk rättvisa/karma-mekanism: 'ingen ogärning går ostraffad'.",
+      quote:
+        "No bad deed goes unpunished — that's how things work, unless " +
+        "you're a psychopath.",
+      verseNotes: [
+        {
+          chapter: 29,
+          verse: 25,
+          order: 1,
+          quote:
+            "This is an inversion, because he's in the dark like Isaac was " +
+            "when he fooled Isaac — so now it's Jacob's turn to be in the " +
+            "dark.",
+          summary:
+            "Pekar på den symmetriska ironin: precis som Jakob lurade sin " +
+            "blinde far Isak genom förklädnad, blir han själv lurad genom " +
+            "att bruden är beslöjad/dold i mörkret — samma sorts bedrägeri " +
+            "kommer tillbaka till honom.",
+        },
+        {
+          chapter: 29,
+          verse: 35,
+          order: 2,
+          quote:
+            "It's from the tribe of Judah that Christ arises — Judah is " +
+            "essentially promoted to the status of firstborn later in the " +
+            "story.",
+          summary:
+            "Förklarar varför just Juda (Leas fjärde son) namnges särskilt " +
+            "noga: eftersom Ruben, Simeon och Levi senare gör sig " +
+            "skyldiga till allvarliga fel blir Juda i praktiken upphöjd " +
+            "till förstfödslo-status — och det är från Judas stam som " +
+            "(enligt kristen tolkningstradition) Kristus härstammar.",
+        },
+      ],
+    },
+    {
+      storySlug: "jacob-flees-laban",
+      youtubeId: "DRJKwDfDbco",
+      startSec: 67 * 60 + 47,
+      keyPoints:
+        "Läser hur Jakob genom 'sympatisk magi' (spräckliga grenar framför " +
+        "parande djur) blir förmögen på Labans bekostnad, flyr med sina " +
+        "fruar när Labans söner blir avundsjuka, och hur Rakel stjäl sin " +
+        "fars husgudar — innan Jakob och Laban till slut sluter fred och " +
+        "reser en stenhög som vittne om överenskommelsen.",
+      quote:
+        "It's sort of like the karmic debt is being paid — he got " +
+        "punished for his wrongdoing, and that's good enough as far as " +
+        "he's concerned.",
+      verseNotes: [
+        {
+          chapter: 31,
+          verse: 19,
+          order: 1,
+          quote:
+            "It's not exactly obvious why — it sounds to me mostly like a " +
+            "little act of revenge, maybe with a bit of loneliness mixed " +
+            "in.",
+          summary:
+            "Går igenom flera tolkningar av varför Rakel stjäl sin fars " +
+            "husgudar (hämnd, saknad efter hemmet, eller att omöjliggöra " +
+            "att Laban använder dem för att spå upp deras flyktväg) utan " +
+            "att slå fast en enda förklaring — texten lämnar det medvetet " +
+            "tvetydigt.",
         },
       ],
     },
@@ -2156,6 +2256,8 @@ async function main() {
     { slug: "peter-pan-film", name: "Peter Pan (Disneyfilm)" },
     { slug: "harry-potter", name: "Harry Potter (bokserie/filmer)" },
     { slug: "sagan-om-ringen", name: "Sagan om ringen / Bilbo (bokserie/filmer)" },
+    { slug: "aleksandr-solzhenitsyn", name: "Aleksandr Solzjenitsyn" },
+    { slug: "viktor-frankl", name: "Viktor Frankl" },
   ];
   const refCharacters: Record<string, { id: string }> = {};
   for (const c of refCharacterDefs) {
@@ -2353,6 +2455,16 @@ async function main() {
         "förräderi rankas som det allvarligaste av alla brott — placerat " +
         "längst ner i helvetet, näst intill Satan själv.",
     },
+    {
+      videoYoutubeId: "DRJKwDfDbco", storySlug: "jacob-serves-laban-for-rachel-and-leah",
+      characterSlug: "dostojevskij", atSec: 3594,
+      note:
+        "Andra gången Brott och straff används för att illustrera skuld: " +
+        "kopplar Jakobs 'karmiska' bestraffning (blir själv lurad av " +
+        "Laban efter att ha lurat Esau) till hur Raskolnikov, trots att " +
+        "han kommer undan mordet obemärkt, drivs av skuld till att i " +
+        "praktiken överlämna sig själv till polisen.",
+    },
   ];
 
   for (const r of references) {
@@ -2366,6 +2478,124 @@ async function main() {
     });
   }
   console.log(`Seedat referens-index: ${refCharacterDefs.length} refererade personer, ${references.length} referenser.`);
+
+  // --- Bok-interna referenser i 12 Rules for Life --------------------
+  // Samma Reference-modell, men källan är ett bokkapitel (bookSourceRef)
+  // istället för en video — inget videoId. Svarar på: vilka andra
+  // personer/verk/berättelser refererar Jordan till INOM respektive
+  // kapitel i 12 Rules for Life, vad är poängen han gör med referensen,
+  // och hur kopplar han den till den moderna läsarens liv.
+  //
+  // OMFATTNING (viktigt): till skillnad från YouTube-materialet har vi
+  // INGET transkript av boken att verifiera mot (den är fortfarande
+  // upphovsrättsskyddad och i tryck). Varje post nedan är därför
+  // korskontrollerad mot minst två oberoende sekundärkällor (främst
+  // LitCharts karaktärs-/kapitelanalyser) 2026-08-23 — men det är EN
+  // riktad research-insats, inte en fullständig genomgång av alla tolv
+  // kapitel. Solzjenitsyn/Gulagarkipelagen är den enda referens som med
+  // säkerhet återkommer i FLERA kapitel (regel 6, 8, 11); övriga kapitel
+  // (1, 3, 4, 5, 9, 10, 12) saknar här en lika tydligt verifierbar,
+  // namngiven extern referens och är därför utelämnade snarare än gissade.
+  type BookRefDef = {
+    id: string;
+    ruleOrder: number;
+    storySlug?: string;
+    characterSlug?: string;
+    note: string;
+  };
+  const bookReferences: BookRefDef[] = [
+    {
+      id: "seed-bookref-rules2-eden", ruleOrder: 2, storySlug: "garden-of-eden",
+      note:
+        "Använder syndafallsberättelsen (Adam och Eva) som psykologisk " +
+        "förklaringsmodell: självmedvetenheten om den egna sårbarheten och " +
+        "skammen efter syndafallet gör det lätt att förakta och försumma " +
+        "sig själv — vilket enligt Peterson är varför så många är sämre " +
+        "på att ta hand om sig själva än om t.ex. ett husdjur de älskar. " +
+        "Modern koppling: samma mekanism ligger enligt honom bakom att " +
+        "hoppa över läkarbesök eller stanna kvar i ohälsosamma vanor — " +
+        "inte av okunskap, utan av en djupt rotad känsla av att inte " +
+        "förtjäna samma omsorg man skulle ge någon annan.",
+    },
+    {
+      id: "seed-bookref-rules6-solzhenitsyn", ruleOrder: 6, characterSlug: "aleksandr-solzhenitsyn",
+      note:
+        "Använder Solzjenitsyns liv — år i sovjetiska arbetsläger, sedan " +
+        "cancer — som motexempel till bitterhet: istället för att skylla " +
+        "på systemet vände han blicken inåt, granskade sina egna moraliska " +
+        "misslyckanden, och kanaliserade det i Gulagarkipelagen, ett verk " +
+        "som senare bidrog till att underminera det system han hade all " +
+        "rätt att hata. Modern koppling: kapitlet ställer detta mot " +
+        "skolskjutares (bl.a. Columbine) hämndfantasier mot 'samhället' — " +
+        "en extrem, destruktiv variant av att skylla utåt istället för att " +
+        "sätta sitt eget hus i ordning.",
+    },
+    {
+      id: "seed-bookref-rules7-cain-abel", ruleOrder: 7, storySlug: "cain-and-abel",
+      note:
+        "Läser Kain och Abel som en studie i vad som händer när uppoffring " +
+        "upprepat känns meningslös: Kains offer avvisas, hans bitterhet " +
+        "växer, och istället för självrannsakan väljer han hämnd — den " +
+        "arketypiska vägen från besvikelse till katastrof. Modern " +
+        "koppling: samma mönster (upplevd orättvisa → bitterhet → " +
+        "hämndfantasier, i extremfall verkligt våld) ligger enligt " +
+        "Peterson bakom en del skolskjutningar och terrordåd — därför " +
+        "framhålls tålamod och fortsatt investering i framtiden, trots " +
+        "motgång, som motgiftet.",
+    },
+    {
+      id: "seed-bookref-rules8-solzhenitsyn", ruleOrder: 8, characterSlug: "aleksandr-solzhenitsyn",
+      note:
+        "Använder Gulagarkipelagen för att visa hur vanliga människors " +
+        "vardagliga undvikande av obekväma sanningar och konfrontationer " +
+        "— 'det är lättare att bara inte säga något' — i aggregat är " +
+        "precis den mekanism som gör att totalitära system kan växa sig " +
+        "starka. Modern koppling: varje litet undvikande (att inte säga " +
+        "ifrån, att låtsas hålla med) är enligt Peterson inte harmlöst " +
+        "utan en övning i svek mot sanningen som gör nästa svek lättare.",
+    },
+    {
+      id: "seed-bookref-rules8-frankl", ruleOrder: 8, characterSlug: "viktor-frankl",
+      note:
+        "Citerar Viktor Frankl (Auschwitz-överlevare, författare till " +
+        "Livet måste ha mening) för idén att lögner är en förutsättning " +
+        "för totalitarism — ett tvångssystem kräver att människor " +
+        "accepterar och upprepar falskheter för att fungera. Modern " +
+        "koppling: Peterson drar slutsatsen att personlig sanningsenlighet, " +
+        "även i vardagliga, obekväma situationer, är ett skydd mot att " +
+        "hela samhällen glider mot förtryck — inte bara en privat dygd.",
+    },
+    {
+      id: "seed-bookref-rules11-solzhenitsyn", ruleOrder: 11, characterSlug: "aleksandr-solzhenitsyn",
+      note:
+        "Lyfter fram Solzjenitsyn som en av få västerländska intellektuella " +
+        "som tidigt och korrekt identifierade sovjetkommunismens verkliga " +
+        "natur — ett system byggt på tvångsarbete och terror, inte (som " +
+        "många då hävdade) en missförstådd men i grunden god idé. Modern " +
+        "koppling: exemplet används som varning för hur lätt intellektuella " +
+        "kan blunda för obekväma sanningar när de inte passar den egna " +
+        "ideologin — ett tema Peterson kopplar vidare till kapitlets " +
+        "kritik av förenklade, ideologiskt styrda samhällsanalyser idag.",
+    },
+  ];
+  for (const r of bookReferences) {
+    const storyId = r.storySlug
+      ? (await prisma.story.findFirstOrThrow({ where: { slug: r.storySlug } })).id
+      : null;
+    const characterId = r.characterSlug ? refCharacters[r.characterSlug].id : null;
+    await prisma.reference.upsert({
+      where: { id: r.id },
+      update: { storyId, characterId, note: r.note, bookSourceRef: `12 Rules for Life, Regel ${r.ruleOrder}` },
+      create: {
+        id: r.id,
+        storyId,
+        characterId,
+        note: r.note,
+        bookSourceRef: `12 Rules for Life, Regel ${r.ruleOrder}`,
+      },
+    });
+  }
+  console.log(`Seedat bok-interna referenser i 12 Rules for Life: ${bookReferences.length}.`);
 
   // --- Exempel-Parallel (visar konceptet med en enda post) -----------
   // Fler tvärtext-jämförelser (särskilt Bibeln↔Koranen) läggs till när
