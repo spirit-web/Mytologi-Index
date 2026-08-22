@@ -70,6 +70,26 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 7 (2026-08-22): Maps of Meaning + 12 Rules for Life
+
+Framework-korpusen (fanns bara som tom platshållare sen tidigare) fylld:
+
+- **"Maps of Meaning" (2017 års föreläsningsserie)**: 12 stories, en per
+  University of Toronto-föreläsning. Använde 2017-föreläsningsserien
+  istället för 1999-boken (som bara har 5 kapitel — för kort för ett
+  meningsfullt index). YouTube-ID:n hämtade direkt ur den officiella
+  spellistan (`yt-dlp --flat-playlist`), fritt tillgängliga utan
+  inloggning. Varje Story har ett självrefererande `PetersonSegment`
+  (videon ÄR kapitlet). Sammanfattningarna bygger på att läsa öppningen
+  (~5–10 min) av 11 av 12 transkript — INTE en fullständig genomläsning
+  av alla ~2,5 h per avsnitt. Föreläsning 7 saknade undertexter helt
+  (`yt-dlp`: "no subtitles") — dess beskrivning är uttryckligen bara
+  titel-baserad.
+- **"12 Rules for Life"**: 12 stories, en per regel. Ingen video-koppling
+  än (inget enskilt kanoniskt klipp per regel — materialet är utspritt
+  över hundratals intervjuer/poddar, samma "discovery-fas"-läge som
+  Nietzsche/Dostojevskij, se nedan).
+
 ## Fas 6 (2026-08-22): Andra Moseboken (Exodus) på djupet
 
 Nytt bokobjekt `exodus` (order 2, mellan Genesis och Matteus). 7 stories
