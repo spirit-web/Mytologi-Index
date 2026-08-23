@@ -85,6 +85,20 @@ klickbara länkar dit. **Detta fungerar automatiskt för alla framtida
 böcker/korpusar** (Koranen m.fl.) utan extra arbete — sidorna är inte
 knutna till en specifik bok, de listar tvärs över hela databasen.
 
+## Fas 14 (2026-08-23): Beyond Order: 12 More Rules for Life (2021)
+
+Fjärde boken i Maps of Meaning-korpusen. Uppföljaren till 12 Rules for
+Life — tolv nya regler, tyngdpunkten mer på kaos-sidan (för mycket
+osäkerhet/upplösning) än ordnings-sidan av modellen. Samma metod som
+tidigare bok-faser: inget digitalt exemplar tillgängligt, varje regels
+citat korskontrollerat mot minst två oberoende sekundärkällor (Goodreads
+officiella citatsida, Shortform kapitelsammanfattningar) 2026-08-23. Där
+inget längre verifierat citat gick att hitta används regelns egen
+ordalydelse som citat (samma princip som regel 4/6 i första boken).
+
+Nytt "Bortom ordningen"-emblem tillagt i gamification-modulen (se Fas 13)
+för symmetri med de andra bok-specifika emblemen.
+
 ## Fas 13 (2026-08-23): Gamification — klarmarkering, favoriter, emblem, poäng
 
 Ny `StoryProgress`-modell (egen tabell, inte fält på `Story` — seed.ts
