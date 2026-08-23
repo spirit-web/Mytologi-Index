@@ -70,6 +70,35 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 19 (2026-08-23): Bättre omslagsbilder + tre nya Exodus-berättelser
+
+**Omslagsbilder**: `Story.thumbnailOrder` (nytt fält) låter boklistans
+lilla omslag skilja sig från galleriets första bild. Många källset
+börjar med en abstrakt, enfärgad "titelkort"-siluett (t.ex. ett gult
+moln med en svart figur) som är okej längre in i galleriet men såg
+intetsägande ut som omslag — direkt feedback från användaren, med
+skärmdump. Bytte 16 berättelsers omslag i Genesis/Exodus/Matteus mot en
+mer detaljerad bild längre in i samma redan nedladdade bildset (Jesus
+korsfäst, Pilatus tvår sina händer, dopet i vattnet, m.fl.). För
+Skapelsen — där källsetet inte hade något som visade jorden — hämtades
+"The Blue Marble" (NASA/Apollo 17, 1972, public domain, Wikimedia
+Commons), exakt det användaren föreslog som exempel. Hittade och
+fixade samtidigt två till instanser av samma fileNum/order-missmatch-
+bugg som i Fas 16 (Kains vrede-bilderna i Genesis, Exodus tio-plågorna).
+
+**Andra Moseboken utökad** från 7 till 10 berättelser: Mose dödar
+egyptiern och flyr till Midjan (2:11–22, fyller luckan innan den
+brinnande busken), Manna och vaktlar i öknen (kap. 16), Vatten ur
+klippan och striden mot Amalek (kap. 17). Text extraherad från samma
+Språkbanken-XML, gudsnamnet normaliserat och läck-kontrollerat. Nya
+karaktärer: Sippora, Josua (inget bra porträttfoto hittat i de
+begränsade bildseten — `portraitPath` lämnas null, samma princip som
+Esau). Ett tidigare olänkat Peterson-panelklipp ("Are You in Egypt, the
+Desert, or the Promised Land?") kopplades till manna-berättelsen.
+
+**Progress-sidan**: raderna under "Framsteg per bok" är nu klickbara
+länkar till respektive bok (`stats.byBook` bär nu med `corpusSlug`).
+
 ## Fas 17 (2026-08-23): JBP Podcast avsnitt 491 (Dawkins & O'Connor) — meme/arketyp-böcker
 
 Ny `PetersonSeries` för Petersons eget podcastflöde (skilt från
