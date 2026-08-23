@@ -1695,6 +1695,8 @@ async function main() {
     { slug: "farao", name: "Farao" },
     { slug: "aron", name: "Aron" },
     { slug: "mirjam", name: "Mirjam" },
+    { slug: "sippora", name: "Sippora" },
+    { slug: "josua", name: "Josua" },
   ];
   const exCharacters: Record<string, { id: string }> = {};
   for (const c of exCharacterDefs) {
@@ -1711,12 +1713,19 @@ async function main() {
   };
   const exStories: ExStoryDef[] = [
     { slug: "moses-in-the-basket", title: "Mose i vassen", startRef: "Exodus 2:1", endRef: "Exodus 2:10", orderInBook: 1, characterSlugs: ["mose", "mirjam"], themeSlugs: [] },
-    { slug: "burning-bush", title: "Den brinnande busken", startRef: "Exodus 3:1", endRef: "Exodus 4:17", orderInBook: 2, characterSlugs: ["mose"], themeSlugs: [] },
-    { slug: "ten-plagues", title: "De tio plågorna", startRef: "Exodus 7:14", endRef: "Exodus 11:10", orderInBook: 3, characterSlugs: ["mose", "aron", "farao"], themeSlugs: ["chaos-order"] },
-    { slug: "passover-and-exodus", title: "Påsken och uttåget", startRef: "Exodus 12:1", endRef: "Exodus 12:42", orderInBook: 4, characterSlugs: ["mose", "farao"], themeSlugs: ["sacrifice"] },
-    { slug: "crossing-the-red-sea", title: "Vandringen genom Röda havet", startRef: "Exodus 14:1", endRef: "Exodus 14:31", orderInBook: 5, characterSlugs: ["mose", "farao"], themeSlugs: ["chaos-order", "testing-of-faith"] },
-    { slug: "ten-commandments", title: "De tio budorden på Sinai", startRef: "Exodus 19:16", endRef: "Exodus 20:21", orderInBook: 6, characterSlugs: ["mose"], themeSlugs: ["kingdom-of-god"] },
-    { slug: "golden-calf", title: "Guldkalven", startRef: "Exodus 32:1", endRef: "Exodus 32:35", orderInBook: 7, characterSlugs: ["mose", "aron"], themeSlugs: ["betrayal"] },
+    // NY 2026-08-23: fyller luckan mellan Mose i vassen och den brinnande
+    // busken — Mose dödar egyptiern, flyr, och möter Sippora i Midjan.
+    { slug: "moses-flees-to-midian", title: "Mose dödar egyptiern och flyr till Midjan", startRef: "Exodus 2:11", endRef: "Exodus 2:22", orderInBook: 2, characterSlugs: ["mose", "sippora"], themeSlugs: [] },
+    { slug: "burning-bush", title: "Den brinnande busken", startRef: "Exodus 3:1", endRef: "Exodus 4:17", orderInBook: 3, characterSlugs: ["mose"], themeSlugs: [] },
+    { slug: "ten-plagues", title: "De tio plågorna", startRef: "Exodus 7:14", endRef: "Exodus 11:10", orderInBook: 4, characterSlugs: ["mose", "aron", "farao"], themeSlugs: ["chaos-order"] },
+    { slug: "passover-and-exodus", title: "Påsken och uttåget", startRef: "Exodus 12:1", endRef: "Exodus 12:42", orderInBook: 5, characterSlugs: ["mose", "farao"], themeSlugs: ["sacrifice"] },
+    { slug: "crossing-the-red-sea", title: "Vandringen genom Röda havet", startRef: "Exodus 14:1", endRef: "Exodus 14:31", orderInBook: 6, characterSlugs: ["mose", "farao"], themeSlugs: ["chaos-order", "testing-of-faith"] },
+    // NY 2026-08-23: ökenvandringens första prövningar, mellan Röda havet
+    // och ankomsten till Sinai.
+    { slug: "manna-and-quail", title: "Manna och vaktlar i öknen", startRef: "Exodus 16:1", endRef: "Exodus 16:36", orderInBook: 7, characterSlugs: ["mose", "aron"], themeSlugs: ["testing-of-faith"] },
+    { slug: "water-from-rock-and-amalek", title: "Vatten ur klippan och striden mot Amalek", startRef: "Exodus 17:1", endRef: "Exodus 17:16", orderInBook: 8, characterSlugs: ["mose", "aron", "josua"], themeSlugs: ["testing-of-faith", "hierarchy"] },
+    { slug: "ten-commandments", title: "De tio budorden på Sinai", startRef: "Exodus 19:16", endRef: "Exodus 20:21", orderInBook: 9, characterSlugs: ["mose"], themeSlugs: ["kingdom-of-god"] },
+    { slug: "golden-calf", title: "Guldkalven", startRef: "Exodus 32:1", endRef: "Exodus 32:35", orderInBook: 10, characterSlugs: ["mose", "aron"], themeSlugs: ["betrayal"] },
   ];
 
   for (const s of exStories) {
@@ -1761,11 +1770,22 @@ async function main() {
     renamedToOrder?: boolean;
   }> = [
     { storySlug: "moses-in-the-basket", code: "FB_LS_Baby_Moses", count: 8, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-baby-moses/" },
+    // Bara bild 7–9 ur FB_YO_Moses_1 (resten av setet, bild 1–6, är
+    // barndomsscener som redan täcks av "moses-in-the-basket") — laddades
+    // ner separat och döptes om till 01–03 i sin egen mapp, se nedan.
+    { storySlug: "moses-flees-to-midian", code: "FB_YO_Moses_1", count: 3, offset: 0, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/yo-moses1/" },
     { storySlug: "burning-bush", code: "FB_LS_Burning_Bush", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-burning-bush/" },
     { storySlug: "ten-plagues", code: "FB_LS_Plagues_1", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-plagues-1/" },
     { storySlug: "ten-plagues", code: "FB_LS_Plagues_2", count: 9, offset: 9, renamedToOrder: true, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-plagues-2/" },
     { storySlug: "passover-and-exodus", code: "FB_LS_Passover", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-passover/" },
     { storySlug: "crossing-the-red-sea", code: "FB_Moses_Red_Sea", count: 15, offset: 0, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/moses-red-sea/" },
+    { storySlug: "manna-and-quail", code: "FB_LS_Moses_Manna", count: 8, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-moses-manna/" },
+    // Exodus 17 delas i två källset i EN story-mapp: vatten ur klippan
+    // (17:1-7, 5 bilder) följt av striden mot Amalek (17:8-16, 15 bilder)
+    // — döpta om till sitt order-nummer vid nedladdning, samma mönster
+    // som Cain-and-Abel/Joseph i Genesis.
+    { storySlug: "water-from-rock-and-amalek", code: "FB_CTA_Water_Rock", count: 5, offset: 0, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/cta-water-rock/" },
+    { storySlug: "water-from-rock-and-amalek", code: "FB_Moses_Amalekites", count: 15, offset: 5, renamedToOrder: true, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/moses-amalekites/" },
     { storySlug: "ten-commandments", code: "FB_RG_Moses_10_Commandments", count: 15, offset: 0, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-moses-10-commandments/" },
     { storySlug: "golden-calf", code: "FB_LS_Golden_Calf", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-golden-calf/" },
   ];
@@ -1790,6 +1810,10 @@ async function main() {
     "moses-in-the-basket": 3, // korgen vävs/bäddas med bebisen
     "passover-and-exodus": 3, // blodet stryks på dörrposten
     "ten-plagues": 5, // grodplågan (Plagues_1, order = fileNum här)
+    // bild 1 i vatten-ur-klippan-setet är en okolorerad "målarbok"-bild
+    // (avviker stilmässigt) — bild 10 (ur Amalek-setet) är den mer
+    // dramatiska "Mose håller upp händerna"-scenen.
+    "water-from-rock-and-amalek": 10,
   };
   for (const [slug, order] of Object.entries(exodusThumbnails)) {
     await prisma.story.updateMany({ where: { bookId: exodus.id, slug }, data: { thumbnailOrder: order } });
@@ -1840,6 +1864,14 @@ async function main() {
         "guldkalvens tema (avgudadyrkan istället för uppoffring). " +
         "Otranskriberat (kräver inloggning) — kopplingen bygger bara på " +
         "klippets titel.",
+    },
+    {
+      storySlug: "manna-and-quail", clipOrder: 7,
+      keyPoints:
+        "Panelklipp 'Are You in Egypt, the Desert, or the Promised Land?' " +
+        "— matchar ökenvandringens tema (folkets prövning/klagan mellan " +
+        "slaveriet i Egypten och det utlovade landet). Otranskriberat " +
+        "(kräver inloggning) — kopplingen bygger bara på klippets titel.",
     },
   ];
   for (const link of exSegmentLinks) {
