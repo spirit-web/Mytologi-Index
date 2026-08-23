@@ -70,6 +70,49 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 17 (2026-08-23): JBP Podcast avsnitt 491 (Dawkins & O'Connor) — meme/arketyp-böcker
+
+Ny `PetersonSeries` för Petersons eget podcastflöde (skilt från
+Bibelserien/Maps of Meaning). Första avsnittet: "491. Symbolic Patterns:
+Memes, Archetypes, Dragons, Genes" med Richard Dawkins & Alex O'Connor
+(2024-10-21) — efterfrågat direkt av användaren, som mindes att Peterson
+namngav böcker för att koppla ihop Dawkins meme-begrepp med Jungianska
+arketyper. Verifierat mot nedladdat undertext-transkript, inte bara
+sekundärkällor (ASR-texten stavar "Erich Neumann" groteskt fel, "Eric
+noyman"/"Eric nyman", men innehållet är otvetydigt i sammanhanget).
+
+Hittade och la till: Erich Neumann (*The Origins and History of
+Consciousness*, *The Great Mother* — Jungs "kanske störste elev"),
+Mircea Eliade (*The Sacred and the Profane*, samt samma *A History of
+Religious Ideas* som redan fanns citerad från Bibelseriens Noa-
+föreläsning, se Fas 15 — nu bekräftad från ytterligare en källa) och
+Camille Paglia (som studerat Neumann). **Om Piaget**, som användaren
+undrade om: en fullständig transkript-sökning hittade INGEN
+Piaget-referens i just det här avsnittet — Piaget-kopplingen finns
+istället redan indexerad från Maps of Meaning föreläsning 5 (se Fas 8.1),
+troligen det användaren mindes.
+
+## Fas 16 (2026-08-23): Genesis komplett (kap. 46–50) + bildbugg
+
+Sista biten av Första Moseboken: Jakob flyttar till Egypten,
+familjeåterförening, Jakobs välsignelse av sina söner (kap. 49) och
+bådas död. Peterson gjorde aldrig fler avsnitt efter "Joseph and the
+Coat of Many Colors" (hans Bibelserie slutade vid episod 15) så ingen
+video täcker det här — texten läggs ändå in för att göra Genesis
+komplett kapitel-för-kapitel. Text extraherad från samma Språkbanken-
+XML som tidigare kapitel, gudsnamnet normaliserat och läck-kontrollerat.
+Bilder från FreeBibleimages.org "Joseph is reunited with Jacob"-setet
+(Gen 45:16–46:34, CC BY-SA 4.0 — annan licens än de tidigare Lambsongs-
+seten, angivet separat per bild).
+
+Hittade och fixade samtidigt en bugg från en tidigare fas: `joseph-and-
+his-brothers` kombinerar tre bildset i EN mapp, där filerna döptes om
+till sitt visningsnummer vid nedladdning — men bildsökvägen byggdes på
+råa käll-filnummer istället, så bildordning 10–28 pekade av misstag på
+samma 10 filer som 1–10 (osynliga dubbletter av de första bilderna
+istället för de riktiga, redan nedladdade "coat"/"brothers"-bilderna).
+Verifierat live: alla 28 bilder är nu distinkta.
+
 ## Fas 8 (2026-08-22): Referens-index + klickbara etiketter
 
 `Reference`-modellen (fanns i schemat sen tidigare men var oanvänd) fylld
