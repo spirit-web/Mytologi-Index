@@ -85,6 +85,34 @@ klickbara länkar dit. **Detta fungerar automatiskt för alla framtida
 böcker/korpusar** (Koranen m.fl.) utan extra arbete — sidorna är inte
 knutna till en specifik bok, de listar tvärs över hela databasen.
 
+## Fas 11 (2026-08-23): Mesopotamien/Egypten/Logos + symbolbilder + buggfix
+
+**Buggfix**: bilderna på "Jakob arbetar för Rakel"-sidan visade sig vara
+trasiga (upptäckt av användaren via skärmdump). Orsak: `public/images/`-
+mappen hette `jacob-serves-laban` men story-sluggen (som seed.ts bygger
+bildsökvägen ifrån) är `jacob-serves-laban-for-rachel-and-leah` — döpte
+om mappen. Kontrollerade programmatiskt att inga andra av de 41
+bildseten i seed.ts har samma typ av mappnamn-mismatch.
+
+**Mesopotamien/Egypten/Logos**: grävde fram ett tidigare ohanterat
+~30-minutersblock i Maps of Meaning-föreläsning 8 om den babyloniska
+skapelsemyten Enuma Elish (Tiamat, Kingu, Marduk vald till kungars kung
+för att han kan SE och TALA — en tidig "logos"-idé) och dess egyptiska
+motsvarighet (Osiris/Horus som farao, "demokratiseringen av Osiris").
+Plus en Derrida/"strid mot logos"-referens i Genesis-föreläsning 2,
+kopplad till en ny verseNote på Genesis 1:3 ("Varde ljus").
+
+**Symbolbilder för ramverksböckerna**: till skillnad från
+Bibelböckerna finns inget bildarkiv för Maps of Meaning/12 Rules for
+Life. Löst med tre noga utvalda, öppet licensierade bilder från
+Wikimedia Commons (en Marduk/Tiamat-relief — med en ärlig notis om att
+identifieringen är omtvistad i modern forskning, se bildtext — samt en
+Osiris/Isis/Horus-relief och ett hummerfoto för regel 1). **Medveten
+avgränsning**: det här är EN handfull utvalda bilder för de rikaste
+referaten, inte samma scen-för-scen-bildtäckning som Bibelböckerna har.
+Fem nya persondporträtt (Solzjenitsyn, Nietzsche, Dante, Milton, Frankl)
+återanvänder samma `Character.portraitPath`-mönster.
+
 ## Fas 10 (2026-08-23): Jakob/Laban-sagan + bok-interna referenser i 12 Rules for Life
 
 **Jakob-cykeln fylld ut ytterligare** — nu 6 avsnitt: "Jakob arbetar för
