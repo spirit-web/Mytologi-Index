@@ -597,6 +597,22 @@ async function main() {
             "megalitiska monument som Stonehenge som bevis på hur gammal " +
             "den kunskapen är.",
         },
+        {
+          chapter: 1,
+          verse: 3,
+          order: 2,
+          quote:
+            "It's perfectly reasonable from an archetypal and " +
+            "psychological perspective to consider the idea of the word " +
+            "equivalent to the spoken truth.",
+          summary:
+            "I en Q&A-diskussion om 'Gud sade... och det blev' kopplar " +
+            "Peterson ordet/Logos till sanning: om tillvaron i grunden är " +
+            "god, måste ett ärligt förhållande till den också vara gott — " +
+            "och då blir sant tal (att 'tala fram' något genom sanning, " +
+            "inte manipulation) det som gör skapelsen god. Hänvisar till " +
+            "Kierkegaard som den som brottades djupast med den idén.",
+        },
       ],
     },
     {
@@ -1855,7 +1871,21 @@ async function main() {
         "minska dödsångest, utan genom att orientera individen så att " +
         "handling matchar det sociala samspelet med andra. Går in på " +
         "varför människor är beredda att försvara och strida för sina " +
-        "trossystem.",
+        "trossystem. Föreläsningens sista, mest omfattande (~30 minuter) " +
+        "block återger den babyloniska skapelsemyten Enuma Elish i " +
+        "detalj: den kaotiska urmodern Tiamat, hennes monster-general " +
+        "Kingu, och hur guden Marduk väljs till kungars kung enbart för " +
+        "att han kan SE (ögon runt hela huvudet) och TALA (magiska ord) " +
+        "— tolkat som mänsklighetens första formulering av 'logos'-idén: " +
+        "att uppmärksamt seende + sant tal är det som bör stå högst i " +
+        "hierarkin, inte bara ren styrka. Marduk besegrar Tiamat, styckar " +
+        "henne till världen, och den mesopotamiske kejsaren blev sedan " +
+        "rituellt tvungen att 'vara en god Marduk' varje nyår. Kopplar " +
+        "detta vidare till den egyptiska Osiris/Horus-myten (där " +
+        "Farao=facket Osiris+Horus förenade) och den gradvisa " +
+        "'demokratiseringen av Osiris' — idén att alla människor, inte " +
+        "bara farao, bär detta gudomliga i sig — som Peterson kallar " +
+        "grundbulten i västerländsk individ-suveränitet.",
     },
     {
       order: 9, slug: "patterns-of-symbolic-representation", title: "Mönster i symbolisk representation", youtubeId: "yXZSeiAl4PI",
@@ -2258,6 +2288,10 @@ async function main() {
     { slug: "sagan-om-ringen", name: "Sagan om ringen / Bilbo (bokserie/filmer)" },
     { slug: "aleksandr-solzhenitsyn", name: "Aleksandr Solzjenitsyn" },
     { slug: "viktor-frankl", name: "Viktor Frankl" },
+    { slug: "marduk", name: "Marduk (mesopotamisk gud)" },
+    { slug: "tiamat", name: "Tiamat (mesopotamisk urmoder/kaos)" },
+    { slug: "osiris-horus", name: "Osiris/Horus (egyptisk gud)" },
+    { slug: "jacques-derrida", name: "Jacques Derrida" },
   ];
   const refCharacters: Record<string, { id: string }> = {};
   for (const c of refCharacterDefs) {
@@ -2464,6 +2498,66 @@ async function main() {
         "Laban efter att ha lurat Esau) till hur Raskolnikov, trots att " +
         "han kommer undan mordet obemärkt, drivs av skuld till att i " +
         "praktiken överlämna sig själv till polisen.",
+    },
+
+    // --- Tillagda 2026-08-23: Mesopotamien, Egypten och Logos-idén i
+    // föreläsning 8, samt en Derrida/logos-referens i Genesis-föreläsning
+    // 2 — grävt fram efter direkt fråga från användaren om just dessa
+    // teman. Se README Fas 11 för sammanhang. ---
+    {
+      videoYoutubeId: "Nb5cBkbQpGY", storySlug: "neuropsychology-of-symbolic-representation",
+      characterSlug: "tiamat", atSec: 6910,
+      note:
+        "Återger den babyloniska skapelsemyten Enuma Elish: Tiamat är de " +
+        "äldre gudarnas kaotiska urmoder ('Moder Natur') som — efter att " +
+        "hennes make dödats — skapar en armé av 13 monster (chimärer, " +
+        "hälften drake/orm/fågel) och utser demonen Kingu ('en tidig " +
+        "representation av Satan') till deras general för att utplåna " +
+        "gudarna. Ingen av de äldre gudarna vågar möta henne.",
+    },
+    {
+      videoYoutubeId: "Nb5cBkbQpGY", storySlug: "neuropsychology-of-symbolic-representation",
+      characterSlug: "marduk", atSec: 7029,
+      note:
+        "Marduk väljs till 'kungars kung' inte för att han är starkast, " +
+        "utan för att han kan SE (ögon runt hela huvudet) och TALA " +
+        "(magiska ord som förvandlar natt till dag) — tolkat som " +
+        "mänsklighetens första formulering av att uppmärksamt seende och " +
+        "sant tal ('logos') bör stå överst i hierarkin. Marduk fångar " +
+        "Tiamat i ett nät, fyller henne med vind, dödar henne och styckar " +
+        "hennes kropp till världen — och gör människor av Kingus blod, " +
+        "vilket Peterson kopplar till syndafallets idé om att människan " +
+        "ensam bland varelserna kan ljuga och göra ont med avsikt. Den " +
+        "mesopotamiske kejsaren fick sedan rituellt (vid nyår) bekänna " +
+        "hur han misslyckats vara 'en god Marduk' föregående år.",
+    },
+    {
+      videoYoutubeId: "Nb5cBkbQpGY", storySlug: "neuropsychology-of-symbolic-representation",
+      characterSlug: "osiris-horus", atSec: 8311,
+      note:
+        "Jämför Marduk-myten med den egyptiska: Farao sågs som en " +
+        "förening av Osiris (den mördade, återuppståndne kungen) och " +
+        "Horus (sonen som besegrar sin onda farbror Seth och återupprättar " +
+        "ordningen) — samma mönster som Marduk mot Tiamat, fast applicerat " +
+        "på statens förfall och förnyelse istället för kosmos. Peterson " +
+        "spårar sedan en 'demokratisering av Osiris': idén om detta " +
+        "gudomliga spred sig från enbart farao, till aristokratin, till " +
+        "(hos grekerna) alla fria män, till (hos de kristna) bokstavligen " +
+        "alla människor oavsett kön eller status — vilket han kallar " +
+        "'grundbulten' för hela idén om den suveräna individens värde i " +
+        "västerländsk civilisation.",
+    },
+    {
+      videoYoutubeId: "hdrLQ7DpiWs", storySlug: "creation",
+      characterSlug: "jacques-derrida", atSec: 8750,
+      note:
+        "I en Q&A-diskussion om 'ordet'/Logos i skapelseberättelsen " +
+        "(Gud talar världen till existens) kopplar Peterson dagens " +
+        "'ideologiska strid' till en 'strid mot logos, i Derridas egna " +
+        "termer' — läser postmodern skepsis mot precist, rationellt " +
+        "språk som ett medvetet avstånd från logos-idén, och kritiserar " +
+        "det som ett sätt att fly undan den 'återlösande kraften i " +
+        "dialog' till förmån för ren maktkamp.",
     },
   ];
 
