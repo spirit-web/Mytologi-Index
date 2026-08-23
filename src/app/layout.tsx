@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
+import { GuideMascot } from "@/components/GuideMascot";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -51,6 +52,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </Link>
               <Link href="/teman" className="transition hover:text-[var(--text)]">
                 Teman
+              </Link>
+              <Link
+                href="/framsteg"
+                title="Ditt framsteg"
+                className="rounded-full transition hover:scale-110 hover:opacity-90"
+              >
+                <GuideMascot className="h-8 w-8" />
               </Link>
             </nav>
           </div>

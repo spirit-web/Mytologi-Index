@@ -21,12 +21,15 @@ export default async function BookPage({
           themes: { include: { theme: true } },
           images: { where: { order: 1 }, take: 1 },
           petersonSegments: { include: { video: true } },
+          progress: true,
         },
       },
     },
   });
 
   if (!book) notFound();
+
+  const completedCount = book.stories.filter((s) => s.progress?.completedAt).length;
 
   // Gruppera: standalone-berättelser vs. cykler (seriesSlug).
   const standalone = book.stories.filter((s) => !s.seriesSlug);
@@ -61,7 +64,10 @@ export default async function BookPage({
       </h1>
       <p className="mb-6 text-sm text-[var(--text-muted)]">
         {standalone.length} enskilda berättelser · {seriesMap.size} berättelsecykler
-        ({[...seriesMap.values()].reduce((n, l) => n + l.length, 0)} avsnitt)
+        ({[...seriesMap.values()].reduce((n, l) => n + l.length, 0)} avsnitt) ·{" "}
+        <Link href="/framsteg" className="text-[var(--accent)] hover:underline">
+          {completedCount}/{book.stories.length} avklarade
+        </Link>
       </p>
 
       {(book.description || book.authorship || book.traditions) && (
@@ -155,8 +161,11 @@ function StoryRow({
     characters: { character: { name: string; slug: string } }[];
     themes: { theme: { name: string; slug: string } }[];
     images: { path: string }[];
+    progress?: { completedAt: Date | null; isFavorite: boolean } | null;
   };
 }) {
+  const completed = !!story.progress?.completedAt;
+  const favorite = !!story.progress?.isFavorite;
   return (
     <div className="flex items-center gap-3 px-5 py-4 transition hover:bg-[var(--accent-bg)]">
       <Link
@@ -174,7 +183,22 @@ function StoryRow({
         )}
         <div className="flex min-w-0 flex-1 flex-col gap-1.5">
           <div className="flex items-center justify-between gap-2">
-            <span className="font-medium text-[var(--text)]">{story.title}</span>
+            <span className="flex min-w-0 items-center gap-1.5 font-medium text-[var(--text)]">
+              {completed && (
+                <span
+                  aria-label="Avklarad"
+                  className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[10px] leading-none text-white"
+                >
+                  ✓
+                </span>
+              )}
+              {favorite && (
+                <span aria-label="Extra viktig" className="shrink-0 text-[var(--link)]">
+                  ★
+                </span>
+              )}
+              <span className="truncate">{story.title}</span>
+            </span>
             <span className="shrink-0 text-xs text-[var(--text-faint)]">
               {story.startRef}
               {story.endRef !== story.startRef ? `–${story.endRef.replace(/^.*?(\d)/, "$1")}` : ""}

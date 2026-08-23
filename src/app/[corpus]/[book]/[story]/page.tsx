@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { fetchBiblePassage, externalBibleUrl } from "@/lib/bible";
+import { StoryProgressControls } from "@/components/StoryProgressControls";
 
 export default async function StoryPage({
   params,
@@ -25,6 +26,7 @@ export default async function StoryPage({
         include: { video: { include: { series: true } }, verseNotes: { orderBy: { order: "asc" } } },
       },
       referencesAsTarget: { include: { video: { include: { series: true } }, character: true } },
+      progress: true,
       parallelLinks: {
         include: {
           parallel: {
@@ -96,11 +98,17 @@ export default async function StoryPage({
       <h1 className="mt-2 mb-1 font-serif text-4xl font-semibold tracking-tight text-[var(--text)]">
         {story.title}
       </h1>
-      <p className="mb-6 text-sm text-[var(--text-muted)]">
+      <p className="mb-4 text-sm text-[var(--text-muted)]">
         {story.startRef}
         {story.endRef !== story.startRef ? `–${story.endRef}` : ""}
         {story.seriesTitle ? ` · Del av ${story.seriesTitle}` : ""}
       </p>
+
+      <StoryProgressControls
+        storyId={story.id}
+        initialCompleted={!!story.progress?.completedAt}
+        initialFavorite={!!story.progress?.isFavorite}
+      />
 
       {story.images.length > 0 && (
         <div className="mb-8">

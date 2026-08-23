@@ -86,8 +86,24 @@ model Story {
   referencesAsTarget Reference[]
   parallelLinks     ParallelStory[]
   images            StoryImage[]
+  progress          StoryProgress?
 
   @@unique([bookId, slug])
+}
+
+// Personlig läsframsteg per story — "klarmarkerad" + "extra viktig".
+// Medvetet EN egen tabell, inte fält på Story: seed.ts kör upsert på
+// Story-poster vid varje omseedning (nya faser, rättade citat osv.), och
+// användarens framsteg får ALDRIG nollställas av det. Appen är byggd för
+// en enda användare (ingen inloggning på huvudvyn) så det behövs inget
+// userId — en rad per story är hela modellen.
+model StoryProgress {
+  id          String    @id @default(cuid())
+  storyId     String    @unique
+  story       Story     @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  completedAt DateTime?
+  isFavorite  Boolean   @default(false)
+  updatedAt   DateTime  @updatedAt
 }
 
 // Illustrerade scenbilder för en story, hämtade från öppna bildarkiv (i
