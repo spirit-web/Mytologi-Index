@@ -404,6 +404,7 @@ export default async function StoryPage({
                     {ref.character.name}
                   </Link>
                 )}
+                {ref.work && <span className="italic text-[var(--text-faint)]"> ({ref.work})</span>}
                 {ref.character && " — "}
                 {ref.video ? `${ref.video.series.title} — ${ref.video.title}` : ref.bookSourceRef}
                 {": "}

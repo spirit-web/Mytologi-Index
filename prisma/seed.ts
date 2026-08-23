@@ -2867,6 +2867,8 @@ async function main() {
     { slug: "sagan-om-ringen", name: "Sagan om ringen / Bilbo (bokserie/filmer)" },
     { slug: "aleksandr-solzhenitsyn", name: "Aleksandr Solzjenitsyn" },
     { slug: "viktor-frankl", name: "Viktor Frankl" },
+    { slug: "mircea-eliade", name: "Mircea Eliade" },
+    { slug: "james-frazer", name: "James George Frazer" },
     { slug: "marduk", name: "Marduk (mesopotamisk gud)" },
     { slug: "tiamat", name: "Tiamat (mesopotamisk urmoder/kaos)" },
     { slug: "osiris-horus", name: "Osiris/Horus (egyptisk gud)" },
@@ -2925,11 +2927,13 @@ async function main() {
     storySlug?: string; // om referensen görs i samband med en specifik story
     characterSlug: string;
     atSec?: number; // exakt tidsstämpel, verifierad mot transkript
+    work?: string; // det specifika verket, bara ifyllt när Peterson faktiskt namnger ett
     note: string;
   };
   const references: RefDef[] = [
     {
       videoYoutubeId: "44f3mxcsI50", storySlug: "cain-and-abel", characterSlug: "dostojevskij",
+      work: "Brott och straff",
       note:
         "Rekommenderar Dostojevskijs Brott och straff som — enligt honom " +
         "kanske den bästa skildringen som någonsin skrivits — av vad som " +
@@ -2978,6 +2982,7 @@ async function main() {
     },
     {
       videoYoutubeId: "xPIanlF6IwM", storySlug: "death-and-burial", characterSlug: "michelangelo",
+      work: "Pietà (skulptur)",
       note:
         "Använder Michelangelos skulptur Pietà (Maria som håller sin döda, " +
         "korsfäste son) som bild för den yttersta formen av uppoffring — " +
@@ -3008,6 +3013,7 @@ async function main() {
     {
       videoYoutubeId: "Us979jCjHu8", storySlug: "marionettes-and-individuals-2",
       characterSlug: "john-milton", atSec: 6981,
+      work: "Paradise Lost",
       note:
         "Rekommenderar att läsa Dantes Inferno tillsammans med Miltons " +
         "Paradise Lost som metafysiska utforskningar av vilka fruktansvärda " +
@@ -3017,6 +3023,7 @@ async function main() {
     {
       videoYoutubeId: "Us979jCjHu8", storySlug: "marionettes-and-individuals-2",
       characterSlug: "dante", atSec: 6978,
+      work: "Inferno",
       note:
         "Beskriver förräderi som en av de värsta sakerna en människa kan " +
         "göra en annan — 'det var Dantes idé' — och kopplar det till " +
@@ -3101,6 +3108,7 @@ async function main() {
     {
       videoYoutubeId: "A9JtQN_GoVI", storySlug: "jacob-steals-blessing",
       characterSlug: "dante", atSec: 4267,
+      work: "Inferno",
       note:
         "Kopplar Esaus mordplan mot Jakob (efter att ha blivit lurad på " +
         "både förstfödslorätt och välsignelse) till Dantes Inferno, där " +
@@ -3110,12 +3118,43 @@ async function main() {
     {
       videoYoutubeId: "DRJKwDfDbco", storySlug: "jacob-serves-laban-for-rachel-and-leah",
       characterSlug: "dostojevskij", atSec: 3594,
+      work: "Brott och straff",
       note:
         "Andra gången Brott och straff används för att illustrera skuld: " +
         "kopplar Jakobs 'karmiska' bestraffning (blir själv lurad av " +
         "Laban efter att ha lurat Esau) till hur Raskolnikov, trots att " +
         "han kommer undan mordet obemärkt, drivs av skuld till att i " +
         "praktiken överlämna sig själv till polisen.",
+    },
+
+    // --- Tillagda 2026-08-23 (Fas 15, verk-nivå-utbyggnad): Eliade och
+    // Frazer i Noa-föreläsningen. ASR-undertexterna stavar namnen
+    // katastrofalt fel ("Mercuria Eliata"/"Mel Elliott", "JG Fraser" för
+    // "the golden bow") men innehållet är otvetydigt — Eliade namnger
+    // sin egen bok, och "golden bow" är uppenbart The Golden Bough. ---
+    {
+      videoYoutubeId: "wNjbasba-Qw", storySlug: "noahs-flood",
+      characterSlug: "mircea-eliade", atSec: 6465,
+      work: "A History of Religious Ideas",
+      note:
+        "Rekommenderar Eliades tre-volyms verk A History of Religious " +
+        "Ideas ('brilliant, jag gillar det verkligen') och återger hans " +
+        "tes om syndaflodsmyter: att de nästan universellt förekommer " +
+        "(dokumenterat på alla kontinenter utom sällan i Afrikas öknar) " +
+        "och att de speglar en universell mänsklig idé — att tillvaron " +
+        "periodvis 'översvämmas'/faller sönder dels av ren entropi, dels " +
+        "i en takt som påskyndas av människans egna synder.",
+    },
+    {
+      videoYoutubeId: "wNjbasba-Qw", storySlug: "noahs-flood",
+      characterSlug: "james-frazer", atSec: 6485,
+      work: "The Golden Bough",
+      note:
+        "Nämner (via Eliades egen genomgång) J.G. Frazers klassiska " +
+        "jämförande mytologi-verk The Golden Bough som en av de tidiga " +
+        "sammanställningarna som visade hur utbrett flodmyten är över " +
+        "världens kulturer — en av grundstenarna för hela det " +
+        "jämförande-mytologi-fält Eliade och Peterson själv bygger vidare på.",
     },
 
     // --- Tillagda 2026-08-23: Mesopotamien, Egypten och Logos-idén i
@@ -3185,8 +3224,8 @@ async function main() {
     const characterId = refCharacters[r.characterSlug].id;
     await prisma.reference.upsert({
       where: { videoId_storyId_characterId: { videoId: video.id, storyId: story?.id ?? "", characterId } },
-      update: { note: r.note, atSec: r.atSec },
-      create: { videoId: video.id, storyId: story?.id, characterId, atSec: r.atSec, note: r.note },
+      update: { note: r.note, atSec: r.atSec, work: r.work },
+      create: { videoId: video.id, storyId: story?.id, characterId, atSec: r.atSec, work: r.work, note: r.note },
     });
   }
   console.log(`Seedat referens-index: ${refCharacterDefs.length} refererade personer, ${references.length} referenser.`);

@@ -101,6 +101,11 @@ export default async function PersonPage({ params }: { params: Promise<{ slug: s
                     </>
                   )}
                 </p>
+                {r.work && (
+                  <p className="mb-1 text-xs font-medium uppercase tracking-wide text-[var(--accent)]">
+                    Verk: {r.work}
+                  </p>
+                )}
                 <p className="text-[var(--text-muted)]">{r.note}</p>
               </li>
             ))}

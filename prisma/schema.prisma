@@ -302,6 +302,10 @@ model Reference {
   characterId   String?
   character     Character? @relation(fields: [characterId], references: [id])
   externalLabel String? // t.ex. "Nietzsche", "Dostojevskij – Raskolnikov"
+  work          String? // det specifika VERKET som citeras, t.ex. "Brott
+  // och straff" eller "Pietà (skulptur)" — bara ifyllt när Peterson
+  // faktiskt namnger ett specifikt verk (inte bara personen/idén i
+  // allmänhet); se README "Fas 15" för avgränsning
 
   note String // vad poängen/illustrationen handlar om
 
