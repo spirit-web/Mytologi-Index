@@ -2137,6 +2137,77 @@ async function main() {
 
   console.log(`Seedat Maps of Meaning: ${momLectures.length} föreläsningar, 12 Rules for Life: ${rules.length} regler.`);
 
+  // --- Symbolbilder för Maps of Meaning / 12 Rules for Life ----------
+  // Till skillnad från bibelböckerna finns inget bildarkiv att hämta
+  // scen-för-scen-bilder från. Istället en handfull noga utvalda,
+  // öppet licensierade bilder (Wikimedia Commons) som illustrerar
+  // centrala referat/symboler Peterson faktiskt använder — inte en
+  // scen-för-scen-bildberättelse. Licens/källa i credit/creditUrl.
+  const frameworkImages: Array<{
+    bookId: string;
+    storySlug: string;
+    order: number;
+    path: string;
+    caption: string;
+    credit: string;
+    creditUrl: string;
+  }> = [
+    {
+      bookId: mapsOfMeaningBook.id, storySlug: "neuropsychology-of-symbolic-representation", order: 1,
+      path: "/images/mom/neuropsychology-of-symbolic-representation/01-marduk-tiamat.png",
+      caption:
+        "Relief föreställande en gud som besegrar ett kaosmonster, ofta kallad " +
+        "'Marduk mot Tiamat'. OBS: identifieringen är omtvistad — flera " +
+        "moderna forskare menar att originalreliefen (från Sennacheribs " +
+        "palats i Nineve) troligen föreställer guden Ninurta mot monstret " +
+        "Anzu, en annan mesopotamisk kaos-bekämpningsmyt. Ingen säkert " +
+        "identifierad antik bildframställning av just Marduk mot Tiamat " +
+        "är känd — bilden används ändå här som närmaste visuella " +
+        "representation av samma arketypiska mönster.",
+      credit: "Bearbetad version av relief, Sennacheribs palats, Nineve (Wikimedia Commons, CC BY-SA 4.0)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Marduk_Tiamat_Battle_from_Enuma_Elish_-_repaired_version.png",
+    },
+    {
+      bookId: mapsOfMeaningBook.id, storySlug: "neuropsychology-of-symbolic-representation", order: 2,
+      path: "/images/mom/neuropsychology-of-symbolic-representation/02-osiris-isis-horus.jpg",
+      caption:
+        "Osiris (mitten) flankerad av sin hustru Isis (vänster) och son " +
+        "Horus (höger). Kalksten, 1200-talet f.Kr., från Abydos, Egypten. " +
+        "British Museum. Peterson läser föreningen Osiris+Horus som " +
+        "modellen för faraos gudomliga själ — samma grundmönster som " +
+        "Marduk mot Tiamat, applicerat på statens förfall och förnyelse.",
+      credit: "Foto: Osama Shukir Muhammed Amin FRCP(Glasg) (Wikimedia Commons, CC BY-SA 4.0)",
+      creditUrl: "https://commons.wikimedia.org/wiki/Category:Osiris",
+    },
+    {
+      bookId: rulesBook.id, storySlug: "stand-up-straight", order: 1,
+      path: "/images/rules/stand-up-straight/01-lobster.jpg",
+      caption:
+        "Amerikansk hummer (Homarus americanus), fotograferad utanför " +
+        "Maines kust 1975. Peterson bygger regel 1 på forskning om " +
+        "hummers dominanshierarkier och kopplingen mellan status och " +
+        "serotoninnivåer.",
+      credit: "NOAA/OAR National Undersea Research Program (public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Nur01521_-_Flickr_-_NOAA_Photo_Library.jpg",
+    },
+  ];
+  for (const img of frameworkImages) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: img.bookId, slug: img.storySlug } });
+    await prisma.storyImage.upsert({
+      where: { storyId_order: { storyId: story.id, order: img.order } },
+      update: { path: img.path, caption: img.caption, credit: img.credit, creditUrl: img.creditUrl },
+      create: {
+        storyId: story.id,
+        order: img.order,
+        path: img.path,
+        caption: img.caption,
+        credit: img.credit,
+        creditUrl: img.creditUrl,
+      },
+    });
+  }
+  console.log(`Seedat ${frameworkImages.length} symbolbilder för Maps of Meaning/12 Rules for Life.`);
+
   // --- Bokpresentationer -----------------------------------------
   // Traditionell attribuering (judisk/kristen tolkningstradition), inte
   // nödvändigtvis modern bibelforsknings-konsensus (som ofta ser flera
@@ -2301,6 +2372,45 @@ async function main() {
       create: c,
     });
   }
+
+  // --- Porträtt för refererade personer (Wikimedia Commons) -----------
+  // Samma återanvändningsmönster som bibliska karaktärsporträtt, men
+  // pekar mot fristående, öppet licensierade porträttfoton/målningar
+  // istället för en scenbild ur en indexerad story.
+  const refPortraits: Record<string, { path: string; credit: string; creditUrl: string }> = {
+    "aleksandr-solzhenitsyn": {
+      path: "/images/personer/solzhenitsyn.jpg",
+      credit: "Foto: Bert Verhoeff/Anefo, 1974 (Wikimedia Commons, public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Aleksandr_Solzhenitsyn_1974crop.jpg",
+    },
+    nietzsche: {
+      path: "/images/personer/nietzsche.jpg",
+      credit: "Foto: Gustav-Adolf Schultze, 1882 (Wikimedia Commons, public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Nietzsche1882.jpg",
+    },
+    dante: {
+      path: "/images/personer/dante.jpg",
+      credit: "Målning: Sandro Botticelli, ca 1495 (Wikimedia Commons, public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Sandro_Botticelli_-_Portrait_of_Dante_-_WGA02802.jpg",
+    },
+    "john-milton": {
+      path: "/images/personer/milton.jpg",
+      credit: "Målning: tillskriven Godfrey Kneller, 1690 (Wikimedia Commons, public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:John_Milton_portrait_painting.jpg",
+    },
+    "viktor-frankl": {
+      path: "/images/personer/frankl.jpg",
+      credit: "Foto: Franz Vesely, 1965 (Wikimedia Commons, CC BY-SA 3.0 DE)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Viktor_Frankl2.jpg",
+    },
+  };
+  for (const [slug, p] of Object.entries(refPortraits)) {
+    await prisma.character.update({
+      where: { slug },
+      data: { portraitPath: p.path, portraitCredit: p.credit, portraitCreditUrl: p.creditUrl },
+    });
+  }
+  console.log(`Seedat ${Object.keys(refPortraits).length} porträtt för refererade personer.`);
 
   type RefDef = {
     videoYoutubeId: string;

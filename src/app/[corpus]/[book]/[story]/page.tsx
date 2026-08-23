@@ -102,7 +102,9 @@ export default async function StoryPage({
       {story.images.length > 0 && (
         <div className="mb-8">
           <p className="mb-2 text-xs uppercase tracking-wide text-[var(--text-faint)]">
-            Bildberättelse (parafras från bildkällan — inte bibeltext, se "Text" nedan för det)
+            {story.book.corpus.kind === "scripture"
+              ? 'Bildberättelse (parafras från bildkällan — inte bibeltext, se "Text" nedan för det)'
+              : "Symbolbilder (se bildtext för sammanhang och källa)"}
           </p>
           <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">
             {story.images.map((img) => (
