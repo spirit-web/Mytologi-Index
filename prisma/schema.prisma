@@ -74,6 +74,13 @@ model Story {
   // upphovsrättsskäl, se README "Viktig avgränsning: upphovsrätt"
   orderInBook Int
 
+  // Vilken StoryImage.order som ska visas som litet omslag i boklistan.
+  // Default (null) = bild nr 1, precis som tidigare. Finns för att många
+  // källsets börjar med en abstrakt "titelkort"-bild (enfärgad siluett)
+  // som fungerar dåligt som omslag även om den är okej i bildgalleriet —
+  // se README om omslagsbilder.
+  thumbnailOrder Int?
+
   // Är denna story del av en berättelsecykel (t.ex. "Abraham", "Jakob")?
   // Om satt grupperas den ihop med syskon-storys som har samma seriesSlug.
   seriesSlug  String?

@@ -19,7 +19,7 @@ export default async function BookPage({
         include: {
           characters: { include: { character: true } },
           themes: { include: { theme: true } },
-          images: { where: { order: 1 }, take: 1 },
+          images: { orderBy: { order: "asc" } },
           petersonSegments: { include: { video: true } },
           progress: true,
         },
@@ -158,23 +158,29 @@ function StoryRow({
     title: string;
     startRef: string;
     endRef: string;
+    thumbnailOrder: number | null;
     characters: { character: { name: string; slug: string } }[];
     themes: { theme: { name: string; slug: string } }[];
-    images: { path: string }[];
+    images: { order: number; path: string }[];
     progress?: { completedAt: Date | null; isFavorite: boolean } | null;
   };
 }) {
   const completed = !!story.progress?.completedAt;
   const favorite = !!story.progress?.isFavorite;
+  // Visa story.thumbnailOrder om satt (se schema-kommentaren — många
+  // källset börjar med en abstrakt "titelkort"-siluett som funkar dåligt
+  // som litet omslag), annars första bilden i galleriet som tidigare.
+  const thumb =
+    story.images.find((img) => img.order === (story.thumbnailOrder ?? 1)) ?? story.images[0];
   return (
     <div className="flex items-center gap-3 px-5 py-4 transition hover:bg-[var(--accent-bg)]">
       <Link
         href={`/${book.corpus.slug}/${book.slug}/${story.slug}`}
         className="flex min-w-0 flex-1 items-center gap-3"
       >
-        {story.images[0] && (
+        {thumb && (
           <Image
-            src={story.images[0].path}
+            src={thumb.path}
             alt=""
             width={56}
             height={42}

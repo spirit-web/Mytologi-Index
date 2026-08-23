@@ -485,7 +485,7 @@ async function main() {
     { storySlug: "creation", code: "FB_LS_Creation_Days", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-creation-days/" },
     { storySlug: "garden-of-eden", code: "FB_FN_Adam_Eve", fileStart: 1, fileEnd: 11, orderStart: 1, credit: "Fishnet Bible Stories (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/fn-adam-eve/" },
     { storySlug: "cain-and-abel", code: "FB_LS_Cain_Abel", fileStart: 1, fileEnd: 9, orderStart: 1, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-cain-abel/" },
-    { storySlug: "cain-and-abel", code: "FB_LS_Cain_Anger", fileStart: 1, fileEnd: 9, orderStart: 10, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-cain-anger/" },
+    { storySlug: "cain-and-abel", code: "FB_LS_Cain_Anger", fileStart: 1, fileEnd: 9, orderStart: 10, renamedToOrder: true, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-cain-anger/" },
     { storySlug: "noahs-flood", code: "FB_LS_Noah_Ark", fileStart: 1, fileEnd: 9, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-noah-ark/" },
     { storySlug: "tower-of-babel", code: "FB_LS_Tower_Babel", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-tower-babel/" },
     { storySlug: "call-of-abram", code: "FB_RP_Abraham_Calling", fileStart: 1, fileEnd: 21, orderStart: 1, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rp-abraham-calling/" },
@@ -529,6 +529,48 @@ async function main() {
         create: { storyId: story.id, order, path, caption, credit: set.credit, creditUrl: set.creditUrl },
       });
     }
+  }
+
+  // --- Skapelsen: jordklotet från rymden (Wikimedia Commons) ----------
+  // FreeBibleimages-setet för Skapelsen är bara enkla dag-för-dag-ikoner
+  // (inget som visar själva jorden), så efterfrågad av användaren direkt
+  // 2026-08-23: ett riktigt foto av jorden som omslagsbild. "The Blue
+  // Marble" (Apollo 17, 1972) — NASA-material, public domain i USA.
+  const creationStory = await prisma.story.findFirstOrThrow({ where: { bookId: genesis.id, slug: "creation" } });
+  await prisma.storyImage.upsert({
+    where: { storyId_order: { storyId: creationStory.id, order: 9 } },
+    update: {
+      path: "/images/genesis/creation/09.jpg",
+      caption: "Jorden fotograferad från rymden (\"The Blue Marble\", Apollo 17, 1972) — inte en bild från själva bibelberättelsen, men vald som omslag för att direkt visa vad kapitlet handlar om.",
+      credit: "NASA/Apollo 17 (Wikimedia Commons), public domain",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:The_Blue_Marble_(remastered).jpg",
+    },
+    create: {
+      storyId: creationStory.id, order: 9,
+      path: "/images/genesis/creation/09.jpg",
+      caption: "Jorden fotograferad från rymden (\"The Blue Marble\", Apollo 17, 1972) — inte en bild från själva bibelberättelsen, men vald som omslag för att direkt visa vad kapitlet handlar om.",
+      credit: "NASA/Apollo 17 (Wikimedia Commons), public domain",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:The_Blue_Marble_(remastered).jpg",
+    },
+  });
+
+  // --- Omslagsbilder (thumbnailOrder) ---------------------------------
+  // Många källset börjar med en abstrakt, enfärgad "titelkort"-siluett
+  // (t.ex. ett gult moln med en svart figur) som är okej längre in i ett
+  // bildgalleri men ser intetsägande ut som litet omslag i boklistan.
+  // Bytt 2026-08-23 efter direkt feedback från användaren, som ville ha
+  // omslag som "direkt gör att man minns berättelsen" — plockade istället
+  // en mer detaljerad/färgstark bild längre in i samma redan nedladdade
+  // bildset (ingen ny research, bara genomläsning av befintliga bilder).
+  const genesisThumbnails: Record<string, number> = {
+    creation: 9, // jordklotet, se ovan
+    "cain-and-abel": 13, // Kains vrede vid altaret
+    "noahs-flood": 5, // arken i vågorna
+    "tower-of-babel": 3, // själva tornet syns i bakgrunden
+    "jacob-wrestling": 7, // familjeåterförening (inget i setet visar själva brottningen)
+  };
+  for (const [slug, order] of Object.entries(genesisThumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: genesis.id, slug }, data: { thumbnailOrder: order } });
   }
 
   // --- Karaktärsporträtt -------------------------------------------
@@ -1481,6 +1523,22 @@ async function main() {
     }
   }
 
+  // --- Omslagsbilder (thumbnailOrder) — se motsvarande kommentar i
+  // Genesis-blocket ovan. Bytt 2026-08-23 efter direkt feedback. ---
+  const matthewThumbnails: Record<string, number> = {
+    "baptism-of-jesus": 5, // Jesus döps i vattnet
+    "temptation-in-wilderness": 7, // frestelsen: utsikt över "alla rikena"
+    "parable-of-the-sower": 7, // det goda sädet växer
+    resurrection: 7, // Maria möter den uppståndne Jesus
+    "last-supper": 8, // brödet bryts vid bordet
+    gethsemane: 3, // Jesus ber ensam vid klippan
+    "trial-before-pilate": 8, // Pilatus tvår sina händer
+    crucifixion: 3, // korsfästelsen själv
+  };
+  for (const [slug, order] of Object.entries(matthewThumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: matthew.id, slug }, data: { thumbnailOrder: order } });
+  }
+
   const ntPortraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
     { slug: "jesus", storySlug: "baptism-of-jesus", imgOrder: 6 },
     { slug: "maria", storySlug: "nativity", imgOrder: 7 },
@@ -1689,11 +1747,23 @@ async function main() {
 
   // --- Exodus story-bilder --------------------------------------------
   const exCaptions = exodusCaptionsByCode as Record<string, string[]>;
-  const exImageSets: Array<{ storySlug: string; code: string; count: number; offset: number; credit: string; creditUrl: string }> = [
+  const exImageSets: Array<{
+    storySlug: string;
+    code: string;
+    count: number;
+    offset: number;
+    credit: string;
+    creditUrl: string;
+    // Sant för set som delar EN story-mapp med ett annat set (bara
+    // ten-plagues, två Plagues-set i samma mapp) — filerna döptes om
+    // till sitt order-nummer vid nedladdning, se samma bugg/fix i
+    // Genesis storyImageSets (joseph-and-his-brothers).
+    renamedToOrder?: boolean;
+  }> = [
     { storySlug: "moses-in-the-basket", code: "FB_LS_Baby_Moses", count: 8, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-baby-moses/" },
     { storySlug: "burning-bush", code: "FB_LS_Burning_Bush", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-burning-bush/" },
     { storySlug: "ten-plagues", code: "FB_LS_Plagues_1", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-plagues-1/" },
-    { storySlug: "ten-plagues", code: "FB_LS_Plagues_2", count: 9, offset: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-plagues-2/" },
+    { storySlug: "ten-plagues", code: "FB_LS_Plagues_2", count: 9, offset: 9, renamedToOrder: true, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-plagues-2/" },
     { storySlug: "passover-and-exodus", code: "FB_LS_Passover", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-passover/" },
     { storySlug: "crossing-the-red-sea", code: "FB_Moses_Red_Sea", count: 15, offset: 0, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/moses-red-sea/" },
     { storySlug: "ten-commandments", code: "FB_RG_Moses_10_Commandments", count: 15, offset: 0, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-moses-10-commandments/" },
@@ -1703,7 +1773,8 @@ async function main() {
     const story = await prisma.story.findFirstOrThrow({ where: { bookId: exodus.id, slug: set.storySlug } });
     for (let fileNum = 1; fileNum <= set.count; fileNum++) {
       const order = set.offset + fileNum;
-      const path = `/images/exodus/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const fileLabel = set.renamedToOrder ? order : fileNum;
+      const path = `/images/exodus/${set.storySlug}/${String(fileLabel).padStart(2, "0")}.jpg`;
       const caption = exCaptions[set.code]?.[fileNum - 1] ?? null;
       await prisma.storyImage.upsert({
         where: { storyId_order: { storyId: story.id, order } },
@@ -1711,6 +1782,17 @@ async function main() {
         create: { storyId: story.id, order, path, caption, credit: set.credit, creditUrl: set.creditUrl },
       });
     }
+  }
+
+  // --- Omslagsbilder (thumbnailOrder) — se motsvarande kommentar i
+  // Genesis-blocket ovan. Bytt 2026-08-23 efter direkt feedback. ---
+  const exodusThumbnails: Record<string, number> = {
+    "moses-in-the-basket": 3, // korgen vävs/bäddas med bebisen
+    "passover-and-exodus": 3, // blodet stryks på dörrposten
+    "ten-plagues": 5, // grodplågan (Plagues_1, order = fileNum här)
+  };
+  for (const [slug, order] of Object.entries(exodusThumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: exodus.id, slug }, data: { thumbnailOrder: order } });
   }
 
   const exPortraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
