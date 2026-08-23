@@ -2067,6 +2067,247 @@ async function main() {
   }
   console.log(`Seedat We Who Wrestle with God: ${wrestleChapters.length} kapitel.`);
 
+  // --- Fas 14: Beyond Order: 12 More Rules for Life (2021) -----------
+  // Uppföljaren till 12 Rules for Life — samma metod: inget digitalt
+  // exemplar/transkript tillgängligt, så varje regels citat är
+  // korskontrollerat mot minst två oberoende sekundärkällor (Goodreads
+  // officiella citatsida, Shortform kapitelsammanfattningar m.fl.)
+  // 2026-08-23. Där inget längre verifierat citat hittades används
+  // regelns egen ordalydelse som citat (samma princip som regel 4/6 i
+  // första boken) — se README för fullständig avgränsning.
+  const beyondOrderBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: mapsOfMeaningCorpus.id, slug: "beyond-order" } },
+    update: {
+      description:
+        "Uppföljaren till 12 Rules for Life (2021) — tolv nya regler som " +
+        "denna gång lutar mer åt kaos-sidan av kaos/ordning-modellen: hur " +
+        "man hanterar för mycket osäkerhet, förändring och upplösning i " +
+        "livet (jämfört med första bokens fokus på för mycket rigid " +
+        "ordning/kaos-brist). Byggd kring samma anekdot- och " +
+        "livsråds-format som föregångaren.",
+      authorship: "Jordan B. Peterson, Portfolio/Penguin, mars 2021.",
+      traditions: null,
+    },
+    create: {
+      corpusId: mapsOfMeaningCorpus.id,
+      slug: "beyond-order",
+      name: "Beyond Order: 12 More Rules for Life",
+      order: 4,
+      description:
+        "Uppföljaren till 12 Rules for Life (2021) — tolv nya regler som " +
+        "denna gång lutar mer åt kaos-sidan av kaos/ordning-modellen: hur " +
+        "man hanterar för mycket osäkerhet, förändring och upplösning i " +
+        "livet (jämfört med första bokens fokus på för mycket rigid " +
+        "ordning/kaos-brist). Byggd kring samma anekdot- och " +
+        "livsråds-format som föregångaren.",
+      authorship: "Jordan B. Peterson, Portfolio/Penguin, mars 2021.",
+    },
+  });
+
+  const beyondOrderRules: Array<{ order: number; slug: string; title: string; quote: string; summary: string }> = [
+    {
+      order: 1, slug: "do-not-denigrate-institutions", title: "Förringa inte sociala institutioner eller kreativa framsteg",
+      quote:
+        "A certain amount of creativity and rebellion must be tolerated " +
+        "to maintain the process of regeneration. Every rule was once a " +
+        "creative act, breaking other rules.",
+      summary:
+        "Argumenterar för att tradition/institutioner och kreativ " +
+        "förnyelse inte är motsatser utan samarbetspartners: traditionen " +
+        "ger stabilitet och historisk förankring, medan kreativiteten " +
+        "förnyar det som stelnat. Att ensidigt förakta antingen ordning " +
+        "(institutioner) eller kaos (kreativ omstörtning) leder till " +
+        "antingen stagnation eller upplösning. Modern koppling: samma " +
+        "balansgång gäller på jobbet, i familjen och i politiken — ren " +
+        "revolution och ren konservatism är båda ofullständiga strategier.",
+    },
+    {
+      order: 2, slug: "imagine-who-you-could-be", title: "Föreställ dig vem du skulle kunna vara — och sikta enträget dit",
+      quote: "Imagine who you could be, and then aim single-mindedly at that.",
+      summary:
+        "Utgår från att lidande är en oundviklig del av tillvaron, och " +
+        "att varje människa därför har en sorts skyldighet att bli sin " +
+        "bästa möjliga version — inte av narcissism, utan för att minska " +
+        "det lidande man annars bidrar med till världen. Frågar rakt av: " +
+        "'vem skulle du kunna vara, om du var allt du skulle kunna vara?' " +
+        "Modern koppling: till skillnad från vaga mål ('bli lyckligare') " +
+        "kräver den här övningen att man konkret föreställer sig en " +
+        "specifik, bättre version av sig själv och sedan riktar sina " +
+        "dagliga val mot den — ett sorts personligt norrsken att navigera efter.",
+    },
+    {
+      order: 3, slug: "do-not-hide-in-fog", title: "Göm inte oönskade saker i dimman",
+      quote:
+        "Your world is known territory, surrounded by relatively " +
+        "unknown, surrounded by absolutely unknown.",
+      summary:
+        "Varnar för att otydligt definierade, ouppmärksammade problem " +
+        "('dimman') sväller okontrollerat i bakgrunden istället för att " +
+        "krympa — till skillnad från konkreta, namngivna problem som går " +
+        "att faktiskt ta itu med. Små vardagsstressorer man skjuter upp " +
+        "att hantera ackumuleras tyst tills de blir överväldigande. " +
+        "Modern koppling: regelbunden, ärlig självrannsakan (vad stör mig " +
+        "egentligen just nu?) är enligt Peterson billigare i längden än " +
+        "att låta obehagliga saker samla sig omärkt i periferin.",
+    },
+    {
+      order: 4, slug: "opportunity-where-responsibility-abdicated", title: "Möjligheten finns där ansvar övergivits",
+      quote:
+        "With careful attention, you might tip the balance toward " +
+        "opportunity sufficiently so that life is worth living.",
+      summary:
+        "Menar att uppmärksamhet på VAD som behöver göras — men som ingen " +
+        "gör — är en av de mest tillförlitliga källorna till mening och " +
+        "möjlighet i livet, mer hållbart än jakten på tillfällig lycka. " +
+        "Ett övergivet ansvar (ett ostädat rum, ett olöst problem på " +
+        "jobbet ingen tar tag i) är samtidigt en lucka någon kan fylla. " +
+        "Modern koppling: istället för att vänta på en perfekt " +
+        "'drömmöjlighet' uppmanar Peterson läsaren att aktivt leta efter " +
+        "de områden där ansvar redan ligger och skräpar oombesörjt.",
+    },
+    {
+      order: 5, slug: "do-not-do-what-you-hate", title: "Gör inte det du avskyr",
+      quote: "Do not do what you hate.",
+      summary:
+        "Läser kompromissande med sina egna moraliska gränser (att göra " +
+        "eller acceptera saker man innerst inne avskyr, av bekvämlighet " +
+        "eller konflikträdsla) som en av de säkraste vägarna till passivt " +
+        "förakt för sig själv och undertryckta, senare explosiva känslor. " +
+        "Regeln är medvetet formulerad negativt (vad man INTE ska göra) " +
+        "snarare än positivt, eftersom Peterson menar att man ofta vet " +
+        "precis vad man avskyr långt innan man vet vad man egentligen vill. " +
+        "Modern koppling: ett bra första steg mot ett meningsfullt liv är " +
+        "helt enkelt att sluta göra det man redan vet är fel för en själv.",
+    },
+    {
+      order: 6, slug: "abandon-ideology", title: "Överge ideologin",
+      quote: "Abandon ideology.",
+      summary:
+        "Varnar för färdigpaketerade ideologiska världsbilder (oavsett " +
+        "politisk riktning) som förenklar verklighetens genuina " +
+        "komplexitet till några få slagord och skyldiga syndabockar — " +
+        "vilket känns tryggt men gör en blind för nyanser som inte passar " +
+        "berättelsen. Uppmanar istället till att aktivt utbilda sig brett " +
+        "och brottas med världens faktiska komplexitet. Modern koppling: " +
+        "särskilt relevant i en tid av polariserad politik online — " +
+        "regeln är en uppmaning att misstro varje färdig världsförklaring " +
+        "som känns för enkel för att vara sann, oavsett vilket 'lag' den kommer från.",
+    },
+    {
+      order: 7, slug: "work-hard-on-one-thing", title: "Arbeta så hårt du kan med minst en sak",
+      quote:
+        "You could start by confronting a dragon of just the size you " +
+        "are likely to defeat.",
+      summary:
+        "Menar att spretig, halvhjärtad ansträngning över många områden " +
+        "sällan bygger verklig kompetens eller karaktär — medan " +
+        "helhjärtat engagemang i ÅTMINSTONE en sak, även liten, bygger " +
+        "både färdighet och självrespekt som sedan sprider sig till andra " +
+        "delar av livet. Bilden av att 'utmana en drake av lagom storlek' " +
+        "återkommer: börja med motstånd du faktiskt har en chans att " +
+        "besegra. Modern koppling: en vanlig fälla är att vänta på " +
+        "motivation innan man anstränger sig — Peterson vänder på det: " +
+        "kompetensen och motivationen kommer FRÅN att man redan ansträngt sig.",
+    },
+    {
+      order: 8, slug: "make-one-room-beautiful", title: "Försök göra ett rum i ditt hem så vackert som möjligt",
+      quote:
+        "We need to understand art as bedrock of culture itself, not as " +
+        "luxury or affectation.",
+      summary:
+        "Läser skönhet/konst inte som lyx utan som något psykologiskt " +
+        "nödvändigt — ett sätt att återupprätta kontakten med den " +
+        "barnsliga förundran och uppmärksamhet på detaljer som vuxenlivets " +
+        "rutin annars slipar bort. Att medvetet skapa EN vacker plats i " +
+        "sitt hem (snarare än att vänta på råd att göra om allt) är en " +
+        "konkret, avgränsad övning i att faktiskt agera på den impulsen. " +
+        "Modern koppling: ett litet, görbart projekt (städa och pryda ett " +
+        "enda hörn) som motgift mot känslan av att hela livet måste " +
+        "förbättras på en gång för att något ska räknas.",
+    },
+    {
+      order: 9, slug: "write-down-old-memories", title: "Om gamla minnen fortfarande plågar dig — skriv ner dem noggrant",
+      quote: "If old memories still upset you, write them down carefully and completely.",
+      summary:
+        "Bygger på idén att obearbetade, smärtsamma minnen fortsätter " +
+        "generera ångest just för att de aldrig fått en fullständig, " +
+        "sammanhängande berättelse — hjärnan larmar tills 'historien' är " +
+        "klar. Att medvetet skriva ner en plågsam episod i detalj, från " +
+        "flera vinklar, och försöka förstå den (inte bara återuppleva den) " +
+        "är enligt Peterson en väg att omvandla ett rått, ostrukturerat " +
+        "trauma till något hanterbart. Modern koppling: en konkret, " +
+        "görbar övning (skriftlig bearbetning) för något som annars ofta " +
+        "stannar som vag, återkommande olust utan tydlig utväg.",
+    },
+    {
+      order: 10, slug: "maintain-the-romance", title: "Planera och arbeta medvetet för att behålla romantiken i din relation",
+      quote:
+        "Collect a hundred small grievances and your marriage is doomed. " +
+        "Have the damn fight about daily matters.",
+      summary:
+        "Argumenterar för att romantik i ett långvarigt förhållande inte " +
+        "uppstår spontant utan kräver aktivt, återkommande underhåll — " +
+        "regelbundna samtal om vad som faktiskt irriterar båda parter " +
+        "INNAN småsaker hopar sig till outhärdlig bitterhet. Förespråkar " +
+        "monogami som den mest hållbara strukturen för det, med skilsmässa " +
+        "medvetet borttaget som lättillgänglig utväg för att tvinga fram " +
+        "faktisk problemlösning istället för undvikande. Modern koppling: " +
+        "ett schemalagt, återkommande 'förhandlingsmöte' om vardagsirritation " +
+        "är enligt Peterson mindre romantiskt i stunden men avgörande för " +
+        "att romantiken ska kunna hålla i sig över tid.",
+    },
+    {
+      order: 11, slug: "do-not-become-resentful-deceitful-arrogant", title: "Låt dig inte bli bitter, bedräglig eller arrogant",
+      quote:
+        "One lie breeds necessity for more. One act of self-deception " +
+        "generates requirement for new delusions.",
+      summary:
+        "Läser bitterhet, självbedrägeri och arrogans som en " +
+        "sammanhängande nedåtgående spiral snarare än tre separata laster: " +
+        "en första liten lögn (även bara till sig själv) skapar ett behov " +
+        "av fler lögnar för att upprätthålla den första, vilket i sin tur " +
+        "föder bitterhet över den värld man nu måste förvränga sin " +
+        "uppfattning för att uthärda. Modvärnet är att konsekvent lyssna " +
+        "på och agera enligt sitt samvete, även när det är obekvämt. " +
+        "Modern koppling: samma tema som återkommer i 12 Rules for Life " +
+        "regel 8 (tala sanning) — här fördjupat till varför den första " +
+        "lilla efterlåtenheten mot sig själv är farligare än den känns.",
+    },
+    {
+      order: 12, slug: "be-grateful-in-spite-of-suffering", title: "Var tacksam trots ditt lidande",
+      quote: "Be grateful in spite of your suffering.",
+      summary:
+        "Avslutar boken med att varken förneka livets verkliga mörker " +
+        "(sjukdom, förlust, orättvisa) eller falla in i nihilism inför " +
+        "det, utan hålla båda sanningarna samtidigt: tillvaron innehåller " +
+        "oundvikligt lidande, OCH det finns fortfarande genuint goda saker " +
+        "värda tacksamhet mitt i det. Tacksamhet blir här inte naiv " +
+        "positivitet utan en medveten, upprepad viljehandling — ett sätt " +
+        "att orientera sig mot vad som fortfarande fungerar, trots allt. " +
+        "Modern koppling: samma andemening som avslutningen av första " +
+        "boken (regel 12, klappa en katt) men fördjupad till en mer " +
+        "allmän livshållning snarare än en enskild liten gest.",
+    },
+  ];
+
+  for (const r of beyondOrderRules) {
+    await prisma.story.upsert({
+      where: { bookId_slug: { bookId: beyondOrderBook.id, slug: r.slug } },
+      update: { title: `Regel ${r.order}: ${r.title}`, summary: r.summary, quote: r.quote },
+      create: {
+        bookId: beyondOrderBook.id,
+        slug: r.slug,
+        title: `Regel ${r.order}: ${r.title}`,
+        startRef: `Regel ${r.order}`,
+        endRef: `Regel ${r.order}`,
+        summary: r.summary,
+        quote: r.quote,
+        orderInBook: r.order,
+      },
+    });
+  }
+  console.log(`Seedat Beyond Order: ${beyondOrderRules.length} regler.`);
+
   type MomLecture = { order: number; slug: string; title: string; youtubeId: string; summary: string };
   const momLectures: MomLecture[] = [
     {

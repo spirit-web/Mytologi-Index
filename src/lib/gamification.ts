@@ -213,6 +213,12 @@ export const BADGES: Badge[] = [
     "Klarmarkera alla 9 kapitel i We Who Wrestle with God.",
     "🤼",
   ),
+  bookBadge(
+    "beyond-order",
+    "Bortom ordningen",
+    "Klarmarkera alla 12 regler i Beyond Order.",
+    "🌀",
+  ),
   seriesBadge("genesis:jacob", "Jakob-cykeln klar", "Klarmarkera alla berättelser i Jakob-cykeln.", "🪜"),
   seriesBadge(
     "genesis:abraham",
