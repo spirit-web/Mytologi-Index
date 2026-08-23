@@ -85,6 +85,30 @@ klickbara länkar dit. **Detta fungerar automatiskt för alla framtida
 böcker/korpusar** (Koranen m.fl.) utan extra arbete — sidorna är inte
 knutna till en specifik bok, de listar tvärs över hela databasen.
 
+## Fas 12 (2026-08-23): We Who Wrestle with God (2024) — ny bok
+
+Petersons senaste bok tillagd som en tredje bok i Maps of Meaning-
+korpusen (`we-who-wrestle-with-god`). Nio kapitel i kronologisk ordning
+(skapelsen → Adam & Eva → Kain & Abel → Noa → Babels torn → Abraham →
+Moses → Elia → Jona), varje kapitel format "Gud som X" applicerat på en
+Gamla testamentet-berättelse — boken är Petersons mest direkta och
+omfattande bibeltolkning sedan 2017 års Bibelserie-föreläsningar, men
+som en genomskriven bok, inte transkript.
+
+Samma metod som 12 Rules for Life: inget digitalt exemplar/transkript
+av boken tillgängligt, så varje kapitels citat+sammanfattning är
+korskontrollerad mot flera oberoende sekundärkällor (Gospel Coalition-
+recension, SuperSummary studieguide, TEDS-reflektion, Prodigal
+Catholic-sammanfattning m.fl.) 2026-08-23.
+
+De sju första kapitlen (skapelsen t.o.m. Moses) cross-linkar direkt till
+redan indexerade Genesis/Exodus-berättelser via `bookSourceRef`-mönstret
+från Fas 10 — story-sidans referens-query generaliserades från
+hårdkodat "12-rules-for-life" till alla `corpus.kind === "framework"`-
+böcker, så samma kod nu servar båda böckerna (och alla framtida). Kapitel
+8 (Elia, 1 Kungaboken) och 9 (Jona) saknar ärligt cross-link eftersom de
+bibelböckerna inte är indexerade i vår Bibel-korpus ännu.
+
 ## Fas 11 (2026-08-23): Mesopotamien/Egypten/Logos + symbolbilder + buggfix
 
 **Buggfix**: bilderna på "Jakob arbetar för Rakel"-sidan visade sig vara
