@@ -85,6 +85,30 @@ klickbara länkar dit. **Detta fungerar automatiskt för alla framtida
 böcker/korpusar** (Koranen m.fl.) utan extra arbete — sidorna är inte
 knutna till en specifik bok, de listar tvärs över hela databasen.
 
+## Fas 13 (2026-08-23): Gamification — klarmarkering, favoriter, emblem, poäng
+
+Ny `StoryProgress`-modell (egen tabell, inte fält på `Story` — seed.ts
+upsertar Story-poster vid varje ny fas, och användarens framsteg får
+aldrig nollställas av det). Ingen inloggning/userId, appen är byggd för
+en enda användare.
+
+- Checkbox ("Markera som klar") + stjärnknapp ("Extra viktig") på varje
+  story-sida, via Server Actions med optimistisk UI.
+- Ny sida `/framsteg`: en "Jordan Peterson-visdomsmätare" (andel
+  klarmarkerade AV de berättelser som faktiskt har verifierat
+  Peterson-innehåll — segment eller bokcitat, inte bara ren bibeltext),
+  övergripande procent, poäng, 16 emblem (milstolpar, bokspecifika,
+  cykel-specifika), framsteg per bok, och en "Extra viktiga"-lista.
+- Enkel poängmodell: 10 poäng per klarmarkerad berättelse, +10 bonus om
+  den har Peterson-innehåll, +5 per extra-viktig-markering.
+- Tecknad (INTE fotorealistisk) vägvisar-maskot i headern länkar till
+  `/framsteg` — en stiliserad SVG-karikatyr för personligt/lokalt bruk,
+  inte ett porträtt.
+- ✓/★ syns nu även direkt i bokens berättelselista.
+
+**Medvetet inte byggt än**: en dialog-/samtalsfunktion där "Jordan"
+guidar eller svarar användaren — sparat till en senare fas.
+
 ## Fas 12 (2026-08-23): We Who Wrestle with God (2024) — ny bok
 
 Petersons senaste bok tillagd som en tredje bok i Maps of Meaning-
