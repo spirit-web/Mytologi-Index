@@ -85,6 +85,33 @@ klickbara länkar dit. **Detta fungerar automatiskt för alla framtida
 böcker/korpusar** (Koranen m.fl.) utan extra arbete — sidorna är inte
 knutna till en specifik bok, de listar tvärs över hela databasen.
 
+## Fas 15 (2026-08-23): Referenser på verk-nivå + Eliade och Frazer
+
+Nytt `Reference.work`-fält: vilket SPECIFIKT verk Peterson citerar (t.ex.
+"Brott och straff", "Pietà (skulptur)"), inte bara personen/idén i
+allmänhet — svaret på "vilken bok av Dostojevskij/Nietzsche/Jung citeras
+var". Bara ifyllt när ett verk faktiskt namnges i det vi läst/verifierat
+— Nietzsche/Jung/Freud/Platon har inget verk-fält eftersom inget
+specifikt verk namngavs i transkripten, hellre tomt än gissat. Fyllt i
+för de 6 referenser där ett verk redan var namngivet: Dostojevskij ×2
+(Brott och straff), Milton (Paradise Lost), Dante ×2 (Inferno),
+Michelangelo (Pietà). Visas nu på både story-sidan och personsidan.
+
+**Två nya referenser hittade** i Noa-föreläsningen (Biblical Series 6):
+Mircea Eliade (namnger sin egen bok *A History of Religious Ideas*) och
+James Frazer (*The Golden Bough*) — båda försvann i en tidigare
+textsökning efter "Eliade" eftersom YouTubes auto-undertexter stavat
+namnen katastrofalt fel ("Mercuria Eliata"/"Mel Elliott", "JG Fraser...
+golden bow"). En äldre kommentar i seed.ts påstod redan att Eliade
+nämndes där, men det hade aldrig faktiskt verifierats mot transkriptet
+förrän nu — löst genom att läsa passagen i sitt sammanhang istället för
+att bara textsöka på namnet.
+
+**Gilgamesh-eposet** undersöktes (på användarens direkta fråga) men
+hittades INTE i något nedladdat transkript — utelämnat snarare än gissat.
+
+Referens-index nu 26 personer/verk, 28 referenser (upp från 24/26).
+
 ## Fas 14 (2026-08-23): Beyond Order: 12 More Rules for Life (2021)
 
 Fjärde boken i Maps of Meaning-korpusen. Uppföljaren till 12 Rules for
