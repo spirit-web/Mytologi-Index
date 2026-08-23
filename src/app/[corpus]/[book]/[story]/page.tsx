@@ -38,13 +38,16 @@ export default async function StoryPage({
   if (!story) notFound();
 
   // Bok-interna referenser (t.ex. "12 Rules for Life, Regel 6" ->
-  // Solzjenitsyn): vilka andra personer/berättelser Jordan refererar till
-  // INOM just det här kapitlet. Bara relevant för 12 Rules for Life just
-  // nu (se seed.ts "Bok-interna referenser"-block för omfattning/källor).
+  // Solzjenitsyn, eller "We Who Wrestle with God, Kapitel 2" -> Adam och
+  // Eva i Edens lustgård): vilka andra personer/berättelser Jordan
+  // refererar till INOM just det här kapitlet. bookSourceRef byggs
+  // konsekvent som "${bokens namn}, ${story.startRef}" i seed.ts, så
+  // samma query fungerar för alla framework-böcker (se seed.ts
+  // "Bok-interna referenser"-block för omfattning/källor per bok).
   const bookReferences =
-    story.book.slug === "12-rules-for-life"
+    story.book.corpus.kind === "framework"
       ? await prisma.reference.findMany({
-          where: { bookSourceRef: `12 Rules for Life, ${story.startRef}` },
+          where: { bookSourceRef: `${story.book.name}, ${story.startRef}` },
           include: {
             story: { include: { book: { include: { corpus: true } } } },
             character: true,

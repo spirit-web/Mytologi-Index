@@ -1800,6 +1800,273 @@ async function main() {
     },
   });
 
+  // --- Fas 12: We Who Wrestle with God (2024) -------------------------
+  // Petersons senaste och mest direkta bibeltolkningsverk sedan 2017 års
+  // Bibelserie — men som RIKTIG BOK (inte transkriberade föreläsningar).
+  // Nio kapitel, vart och ett format "Gud som X" applicerat på en
+  // Gamla testamentet-berättelse, i kronologisk ordning. Kapitelstruktur
+  // och citat nedan är INTE hämtade ur boken direkt (ingen digital
+  // text/transkript tillgänglig för oss) utan korskontrollerade mot
+  // flera oberoende sekundärkällor 2026-08-23 (Gospel Coalition-recension,
+  // SuperSummary studieguide, TEDS-reflektion, Prodigal Catholic-
+  // sammanfattning m.fl.) — samma metod som för 12 Rules for Life.
+  // Kapitel 8 (Elia) och 9 (Jona) refererar till bibelböcker (1 Kungaboken,
+  // Jona) som INTE finns i vår Bibel-korpus än, så de saknar cross-link
+  // till en indexerad Story — de första sju kapitlen länkar däremot direkt
+  // till redan indexerade Genesis/Exodus-berättelser.
+  const wrestleBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: mapsOfMeaningCorpus.id, slug: "we-who-wrestle-with-god" } },
+    update: {
+      description:
+        "Petersons senaste bok (november 2024) — hans mest direkta och " +
+        "omfattande bibeltolkning sedan 2017 års Bibelserie-föreläsningar, " +
+        "men som en genomskriven bok snarare än transkriberade " +
+        "föreläsningar. Nio kapitel går kronologiskt igenom Gamla " +
+        "testamentets urberättelser (skapelsen till Jona), där varje " +
+        "kapitel undersöker en annan 'sida' eller 'personlighet' av Gud/" +
+        "Varat som den berättelsen framställer.",
+      authorship: "Jordan B. Peterson, Portfolio/Penguin, november 2024, ca 576 sidor.",
+      traditions:
+        "Tolkar Toran/Gamla testamentets urberättelser genom en jungiansk/" +
+        "arketypisk-psykologisk lins snarare än som traditionell religiös " +
+        "kommentar — men i nära dialog med judisk-kristen tolkningstradition.",
+    },
+    create: {
+      corpusId: mapsOfMeaningCorpus.id,
+      slug: "we-who-wrestle-with-god",
+      name: "We Who Wrestle with God",
+      order: 3,
+      description:
+        "Petersons senaste bok (november 2024) — hans mest direkta och " +
+        "omfattande bibeltolkning sedan 2017 års Bibelserie-föreläsningar, " +
+        "men som en genomskriven bok snarare än transkriberade " +
+        "föreläsningar. Nio kapitel går kronologiskt igenom Gamla " +
+        "testamentets urberättelser (skapelsen till Jona), där varje " +
+        "kapitel undersöker en annan 'sida' eller 'personlighet' av Gud/" +
+        "Varat som den berättelsen framställer.",
+      authorship: "Jordan B. Peterson, Portfolio/Penguin, november 2024, ca 576 sidor.",
+      traditions:
+        "Tolkar Toran/Gamla testamentets urberättelser genom en jungiansk/" +
+        "arketypisk-psykologisk lins snarare än som traditionell religiös " +
+        "kommentar — men i nära dialog med judisk-kristen tolkningstradition.",
+    },
+  });
+
+  type WrestleChapter = {
+    order: number;
+    slug: string;
+    title: string;
+    quote: string;
+    summary: string;
+    genesisStorySlug?: string; // cross-link till redan indexerad Genesis/Exodus-story
+  };
+  const wrestleChapters: WrestleChapter[] = [
+    {
+      order: 1, slug: "in-the-beginning", title: "I begynnelsen: Gud som den kreativa anden",
+      quote:
+        "The spirit who faces chaos; who confronts the void, the deep; " +
+        "who voluntarily shapes what has not yet been realized, and " +
+        "navigates the ever-transforming horizon of the future.",
+      summary:
+        "Läser skapelseberättelsens Gud inte i första hand som en " +
+        "bokstavlig skapare av materia, utan som en psykologisk modell: " +
+        "den kreativa hållning som frivilligt möter det oformade/okända " +
+        "('tohu va bohu' — vattnen, avgrunden) och formar det till något " +
+        "hanterbart. Poängen kopplad till moderna livet: människor är " +
+        "enligt Peterson kallade att göra samma sak i litet format — möta " +
+        "sin egen ostrukturerade framtid frivilligt och forma den, " +
+        "snarare än att passivt vänta på att kaos ska drabba en.",
+      genesisStorySlug: "creation",
+    },
+    {
+      order: 2, slug: "adam-and-eve-fall", title: "Adam och Eva och människans eviga fall",
+      quote:
+        "She represents and speaks for what is not yet known to Adam. " +
+        "Given his ignorance, willful and otherwise, she has plenty to " +
+        "work with.",
+      summary:
+        "Läser Eva som arketypen för det ännu-okända som lockar det " +
+        "medvetna (Adam) framåt, och hennes fall som en 'medkänslans " +
+        "patologi' — godhet som blir naiv och låter sig luras. Adams fall " +
+        "läses som hybris: att tro sig kunna omforma/kontrollera ordningen " +
+        "utan konsekvenser, och att falskt vilja imponera på sin partner " +
+        "istället för att vara ärlig. Modern koppling: utdrivningen ur " +
+        "Eden blir en bild för självmedvetandets eviga pris — när man väl " +
+        "vet vad sårbarhet och skam är kan man aldrig 'o-veta' det, och " +
+        "vägen tillbaka till harmoni kräver ödmjukhet snarare än förnekelse.",
+      genesisStorySlug: "garden-of-eden",
+    },
+    {
+      order: 3, slug: "cain-and-abel-resentment", title: "Kain och Abel: Det förbittrade brödrakriget",
+      quote:
+        "[Cain forges] a voluntary and blackly creative relationship with " +
+        "the temptation crouching in predatory form at his doorstep.",
+      summary:
+        "Definierar 'det goda' som troget, uppoffrande arbete och 'det " +
+        "onda' som självcentrerat groll — och läser Kains verkliga fel " +
+        "inte som det första avvisade offret (ett normalt bakslag) utan " +
+        "vägran att lära sig av det och ta ansvar. Peterson menar att Kain " +
+        "dödar Abel för att Abel representerar den ideal-version av sig " +
+        "själv som Kain innerst inne mest vill vara. Modern koppling: " +
+        "bitterhet och offerkofta (särskilt när man verkligen blivit " +
+        "orättvist behandlad) är en frestelse som, om den föds ut, gör mer " +
+        "skada på en själv och ens relationer än den ursprungliga orätten.",
+      genesisStorySlug: "cain-and-abel",
+    },
+    {
+      order: 4, slug: "noah-call-to-prepare", title: "Noa: Guds kallelse att förbereda sig",
+      quote:
+        "When you believe the storm is approaching, do you batten down " +
+        "the hatches and prepare, or not?",
+      summary:
+        "Läser Noa som den som fortsätter Abels rättfärdighet genom att " +
+        "faktiskt LYSSNA på varningen och agera på den, till skillnad från " +
+        "sina samtida. Gud framställs här som 'kallelsen att förbereda " +
+        "sig' inför moralisk/existentiell katastrof — inte ett straff som " +
+        "kommer utifrån, utan en varning man kan välja att ta på allvar " +
+        "eller ignorera. Modern koppling: samma fråga (bygger du din ark " +
+        "innan stormen, eller låtsas du att den inte kommer) appliceras på " +
+        "vardagliga varningstecken i eget liv, relationer eller samhälle " +
+        "som man väljer att antingen adressera i tid eller förtränga.",
+      genesisStorySlug: "noahs-flood",
+    },
+    {
+      order: 5, slug: "tower-of-babel-tyranny", title: "Babels torn: Gud kontra tyranni och högmod",
+      quote:
+        "In their pride, they claimed divinity and overstepped the bounds " +
+        "that kept them properly ensconced within the true cosmic and " +
+        "metaphysical order.",
+      summary:
+        "Läser Babels torn som prototypen för det arroganta imperiet: när " +
+        "människor tror sig kunna bygga ett fulländat, teknokratiskt " +
+        "utopia utan Gud/transcendent ordning, slutar det i tyranni och " +
+        "splittring (språkförbistringen). Peterson kallar det en varning " +
+        "mot 'totalitär visshet' — och kopplar det till idén att varje " +
+        "människas skapelse till Guds avbild är grunden för västerländska " +
+        "mänskliga rättigheter; att överge den idén (t.ex. genom att " +
+        "reducera individer till kollektiv/ideologiska kategorier) är " +
+        "enligt honom precis det steg som historiskt lett till tyranni.",
+      genesisStorySlug: "tower-of-babel",
+    },
+    {
+      order: 6, slug: "abraham-call-to-adventure", title: "Abraham: Guds modiga kallelse till äventyr",
+      quote:
+        "God, in the story of Abram, is the spirit that calls to the " +
+        "privileged and sheltered to leave the comforts of home and to " +
+        "undertake the adventures of their life.",
+      summary:
+        "Läser Abrahams kallelse ('gå ut från ditt land') som arketypen " +
+        "för det obligatoriska äventyret varje människa förr eller senare " +
+        "kallas till — att lämna trygghet och bekvämlighet för risk, " +
+        "ansvar och uppoffring. Peterson menar att man i Abrahams efterföljd " +
+        "måste 'gå all in', avvisa bekväma lögner som håller en kvar i " +
+        "overksamhet, och ta på sig ansvaret att 'välsigna sin värld' " +
+        "(bygga något av bestående värde för andra, inte bara för sig " +
+        "själv) — direkt kopplat till hans återkommande tema om ansvar " +
+        "som meningens motor, snarare än rättigheter eller bekvämlighet.",
+      genesisStorySlug: "call-of-abram",
+    },
+    {
+      order: 7, slug: "moses-and-israelites", title: "Moses och israeliterna",
+      quote:
+        "I am who I am.",
+      summary:
+        "Läser den brinnande busken och Guds självpresentation ('Jag är " +
+        "den jag är') som en uppenbarelse av rent Vara/existens självt — " +
+        "en kallelse till frihet som samtidigt är fruktansvärd, eftersom " +
+        "frihet medför enormt ansvar. Gud framställs genomgående i Moses " +
+        "berättelse som den anda som frigör GENOM att tvinga individer och " +
+        "samhällen att konfrontera tyranni (Farao) och kaos (ökenvandringen). " +
+        "Modern koppling: äkta frigörelse — från ett dåligt jobb, en " +
+        "destruktiv relation, ett skadligt system — är sällan bekväm; den " +
+        "kräver att man går igenom en egen 'öken' innan något bättre kan " +
+        "byggas.",
+      genesisStorySlug: "burning-bush",
+    },
+    {
+      order: 8, slug: "elijah-still-small-voice", title: "Elia: Den tysta, stilla rösten",
+      quote:
+        "[God] is not in the wind, no matter its ferocity, nor in the " +
+        "earthquake, regardless of its magnitude, but is something " +
+        "within; the voice of conscience itself.",
+      summary:
+        "Elias möte med Gud i 'den tysta, stilla rösten' (inte i stormen, " +
+        "inte i jordbävningen) läser Peterson som en vändpunkt i " +
+        "mänsklighetens gudsuppfattning: insikten att det gudomliga kan " +
+        "återfinnas som samvetets röst inom människan själv, inte bara i " +
+        "dramatiska yttre fenomen. Han kallar det 'en upptäckt av " +
+        "makalös betydelse'. Modern koppling: att lära sig lyssna på och " +
+        "lita på sitt eget samvete (snarare än yttre auktoriteter eller " +
+        "sociala påtryckningar) blir här grunden för moralisk förändring " +
+        "— ett tema som binder direkt till hans återkommande råd om att " +
+        "tala sanning och lyssna på sig själv (jfr 12 Rules for Life, " +
+        "regel 8–9).",
+      // Elia finns i 1 Kungaboken, ej indexerad ännu — inget cross-link.
+    },
+    {
+      order: 9, slug: "jonah-belly-of-the-whale", title: "Jona: Att möta helvetet i valens buk",
+      quote:
+        "Faith is the courage to determine to maintain stalwart and " +
+        "upward aim at the good, even in the midst of hell.",
+      summary:
+        "Läser Jonas flykt från sin kallelse (att varna Nineve) och hans " +
+        "efterföljande fångenskap i valens buk som en bild för vad som " +
+        "händer när man vägrar lyssna och agera: man hamnar ändå i sitt " +
+        "eget helvete, fast senare och värre. Valen tolkas symboliskt som " +
+        "samhällets 'kropp' av lag, kunskap och tradition som sväljer den " +
+        "som inte vill delta frivilligt. Tro definieras här inte som " +
+        "blind övertygelse utan som modet att fortsätta sikta uppåt mot " +
+        "det goda mitt i det värsta — direkt applicerbart på moderna kriser " +
+        "(sjukdom, förlust, misslyckande) där själva förmågan att fortsätta " +
+        "sikta mot något gott, mitt i lidandet, är vad Peterson kallar tro.",
+      // Jona är en egen bibelbok, ej indexerad ännu — inget cross-link.
+    },
+  ];
+
+  for (const ch of wrestleChapters) {
+    await prisma.story.upsert({
+      where: { bookId_slug: { bookId: wrestleBook.id, slug: ch.slug } },
+      update: {
+        title: `${ch.order}. ${ch.title}`,
+        summary: ch.summary,
+        quote: ch.quote,
+      },
+      create: {
+        bookId: wrestleBook.id,
+        slug: ch.slug,
+        title: `${ch.order}. ${ch.title}`,
+        startRef: `Kapitel ${ch.order}`,
+        endRef: `Kapitel ${ch.order}`,
+        summary: ch.summary,
+        quote: ch.quote,
+        orderInBook: ch.order,
+      },
+    });
+  }
+  // Bok-interna referenser: cross-link varje kapitel till den redan
+  // indexerade Genesis/Exodus-storyn för samma berättelse, med samma
+  // Reference-mönster (bookSourceRef) som byggdes för 12 Rules for Life.
+  for (const ch of wrestleChapters) {
+    if (!ch.genesisStorySlug) continue;
+    const targetStory = await prisma.story.findFirst({ where: { slug: ch.genesisStorySlug } });
+    if (!targetStory) continue;
+    await prisma.reference.upsert({
+      where: { id: `seed-bookref-wrestle-${ch.slug}` },
+      update: {
+        storyId: targetStory.id,
+        note: `Samma berättelse som "${targetStory.title}" i Bibel-korpusen, tolkad här ur "We Who Wrestle with God"s perspektiv.`,
+        bookSourceRef: `We Who Wrestle with God, Kapitel ${ch.order}`,
+      },
+      create: {
+        id: `seed-bookref-wrestle-${ch.slug}`,
+        storyId: targetStory.id,
+        note: `Samma berättelse som "${targetStory.title}" i Bibel-korpusen, tolkad här ur "We Who Wrestle with God"s perspektiv.`,
+        bookSourceRef: `We Who Wrestle with God, Kapitel ${ch.order}`,
+      },
+    });
+  }
+  console.log(`Seedat We Who Wrestle with God: ${wrestleChapters.length} kapitel.`);
+
   type MomLecture = { order: number; slug: string; title: string; youtubeId: string; summary: string };
   const momLectures: MomLecture[] = [
     {
