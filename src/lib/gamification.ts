@@ -26,7 +26,15 @@ export type StoryStat = {
   favorite: boolean;
 };
 
-export type GroupStat = { slug: string; name: string; completed: number; total: number };
+export type GroupStat = {
+  slug: string;
+  name: string;
+  completed: number;
+  total: number;
+  // Bara satt för byBook — vägen till bokens sida (/{corpusSlug}/{slug}).
+  // bySeries/byCorpus behöver den inte (byCorpus ÄR redan corpus-sluggen).
+  corpusSlug?: string;
+};
 
 export type GamificationStats = {
   stories: StoryStat[];
@@ -80,7 +88,7 @@ export async function getGamificationStats(): Promise<GamificationStats> {
     stories.filter((s) => s.completed && s.hasPetersonContent).length * POINTS_PETERSON_BONUS +
     totalFavorites * POINTS_PER_FAVORITE;
 
-  const byBook = groupBy(stories, (s) => s.bookSlug, (s) => s.bookName);
+  const byBook = groupBy(stories, (s) => s.bookSlug, (s) => s.bookName, (s) => s.corpusSlug);
   const bySeries = groupBy(
     stories.filter((s) => s.seriesSlug),
     (s) => `${s.bookSlug}:${s.seriesSlug}`,
@@ -106,11 +114,14 @@ function groupBy(
   stories: StoryStat[],
   keyFn: (s: StoryStat) => string,
   nameFn: (s: StoryStat) => string,
+  corpusSlugFn?: (s: StoryStat) => string,
 ): GroupStat[] {
   const map = new Map<string, GroupStat>();
   for (const s of stories) {
     const key = keyFn(s);
-    const existing = map.get(key) ?? { slug: key, name: nameFn(s), completed: 0, total: 0 };
+    const existing =
+      map.get(key) ??
+      { slug: key, name: nameFn(s), completed: 0, total: 0, corpusSlug: corpusSlugFn?.(s) };
     existing.total += 1;
     if (s.completed) existing.completed += 1;
     map.set(key, existing);

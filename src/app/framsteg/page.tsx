@@ -102,17 +102,29 @@ export default async function ProgressPage() {
           Framsteg per bok
         </h2>
         <div className="space-y-3 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5 shadow-sm">
-          {stats.byBook.map((b) => (
-            <div key={b.slug}>
-              <div className="mb-1 flex items-baseline justify-between text-sm">
-                <span className="text-[var(--text)]">{b.name}</span>
-                <span className="text-xs text-[var(--text-faint)] tabular-nums">
-                  {b.completed}/{b.total}
-                </span>
-              </div>
-              <ProgressBar pct={pct(b.completed, b.total)} tone="neutral" thin />
-            </div>
-          ))}
+          {stats.byBook.map((b) => {
+            const href = b.corpusSlug ? `/${b.corpusSlug}/${b.slug}` : null;
+            const row = (
+              <>
+                <div className="mb-1 flex items-baseline justify-between text-sm">
+                  <span className={href ? "text-[var(--text)] group-hover:underline" : "text-[var(--text)]"}>
+                    {b.name}
+                  </span>
+                  <span className="text-xs text-[var(--text-faint)] tabular-nums">
+                    {b.completed}/{b.total}
+                  </span>
+                </div>
+                <ProgressBar pct={pct(b.completed, b.total)} tone="neutral" thin />
+              </>
+            );
+            return href ? (
+              <Link key={b.slug} href={href} className="group block">
+                {row}
+              </Link>
+            ) : (
+              <div key={b.slug}>{row}</div>
+            );
+          })}
         </div>
       </section>
 
