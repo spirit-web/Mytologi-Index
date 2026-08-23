@@ -85,11 +85,14 @@ export default async function PersonPage({ params }: { params: Promise<{ slug: s
                       {r.story.title}
                     </Link>
                   ) : (
-                    r.bookSourceRef ?? "Okänd källa"
+                    // Fristående referens (t.ex. ett podcastavsnitt) utan
+                    // koppling till en specifik story eller bokreferens —
+                    // videolänken nedan räcker själv som källangivelse.
+                    r.bookSourceRef
                   )}
                   {r.video && (
                     <>
-                      {" · "}
+                      {r.story || r.bookSourceRef ? " · " : ""}
                       <a
                         href={`https://youtube.com/watch?v=${r.video.youtubeId}${r.atSec ? `&t=${r.atSec}s` : ""}`}
                         target="_blank"

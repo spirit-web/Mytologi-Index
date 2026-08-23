@@ -2875,6 +2875,41 @@ async function main() {
   // nämns. En "Al Albert Barn"-referens i föreläsning 10 (troligen
   // bibelforskaren Robert Alter, men ASR-texten är för förvrängd för att
   // vara säker) är fortsatt utelämnad av samma försiktighetsskäl.
+  // --- Tillagd 2026-08-23: The Jordan B. Peterson Podcast ------------
+  // Petersons eget podcast-flöde är en helt egen källa (inte del av
+  // Bibelserien eller Maps of Meaning) — läggs till som ny PetersonSeries
+  // första gången här, med avsnitt 491 ("Symbolic Patterns: Memes,
+  // Archetypes, Dragons, Genes", med Richard Dawkins & Alex O'Connor,
+  // 2024-10-21) som första avsnitt. Efterfrågad direkt av användaren:
+  // vilka böcker Peterson refererar till där för att koppla ihop Dawkins
+  // meme-teori med Jungianska arketyper. Verifierat mot nedladdat
+  // undertext-transkript (yt-dlp auto-captions), inte bara sekundärkällor.
+  const jbpPodcastSeries = await prisma.petersonSeries.upsert({
+    where: { slug: "jbp-podcast" },
+    update: {},
+    create: {
+      slug: "jbp-podcast",
+      title: "The Jordan B. Peterson Podcast",
+      isPanelDiscussion: true,
+      panelists: "Gäster varierar per avsnitt",
+      enabledByDefault: true,
+    },
+  });
+  await prisma.petersonVideo.upsert({
+    where: { youtubeId: "8wBtFNj_o5k" },
+    update: {
+      title: "491. Symbolic Patterns: Memes, Archetypes, Dragons, Genes | Dr. Richard Dawkins & Alex O'Connor",
+      seriesId: jbpPodcastSeries.id,
+      publishedAt: "2024-10-21",
+    },
+    create: {
+      youtubeId: "8wBtFNj_o5k",
+      title: "491. Symbolic Patterns: Memes, Archetypes, Dragons, Genes | Dr. Richard Dawkins & Alex O'Connor",
+      seriesId: jbpPodcastSeries.id,
+      publishedAt: "2024-10-21",
+    },
+  });
+
   const refCharacterDefs: Array<{ slug: string; name: string }> = [
     { slug: "dostojevskij", name: "Fjodor Dostojevskij" },
     { slug: "carl-jung", name: "Carl Jung" },
@@ -2902,6 +2937,8 @@ async function main() {
     { slug: "tiamat", name: "Tiamat (mesopotamisk urmoder/kaos)" },
     { slug: "osiris-horus", name: "Osiris/Horus (egyptisk gud)" },
     { slug: "jacques-derrida", name: "Jacques Derrida" },
+    { slug: "erich-neumann", name: "Erich Neumann" },
+    { slug: "camille-paglia", name: "Camille Paglia" },
   ];
   const refCharacters: Record<string, { id: string }> = {};
   for (const c of refCharacterDefs) {
@@ -3244,6 +3281,64 @@ async function main() {
         "språk som ett medvetet avstånd från logos-idén, och kritiserar " +
         "det som ett sätt att fly undan den 'återlösande kraften i " +
         "dialog' till förmån för ren maktkamp.",
+    },
+
+    // --- Tillagda 2026-08-23: The Jordan B. Peterson Podcast avsnitt 491
+    // (Dawkins & O'Connor) — de böcker Peterson/O'Connor tar upp för att
+    // koppla ihop Dawkins meme-begrepp med Jungianska arketyper. Ingen
+    // storySlug (avsnittet är inte knutet till en specifik Bibel-story).
+    // OBS om Piaget: användaren undrade om Piaget också hör hit — en
+    // fullständig sökning i avsnittets transkript hittade INGEN
+    // Piaget-referens i just det här samtalet. Piaget förekommer däremot
+    // upprepat i Maps of Meaning (se referensen ovan, föreläsning 5) —
+    // det är troligen den kopplingen användaren mindes, inte den här
+    // podcasten.
+    {
+      videoYoutubeId: "8wBtFNj_o5k", characterSlug: "mircea-eliade", atSec: 401,
+      work: "The Sacred and the Profane",
+      note:
+        "Alex O'Connor tar upp om Peterson läst Eliades The Sacred and " +
+        "the Profane, som infallsport till att beskriva religiösa idéers " +
+        "'virala' spridning och konkurrens mellan kulturers gudsbilder — " +
+        "direkt kopplat till samtalets huvudfråga om memer vs. arketyper.",
+    },
+    {
+      videoYoutubeId: "8wBtFNj_o5k", characterSlug: "mircea-eliade", atSec: 407,
+      work: "A History of Religious Ideas",
+      note:
+        "Samma resonemang fortsätter till Eliades tre-volyms A History " +
+        "of Religious Ideas ('jag gillar den verkligen') och dess analys " +
+        "av 'striden mellan gudarna i himlen' som ett återkommande motiv " +
+        "i många kulturer — varje gud som uttryck för ett visst sätt att " +
+        "uppfatta/agera i världen, som sedan konkurrerar och bildar en " +
+        "hierarki (grobotten för monoteism). Samma bok Peterson själv " +
+        "rekommenderar i Noa-föreläsningen (Bibelserien), se ovan.",
+    },
+    {
+      videoYoutubeId: "8wBtFNj_o5k", characterSlug: "erich-neumann", atSec: 3663,
+      work: "The Origins and History of Consciousness",
+      note:
+        "Peterson kallar Erich Neumann (Jungs 'kanske störste elev, " +
+        "möjligen den som överträffade honom') författare till 'ett verk " +
+        "av geni' i The Origins and History of Consciousness — central " +
+        "för hans argument att meme-begreppet och arketyp-begreppet i " +
+        "grunden beskriver samma sak.",
+    },
+    {
+      videoYoutubeId: "8wBtFNj_o5k", characterSlug: "erich-neumann", atSec: 3667,
+      work: "The Great Mother",
+      note:
+        "Nämner i samma andetag Neumanns The Great Mother, en studie av " +
+        "det feminina symbolspråket ('ett bra bra bok') — Neumanns andra " +
+        "stora arketyp-studie utöver Origins and History of Consciousness.",
+    },
+    {
+      videoYoutubeId: "8wBtFNj_o5k", characterSlug: "camille-paglia", atSec: 3659,
+      note:
+        "Berättar att Camille Paglia studerat Neumanns arbete djupt, och " +
+        "att hon trodde att hela den akademiska 'kulturkriget' hade " +
+        "kunnat undvikas om universiteten på 1960–70-talen hade vänt sig " +
+        "till Neumann istället för åt det håll de faktiskt gick.",
     },
   ];
 
