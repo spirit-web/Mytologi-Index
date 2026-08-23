@@ -394,6 +394,19 @@ async function main() {
       characterSlugs: ["joseph", "jacob"],
       themeSlugs: ["sibling-rivalry", "sacrifice"],
     },
+    {
+      // Avslutar Första Moseboken: familjen flyttar till Egypten, Jakob
+      // välsignar sina söner (den poetiska "stams-profetian" i kap. 49)
+      // och dör, och till sist dör även Josef. Peterson gjorde aldrig ett
+      // avsnitt om det här — hans Bibelserie slutade vid Josefs kappa
+      // (ep. 15) — men texten läggs ändå in för att göra Genesis komplett.
+      slug: "jacob-in-egypt-and-death",
+      title: "Jakob i Egypten — välsignelsen och döden",
+      startRef: "Genesis 46:1", endRef: "Genesis 50:26",
+      orderInBook: 18,
+      characterSlugs: ["jacob", "joseph"],
+      themeSlugs: ["covenant"],
+    },
   ];
 
   for (const s of stories) {
@@ -460,6 +473,14 @@ async function main() {
     orderStart: number;
     credit: string;
     creditUrl: string;
+    // Sant för set som delar EN story-mapp med andra set (t.ex. Josefs tre
+    // bildset i samma mapp) — då döptes filerna om till sitt ORDER-nummer
+    // vid nedladdning (se download-images.sh) för att undvika kollision,
+    // så path måste också bygga på `order`, inte råa `fileNum`. Falskt
+    // (default) för set som ligger ensamma i sin mapp under sina
+    // ursprungliga filnummer (inkl. FB_RG_Lot, som medvetet laddades ner
+    // en gång per story-mapp under originalnumrering).
+    renamedToOrder?: boolean;
   }> = [
     { storySlug: "creation", code: "FB_LS_Creation_Days", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-creation-days/" },
     { storySlug: "garden-of-eden", code: "FB_FN_Adam_Eve", fileStart: 1, fileEnd: 11, orderStart: 1, credit: "Fishnet Bible Stories (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/fn-adam-eve/" },
@@ -480,8 +501,13 @@ async function main() {
     { storySlug: "jacob-flees-laban", code: "FB_Jacob_Returns", fileStart: 1, fileEnd: 16, orderStart: 1, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/jacob-returns/" },
     { storySlug: "jacob-wrestling", code: "FB_LS_Jacob_Israel", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jacob-israel/" },
     { storySlug: "joseph-and-his-brothers", code: "FB_LS_Joseph_Dreams", fileStart: 1, fileEnd: 9, orderStart: 1, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-joseph-dreams/" },
-    { storySlug: "joseph-and-his-brothers", code: "FB_LS_Joseph_Coat", fileStart: 1, fileEnd: 10, orderStart: 10, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-joseph-coat/" },
-    { storySlug: "joseph-and-his-brothers", code: "FB_LS_Joseph_Brothers", fileStart: 1, fileEnd: 9, orderStart: 20, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-joseph-brothers/" },
+    { storySlug: "joseph-and-his-brothers", code: "FB_LS_Joseph_Coat", fileStart: 1, fileEnd: 10, orderStart: 10, renamedToOrder: true, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-joseph-coat/" },
+    { storySlug: "joseph-and-his-brothers", code: "FB_LS_Joseph_Brothers", fileStart: 1, fileEnd: 9, orderStart: 20, renamedToOrder: true, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-joseph-brothers/" },
+    // Gen 46–50: Jakob flyttar till Egypten, familjeåterförening, Jakobs
+    // välsignelse av sina söner och bådas död. Peterson gjorde aldrig
+    // fler avsnitt efter "Joseph and the Coat of Many Colors" (ep. 15 var
+    // seriens sista) så ingen video täcker det här — se README.
+    { storySlug: "jacob-in-egypt-and-death", code: "FB_Joseph_Jacob", fileStart: 1, fileEnd: 19, orderStart: 1, credit: "FreeBibleimages.org, CC BY-SA 4.0", creditUrl: "https://www.freebibleimages.org/photos/joseph-jacob/" },
   ];
 
   for (const set of storyImageSets) {
@@ -490,8 +516,11 @@ async function main() {
       const order = set.orderStart + (fileNum - set.fileStart);
       // Filen ligger fysiskt kvar under sitt UR-SPRUNGLIGA filnummer i
       // story-mappen (så vi slapp ladda ner FB_RG_Lot två gånger) — path
-      // pekar därför på fileNum, medan `order` är visningsordningen.
-      const path = `/images/genesis/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      // pekar därför på fileNum, medan `order` är visningsordningen. Om
+      // setet delar mapp med andra set (renamedToOrder) döptes filerna
+      // om vid nedladdning, så path bygger då på `order` istället.
+      const fileLabel = set.renamedToOrder ? order : fileNum;
+      const path = `/images/genesis/${set.storySlug}/${String(fileLabel).padStart(2, "0")}.jpg`;
       const rawCaption = captions[set.code]?.[fileNum - 1];
       const caption = isJunkCaption(rawCaption) ? null : rawCaption;
       await prisma.storyImage.upsert({
