@@ -1799,6 +1799,7 @@ async function main() {
     { slug: "sippora", name: "Sippora" },
     { slug: "josua", name: "Josua" },
     { slug: "besalel", name: "Besalel" },
+    { slug: "jetro", name: "Jetro" },
   ];
   const exCharacters: Record<string, { id: string }> = {};
   for (const c of exCharacterDefs) {
@@ -1826,8 +1827,19 @@ async function main() {
     // och ankomsten till Sinai.
     { slug: "manna-and-quail", title: "Manna och vaktlar i öknen", startRef: "Exodus 16:1", endRef: "Exodus 16:36", orderInBook: 7, characterSlugs: ["mose", "aron"], themeSlugs: ["testing-of-faith"] },
     { slug: "water-from-rock-and-amalek", title: "Vatten ur klippan och striden mot Amalek", startRef: "Exodus 17:1", endRef: "Exodus 17:16", orderInBook: 8, characterSlugs: ["mose", "aron", "josua"], themeSlugs: ["testing-of-faith", "hierarchy"] },
-    { slug: "ten-commandments", title: "De tio budorden på Sinai", startRef: "Exodus 19:16", endRef: "Exodus 20:21", orderInBook: 9, characterSlugs: ["mose"], themeSlugs: ["kingdom-of-god"] },
-    { slug: "golden-calf", title: "Guldkalven", startRef: "Exodus 32:1", endRef: "Exodus 32:35", orderInBook: 10, characterSlugs: ["mose", "aron"], themeSlugs: ["betrayal"] },
+    // NY 2026-08-24: inget bildset hittat trots upprepad sökning — Exodus
+    // 18 verkar helt enkelt sakna en dedikerad FreeBibleimages-
+    // illustration. Läggs ändå in textbaserad (första storyn i appen helt
+    // utan bildgalleri) hellre än att lämna kapitlet outtäckt, efter
+    // uttrycklig önskan om fullständighet för Genesis/Exodus.
+    { slug: "jethro-advises-moses", title: "Jetro ger Mose råd", startRef: "Exodus 18:1", endRef: "Exodus 18:27", orderInBook: 9, characterSlugs: ["mose", "jetro", "sippora"], themeSlugs: ["hierarchy"] },
+    { slug: "ten-commandments", title: "De tio budorden på Sinai", startRef: "Exodus 19:16", endRef: "Exodus 20:21", orderInBook: 10, characterSlugs: ["mose"], themeSlugs: ["kingdom-of-god"] },
+    { slug: "golden-calf", title: "Guldkalven", startRef: "Exodus 32:1", endRef: "Exodus 32:35", orderInBook: 11, characterSlugs: ["mose", "aron"], themeSlugs: ["betrayal"] },
+    // NY 2026-08-24: den direkta uppföljningen till guldkalven — Mose
+    // ber för folket, ser Guds härlighet passera, får nya lagtavlor
+    // (efter att ha slagit sönder de första), och kommer ner med ett
+    // strålande ansikte.
+    { slug: "new-tablets-and-gods-glory", title: "Nya lagtavlor och Guds härlighet", startRef: "Exodus 33:1", endRef: "Exodus 34:35", orderInBook: 12, characterSlugs: ["mose", "aron"], themeSlugs: ["covenant"] },
     // NY 2026-08-23: bokens sista, till stora delar instruktions-/
     // byggnadstunga avsnitt (Exodus 25-40) — sammanfattat som EN story
     // snarare än uppdelat scen för scen, eftersom kapitlen mest är
@@ -1841,7 +1853,7 @@ async function main() {
     // måttlistor) — startRef/endRef begränsas medvetet till bara det
     // faktiskt extraherade kapitlet så att sidan inte visar ett felaktigt
     // "kunde inte hämta"-varningsmeddelande.
-    { slug: "the-tabernacle", title: "Tabernaklet — Guds boning bland folket", startRef: "Exodus 25:1", endRef: "Exodus 25:40", orderInBook: 11, characterSlugs: ["mose", "aron", "besalel"], themeSlugs: ["kingdom-of-god"] },
+    { slug: "the-tabernacle", title: "Tabernaklet — Guds boning bland folket", startRef: "Exodus 25:1", endRef: "Exodus 25:40", orderInBook: 13, characterSlugs: ["mose", "aron", "besalel"], themeSlugs: ["kingdom-of-god"] },
   ];
 
   for (const s of exStories) {
@@ -1904,6 +1916,9 @@ async function main() {
     { storySlug: "water-from-rock-and-amalek", code: "FB_Moses_Amalekites", count: 15, offset: 5, renamedToOrder: true, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/moses-amalekites/" },
     { storySlug: "ten-commandments", code: "FB_RG_Moses_10_Commandments", count: 15, offset: 0, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-moses-10-commandments/" },
     { storySlug: "golden-calf", code: "FB_LS_Golden_Calf", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-golden-calf/" },
+    // ("jethro-advises-moses" har medvetet inget bildset — se kommentar
+    // vid storyn ovan.)
+    { storySlug: "new-tablets-and-gods-glory", code: "FB_LS_Moses_Commandments", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-moses-commandments/" },
     { storySlug: "the-tabernacle", code: "FB_Moses_Tabernacle", count: 34, offset: 0, credit: "Sweet Publishing / freebibleimages.org, CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/moses-tabernacle/" },
   ];
   for (const set of exImageSets) {
