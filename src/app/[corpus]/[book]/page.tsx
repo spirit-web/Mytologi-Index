@@ -22,6 +22,11 @@ export default async function BookPage({
           themes: { include: { theme: true } },
           images: { orderBy: { order: "asc" } },
           petersonSegments: { include: { video: true } },
+          // Personer/verk Peterson REFERERAR till i samband med storyn
+          // (Nietzsche, Jung, Disney-filmer, ...) — framework-böcker som
+          // Maps of Meaning har annars inga riktiga StoryCharacter-rader
+          // alls, se användarfeedback och gamification.ts.
+          referencesAsTarget: { include: { character: true } },
           progress: true,
         },
       },
@@ -32,11 +37,18 @@ export default async function BookPage({
 
   const completedCount = book.stories.filter((s) => s.progress?.completedAt).length;
 
-  // Karaktärsremsan under "Om boken": bara karaktärerna som faktiskt
-  // förekommer i DEN HÄR bokens berättelser, men x/y räknas GLOBALT (över
-  // hela appen) — en karaktär som Mose räknas likadant oavsett om man
-  // tittar på den från Exodus- eller Matteus-sidan, se gamification.ts.
-  const bookCharacterSlugs = new Set(book.stories.flatMap((s) => s.characters.map((c) => c.character.slug)));
+  // Karaktärsremsan under "Om boken": alla karaktärer som antingen
+  // förekommer SOM person i någon av bokens berättelser (StoryCharacter)
+  // ELLER som Peterson refererar till i samband med en av dem
+  // (Reference) — det senare är hur t.ex. Maps of Meaning/12 Rules for
+  // Life får en karaktärsremsa alls, eftersom de saknar riktiga
+  // StoryCharacter-rader. x/y räknas GLOBALT (över hela appen) — en
+  // karaktär som Mose räknas likadant oavsett om man tittar på den från
+  // Exodus- eller Matteus-sidan, se gamification.ts.
+  const bookCharacterSlugs = new Set([
+    ...book.stories.flatMap((s) => s.characters.map((c) => c.character.slug)),
+    ...book.stories.flatMap((s) => s.referencesAsTarget.flatMap((r) => (r.character ? [r.character.slug] : []))),
+  ]);
   const allCharacterStats = await getCharacterStats();
   const bookCharacterStats = allCharacterStats.filter((c) => bookCharacterSlugs.has(c.slug));
 
@@ -57,6 +69,7 @@ export default async function BookPage({
   const videoMap = new Map<string, string>(); // youtubeId -> titel
   for (const s of book.stories) {
     for (const c of s.characters) characterMap.set(c.character.slug, c.character.name);
+    for (const r of s.referencesAsTarget) if (r.character) characterMap.set(r.character.slug, r.character.name);
     for (const seg of s.petersonSegments) videoMap.set(seg.video.youtubeId, seg.video.title);
   }
 

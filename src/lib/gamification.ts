@@ -27,17 +27,35 @@ export async function getCharacterStats(): Promise<CharacterStat[]> {
   const characters = await prisma.character.findMany({
     include: {
       appearances: { include: { story: { include: { progress: true } } } },
+      // Fångar upp personer/verk Peterson REFERERAR till (Nietzsche,
+      // Jung, Disney-filmer, m.fl.) — särskilt viktigt för framework-
+      // böckerna (Maps of Meaning, 12 Rules for Life, ...) som annars
+      // saknar riktiga StoryCharacter-kopplingar helt. Bara Reference-
+      // rader med en satt storyId räknas (annars går det inte att koppla
+      // till en avklarningsbar berättelse) — se README.
+      references: { include: { story: { include: { progress: true } } } },
     },
   });
   return characters
-    .filter((c) => c.appearances.length > 0)
-    .map((c) => ({
-      slug: c.slug,
-      name: c.name,
-      portraitPath: c.portraitPath,
-      total: c.appearances.length,
-      completed: c.appearances.filter((a) => !!a.story.progress?.completedAt).length,
-    }))
+    .map((c) => {
+      // Union av story-ID:n dels via StoryCharacter (är en karaktär I
+      // berättelsen), dels via Reference (Peterson refererar till
+      // personen i samband med en story) — samma karaktär ska bara
+      // räknas en gång per story oavsett vilken koppling det är.
+      const storyProgress = new Map<string, boolean>();
+      for (const a of c.appearances) storyProgress.set(a.storyId, !!a.story.progress?.completedAt);
+      for (const r of c.references) {
+        if (r.storyId) storyProgress.set(r.storyId, !!r.story?.progress?.completedAt);
+      }
+      return {
+        slug: c.slug,
+        name: c.name,
+        portraitPath: c.portraitPath,
+        total: storyProgress.size,
+        completed: [...storyProgress.values()].filter(Boolean).length,
+      };
+    })
+    .filter((c) => c.total > 0)
     .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name, "sv"));
 }
 

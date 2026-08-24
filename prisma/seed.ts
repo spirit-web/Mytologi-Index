@@ -1431,64 +1431,84 @@ async function main() {
       characterSlugs: ["jesus"], themeSlugs: [],
     },
     {
+      // NY 2026-08-24: samma kapitel som såningsmannen, direkt efter.
+      slug: "wheat-and-tares", title: "Liknelsen om vetet och ogräset",
+      startRef: "Matthew 13:24", endRef: "Matthew 13:30", orderInBook: 8,
+      characterSlugs: ["jesus"], themeSlugs: ["chaos-order"],
+    },
+    {
       // NY 2026-08-23: ett av de mest kända undren, tidigare inte med.
       slug: "feeding-the-5000", title: "Bespisningen av de fem tusen",
-      startRef: "Matthew 14:13", endRef: "Matthew 14:21", orderInBook: 8,
+      startRef: "Matthew 14:13", endRef: "Matthew 14:21", orderInBook: 9,
       characterSlugs: ["jesus"], themeSlugs: ["compassion"],
     },
     {
       // NY 2026-08-23: direkt efterföljande scen i samma kapitel.
       slug: "walking-on-water", title: "Jesus går på vattnet",
-      startRef: "Matthew 14:22", endRef: "Matthew 14:33", orderInBook: 9,
+      startRef: "Matthew 14:22", endRef: "Matthew 14:33", orderInBook: 10,
       characterSlugs: ["jesus", "petrus"], themeSlugs: ["testing-of-faith"],
+    },
+    {
+      // NY 2026-08-24: föregår förklaringen på berget kronologiskt med
+      // bara sex dagar (17:1) — Petrus första stora trosbekännelse.
+      slug: "peters-confession", title: "Petrus bekännelse",
+      startRef: "Matthew 16:13", endRef: "Matthew 16:20", orderInBook: 11,
+      characterSlugs: ["jesus", "petrus"], themeSlugs: ["kingdom-of-god"],
     },
     {
       // NY 2026-08-23: teologisk vändpunkt (Petrus bekännelse följs
       // direkt av förklaringen på berget) — Mose och Elia återknyter
       // till samma Character-poster som i Exodus/framtida profetböcker.
       slug: "transfiguration", title: "Förklaringen på berget",
-      startRef: "Matthew 17:1", endRef: "Matthew 17:13", orderInBook: 10,
+      startRef: "Matthew 17:1", endRef: "Matthew 17:13", orderInBook: 12,
       characterSlugs: ["jesus", "petrus", "jakob-apostel", "johannes-apostel", "mose", "elia"], themeSlugs: ["kingdom-of-god"],
     },
     {
       slug: "triumphal-entry", title: "Intåget i Jerusalem",
-      startRef: "Matthew 21:1", endRef: "Matthew 21:11", orderInBook: 11,
+      startRef: "Matthew 21:1", endRef: "Matthew 21:11", orderInBook: 13,
       characterSlugs: ["jesus"], themeSlugs: [],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 1,
     },
     {
+      // NY 2026-08-24: en av Petersons mest citerade liknelser i eget
+      // författarskap ("do your best with what you've been given").
+      slug: "parable-of-the-talents", title: "Liknelsen om de anförtrodda punden",
+      startRef: "Matthew 25:14", endRef: "Matthew 25:30", orderInBook: 14,
+      characterSlugs: ["jesus"], themeSlugs: [],
+    },
+    {
       slug: "last-supper", title: "Den sista måltiden",
-      startRef: "Matthew 26:17", endRef: "Matthew 26:30", orderInBook: 12,
+      startRef: "Matthew 26:17", endRef: "Matthew 26:30", orderInBook: 15,
       characterSlugs: ["jesus", "judas", "petrus"], themeSlugs: [],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 2,
     },
     {
       slug: "gethsemane", title: "Getsemane och tillfångatagandet",
-      startRef: "Matthew 26:36", endRef: "Matthew 26:56", orderInBook: 13,
+      startRef: "Matthew 26:36", endRef: "Matthew 26:56", orderInBook: 16,
       characterSlugs: ["jesus", "judas", "petrus"], themeSlugs: ["betrayal"],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 3,
     },
     {
       slug: "trial-before-pilate", title: "Rättegången inför Pilatus",
-      startRef: "Matthew 27:11", endRef: "Matthew 27:31", orderInBook: 14,
+      startRef: "Matthew 27:11", endRef: "Matthew 27:31", orderInBook: 17,
       characterSlugs: ["jesus", "pontius-pilatus"], themeSlugs: [],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 4,
     },
     {
       slug: "crucifixion", title: "Korsfästelsen",
-      startRef: "Matthew 27:32", endRef: "Matthew 27:44", orderInBook: 15,
+      startRef: "Matthew 27:32", endRef: "Matthew 27:44", orderInBook: 18,
       characterSlugs: ["jesus"], themeSlugs: ["sacrifice"],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 5,
     },
     {
       slug: "death-and-burial", title: "Jesu död och begravning",
-      startRef: "Matthew 27:45", endRef: "Matthew 27:66", orderInBook: 16,
+      startRef: "Matthew 27:45", endRef: "Matthew 27:66", orderInBook: 19,
       characterSlugs: ["jesus", "maria-magdalena"], themeSlugs: ["sacrifice"],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 6,
     },
     {
       slug: "resurrection", title: "Uppståndelsen",
-      startRef: "Matthew 28:1", endRef: "Matthew 28:20", orderInBook: 17,
+      startRef: "Matthew 28:1", endRef: "Matthew 28:20", orderInBook: 20,
       characterSlugs: ["jesus", "maria-magdalena", "petrus"], themeSlugs: [],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 7,
     },
@@ -1552,6 +1572,15 @@ async function main() {
     { storySlug: "feeding-the-5000", code: "FB_LS_Boy_Lunch", count: 10, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-boy-lunch/" },
     { storySlug: "walking-on-water", code: "FB_LS_Peter_Water", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-peter-water/" },
     { storySlug: "transfiguration", code: "FB_Jesus_Transfiguration", count: 11, credit: "Sweet Publishing / freebibleimages.org, CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/jesus-transfiguration/" },
+    // NY 2026-08-24. Samma försiktighet med licenser: flera bildset för
+    // "Unforgiving servant" och "Sheep and goats" hittades men samtliga
+    // hade explicit "A.I. adaptations prohibited" — utelämnade helt
+    // hellre än att chansa. Peters bekännelse, vete/ogräs och punden
+    // nedan är alla Lambsongs (samma CC BY-NC, AI-adaptationer tillåtna,
+    // som redan används genomgående).
+    { storySlug: "peters-confession", code: "FB_LS_Peter_Rock", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/rg-peter-rock/" },
+    { storySlug: "wheat-and-tares", code: "FB_LS_Wheat_Tares", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-wheat-tares/" },
+    { storySlug: "parable-of-the-talents", code: "FB_LS_Parable_Talents", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-parable-talents/" },
   ];
 
   for (const set of ntImageSets) {
@@ -1581,6 +1610,9 @@ async function main() {
     "calling-of-first-disciples": 7, // Petrus vid det fyllda nätet, inte bara vyn över Kapernaum
     "walking-on-water": 4, // Petrus går mot Jesus på vattnet
     transfiguration: 4, // Jesu strålande, förvandlade gestalt
+    "peters-confession": 6, // gruppscenen där Petrus svarar Jesus
+    "wheat-and-tares": 6, // färgstark vete/ogräs-närbild, inte silhuett-titelkortet
+    "parable-of-the-talents": 4, // guldmynten på bordet
   };
   for (const [slug, order] of Object.entries(matthewThumbnails)) {
     await prisma.story.updateMany({ where: { bookId: matthew.id, slug }, data: { thumbnailOrder: order } });
@@ -3632,9 +3664,19 @@ async function main() {
     },
   ];
   for (const r of bookReferences) {
-    const storyId = r.storySlug
-      ? (await prisma.story.findFirstOrThrow({ where: { slug: r.storySlug } })).id
-      : null;
+    // OBS (rättat 2026-08-24): storyId pekar nu på REGELNS EGEN story
+    // (i 12-rules-for-life-boken), inte längre på ett ev. tvärbok-mål
+    // (r.storySlug, t.ex. Genesis "garden-of-eden") — annars dök inte
+    // dessa referenser upp alls i karaktärsremsan på 12 Rules for Life-
+    // sidan (som bara känner till References vars storyId hör till EN
+    // av bokens egna stories), och de syntes aldrig heller på själva
+    // regel-sidan. Tvärboks-kopplingen finns ändå kvar i klartext i
+    // `note`. r.storySlug behålls i typen som dokumentation men används
+    // inte längre för uppslagning.
+    const ruleStory = await prisma.story.findFirstOrThrow({
+      where: { bookId: rulesBook.id, orderInBook: r.ruleOrder },
+    });
+    const storyId = ruleStory.id;
     const characterId = r.characterSlug ? refCharacters[r.characterSlug].id : null;
     await prisma.reference.upsert({
       where: { id: r.id },
