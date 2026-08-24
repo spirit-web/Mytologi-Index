@@ -1697,6 +1697,7 @@ async function main() {
     { slug: "mirjam", name: "Mirjam" },
     { slug: "sippora", name: "Sippora" },
     { slug: "josua", name: "Josua" },
+    { slug: "besalel", name: "Besalel" },
   ];
   const exCharacters: Record<string, { id: string }> = {};
   for (const c of exCharacterDefs) {
@@ -1726,6 +1727,20 @@ async function main() {
     { slug: "water-from-rock-and-amalek", title: "Vatten ur klippan och striden mot Amalek", startRef: "Exodus 17:1", endRef: "Exodus 17:16", orderInBook: 8, characterSlugs: ["mose", "aron", "josua"], themeSlugs: ["testing-of-faith", "hierarchy"] },
     { slug: "ten-commandments", title: "De tio budorden på Sinai", startRef: "Exodus 19:16", endRef: "Exodus 20:21", orderInBook: 9, characterSlugs: ["mose"], themeSlugs: ["kingdom-of-god"] },
     { slug: "golden-calf", title: "Guldkalven", startRef: "Exodus 32:1", endRef: "Exodus 32:35", orderInBook: 10, characterSlugs: ["mose", "aron"], themeSlugs: ["betrayal"] },
+    // NY 2026-08-23: bokens sista, till stora delar instruktions-/
+    // byggnadstunga avsnitt (Exodus 25-40) — sammanfattat som EN story
+    // snarare än uppdelat scen för scen, eftersom kapitlen mest är
+    // detaljerade instruktioner (och sedan ett upprepat "genomförande"-
+    // avsnitt) utan Peterson-kommenterat narrativt innehåll att luta sig
+    // mot. Bildgalleriet (34 bilder) täcker ändå hela det fulla spannet
+    // 25-40, inklusive slutscenen där Guds härlighet fyller tabernaklet.
+    // Text-sektionen visar bara kap. 25 (instruktionerna för förbundsarken
+    // — den mest ikoniska och mest citerade delen) som representativt
+    // utdrag, INTE hela 25-40 (16 kapitel, till stora delar upprepade
+    // måttlistor) — startRef/endRef begränsas medvetet till bara det
+    // faktiskt extraherade kapitlet så att sidan inte visar ett felaktigt
+    // "kunde inte hämta"-varningsmeddelande.
+    { slug: "the-tabernacle", title: "Tabernaklet — Guds boning bland folket", startRef: "Exodus 25:1", endRef: "Exodus 25:40", orderInBook: 11, characterSlugs: ["mose", "aron", "besalel"], themeSlugs: ["kingdom-of-god"] },
   ];
 
   for (const s of exStories) {
@@ -1788,6 +1803,7 @@ async function main() {
     { storySlug: "water-from-rock-and-amalek", code: "FB_Moses_Amalekites", count: 15, offset: 5, renamedToOrder: true, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/moses-amalekites/" },
     { storySlug: "ten-commandments", code: "FB_RG_Moses_10_Commandments", count: 15, offset: 0, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-moses-10-commandments/" },
     { storySlug: "golden-calf", code: "FB_LS_Golden_Calf", count: 9, offset: 0, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-golden-calf/" },
+    { storySlug: "the-tabernacle", code: "FB_Moses_Tabernacle", count: 34, offset: 0, credit: "Sweet Publishing / freebibleimages.org, CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/moses-tabernacle/" },
   ];
   for (const set of exImageSets) {
     const story = await prisma.story.findFirstOrThrow({ where: { bookId: exodus.id, slug: set.storySlug } });
@@ -1814,6 +1830,7 @@ async function main() {
     // (avviker stilmässigt) — bild 10 (ur Amalek-setet) är den mer
     // dramatiska "Mose håller upp händerna"-scenen.
     "water-from-rock-and-amalek": 10,
+    "the-tabernacle": 15, // förbundsarken, lysande gyllene — mer ikoniskt än bild 1 (bara ett åskmoln)
   };
   for (const [slug, order] of Object.entries(exodusThumbnails)) {
     await prisma.story.updateMany({ where: { bookId: exodus.id, slug }, data: { thumbnailOrder: order } });
