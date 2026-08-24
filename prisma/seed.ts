@@ -1880,26 +1880,32 @@ async function main() {
     // uttrycklig önskan om fullständighet för Genesis/Exodus.
     { slug: "jethro-advises-moses", title: "Jetro ger Mose råd", startRef: "Exodus 18:1", endRef: "Exodus 18:27", orderInBook: 9, characterSlugs: ["mose", "jetro", "sippora"], themeSlugs: ["hierarchy"] },
     { slug: "ten-commandments", title: "De tio budorden på Sinai", startRef: "Exodus 19:16", endRef: "Exodus 20:21", orderInBook: 10, characterSlugs: ["mose"], themeSlugs: ["kingdom-of-god"] },
-    { slug: "golden-calf", title: "Guldkalven", startRef: "Exodus 32:1", endRef: "Exodus 32:35", orderInBook: 11, characterSlugs: ["mose", "aron"], themeSlugs: ["betrayal"] },
-    // NY 2026-08-24: den direkta uppföljningen till guldkalven — Mose
-    // ber för folket, ser Guds härlighet passera, får nya lagtavlor
-    // (efter att ha slagit sönder de första), och kommer ner med ett
-    // strålande ansikte.
-    { slug: "new-tablets-and-gods-glory", title: "Nya lagtavlor och Guds härlighet", startRef: "Exodus 33:1", endRef: "Exodus 34:35", orderInBook: 12, characterSlugs: ["mose", "aron"], themeSlugs: ["covenant"] },
-    // NY 2026-08-23: bokens sista, till stora delar instruktions-/
-    // byggnadstunga avsnitt (Exodus 25-40) — sammanfattat som EN story
-    // snarare än uppdelat scen för scen, eftersom kapitlen mest är
-    // detaljerade instruktioner (och sedan ett upprepat "genomförande"-
-    // avsnitt) utan Peterson-kommenterat narrativt innehåll att luta sig
-    // mot. Bildgalleriet (34 bilder) täcker ändå hela det fulla spannet
-    // 25-40, inklusive slutscenen där Guds härlighet fyller tabernaklet.
+    // NY 2026-08-23: bokens till stora delar instruktions-/byggnadstunga
+    // avsnitt (Exodus 25-40) — sammanfattat som EN story snarare än
+    // uppdelat scen för scen, eftersom kapitlen mest är detaljerade
+    // instruktioner (och sedan ett upprepat "genomförande"-avsnitt) utan
+    // Peterson-kommenterat narrativt innehåll att luta sig mot.
+    // Bildgalleriet (34 bilder) täcker ändå hela det fulla spannet 25-40,
+    // inklusive slutscenen där Guds härlighet fyller tabernaklet.
     // Text-sektionen visar bara kap. 25 (instruktionerna för förbundsarken
     // — den mest ikoniska och mest citerade delen) som representativt
     // utdrag, INTE hela 25-40 (16 kapitel, till stora delar upprepade
     // måttlistor) — startRef/endRef begränsas medvetet till bara det
     // faktiskt extraherade kapitlet så att sidan inte visar ett felaktigt
     // "kunde inte hämta"-varningsmeddelande.
-    { slug: "the-tabernacle", title: "Tabernaklet — Guds boning bland folket", startRef: "Exodus 25:1", endRef: "Exodus 25:40", orderInBook: 13, characterSlugs: ["mose", "aron", "besalel"], themeSlugs: ["kingdom-of-god"] },
+    //
+    // RÄTTAD PLACERING (2026-08-24, upptäckt via /tidslinje): denna story
+    // låg tidigare EFTER guldkalven/nya lagtavlorna trots att dess eget
+    // startRef (25:1) kommer långt före dem — instruktionerna för
+    // tabernaklet gavs MEDAN Mose var uppe på berget, innan guldkalven
+    // hann hända. Flyttad hit, direkt efter de tio budorden.
+    { slug: "the-tabernacle", title: "Tabernaklet — Guds boning bland folket", startRef: "Exodus 25:1", endRef: "Exodus 25:40", orderInBook: 11, characterSlugs: ["mose", "aron", "besalel"], themeSlugs: ["kingdom-of-god"] },
+    { slug: "golden-calf", title: "Guldkalven", startRef: "Exodus 32:1", endRef: "Exodus 32:35", orderInBook: 12, characterSlugs: ["mose", "aron"], themeSlugs: ["betrayal"] },
+    // NY 2026-08-24: den direkta uppföljningen till guldkalven — Mose
+    // ber för folket, ser Guds härlighet passera, får nya lagtavlor
+    // (efter att ha slagit sönder de första), och kommer ner med ett
+    // strålande ansikte.
+    { slug: "new-tablets-and-gods-glory", title: "Nya lagtavlor och Guds härlighet", startRef: "Exodus 33:1", endRef: "Exodus 34:35", orderInBook: 13, characterSlugs: ["mose", "aron"], themeSlugs: ["covenant"] },
   ];
 
   for (const s of exStories) {
@@ -3890,6 +3896,27 @@ async function main() {
     });
   }
   console.log(`Seedat Tier 2 (handplockat kända): ${wellKnownSlugs.length} berättelser.`);
+
+  // ======================================================================
+  // FAS 27: Skrivtid-uppskattningar (för /tidslinje) + tidslinje-metadata
+  // ======================================================================
+  // Kort, fri-text sammanfattning av samma dateringsresonemang som redan
+  // finns i respektive boks `authorship`-fält (traditionell datering vs.
+  // modern forskningskonsensus) — bara komprimerat till en rad för
+  // tidslinjens kompakta vy.
+  const writtenEstimates: Array<{ slug: string; estimate: string }> = [
+    { slug: "genesis", estimate: "Traditionellt ca 1200-talet f.Kr. (Mose) — moderna forskare daterar ofta källorna till ca 950–500 f.Kr., slutredigering ca 500–400 f.Kr." },
+    { slug: "exodus", estimate: "Traditionellt ca 1200-talet f.Kr. — moderna forskare ofta ca 600–500 f.Kr. för slutredigeringen." },
+    { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
+    { slug: "maps-of-meaning-2017", estimate: "Föreläsningar hållna 2017 (boken med samma namn gavs ut 1999)." },
+    { slug: "12-rules-for-life", estimate: "2018" },
+    { slug: "we-who-wrestle-with-god", estimate: "2024" },
+    { slug: "beyond-order", estimate: "2021" },
+  ];
+  for (const { slug, estimate } of writtenEstimates) {
+    await prisma.book.updateMany({ where: { slug }, data: { writtenEstimate: estimate } });
+  }
+  console.log(`Seedat skrivtid-uppskattningar: ${writtenEstimates.length} böcker.`);
 }
 
 main()
