@@ -70,6 +70,35 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 22 (2026-08-24): Referens-baserad karaktärsremsa + tre nya Matteus-berättelser
+
+**Karaktärsremsan gäller nu även framework-böcker**: Maps of Meaning,
+12 Rules for Life m.fl. saknar riktiga StoryCharacter-kopplingar (ingen
+är en "karaktär i berättelsen" i Bibel-mening) och visade därför
+"0 karaktärer" trots ett rikt referens-index. `getCharacterStats()`
+räknar nu även `Reference`-rader (personer/verk Peterson refererar
+till) som "förekomster", så Maps of Meaning-sidan visar 19 referererade
+tänkare/verk och 12 Rules for Life visar Solzjenitsyn/Frankl. Krävde en
+datamodell-fix: `bookReferences`-loopen för 12 Rules for Life pekade
+tidigare `storyId` mot ett EV. tvärboks-mål (t.ex. Genesis vid
+syndafallet) istället för regelns egen story — det gjorde att
+referensen aldrig dök upp någonstans användaren faktiskt tittade.
+Samma system används automatiskt för Koranen och andra framtida verk
+utan extra arbete.
+
+**Header-ikonen** (länken till "Ditt framsteg") byttes från en tecknad
+generisk figur till den riktiga Jordan Peterson-bilden, samma croppade
+badge som Tier 1-märkena.
+
+**Matteus utökad** från 17 till 20 berättelser: Petrus bekännelse
+(16:13-20), Liknelsen om vetet och ogräset (13:24-30), Liknelsen om de
+anförtrodda punden (25:14-30). Rättade proaktivt samma NT Herre/Gud-fel
+som i Fas 20 (se `normalize_divine_name.py`-varningen) i de nya
+kapitlen INNAN de skeppades — 7 fall. Sökte även bildset för
+"Unforgiving servant" och "Sheep and goats" men samtliga hittade hade
+licens som uttryckligen förbjuder "A.I. adaptations" — utelämnade
+medvetet istället för att chansa.
+
 ## Fas 21 (2026-08-24): Karaktärsporträtt, karaktärsemblem, prioritetsnivåer
 
 **Karaktärsremsa under "Om boken"**: varje bok-sida visar nu porträtt (i
