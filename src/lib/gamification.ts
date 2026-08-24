@@ -9,6 +9,38 @@ export const POINTS_PER_STORY = 10;
 export const POINTS_PETERSON_BONUS = 10;
 export const POINTS_PER_FAVORITE = 5;
 
+// --- Karaktärsstatistik ---------------------------------------------------
+// Globalt (inte per bok) — en karaktär som Mose eller Elia kan förekomma
+// i flera böcker (Exodus, Matteus), och "hur långt har jag kommit med den
+// här personen" är mer meningsfullt räknat över hela appen än bara den
+// bok man råkar stå på. Används både för karaktärsremsan under "Om boken"
+// på bok-sidan och för karaktärsemblemen på framsteg-sidan.
+export type CharacterStat = {
+  slug: string;
+  name: string;
+  portraitPath: string | null;
+  completed: number;
+  total: number;
+};
+
+export async function getCharacterStats(): Promise<CharacterStat[]> {
+  const characters = await prisma.character.findMany({
+    include: {
+      appearances: { include: { story: { include: { progress: true } } } },
+    },
+  });
+  return characters
+    .filter((c) => c.appearances.length > 0)
+    .map((c) => ({
+      slug: c.slug,
+      name: c.name,
+      portraitPath: c.portraitPath,
+      total: c.appearances.length,
+      completed: c.appearances.filter((a) => !!a.story.progress?.completedAt).length,
+    }))
+    .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name, "sv"));
+}
+
 export type StoryStat = {
   id: string;
   title: string;

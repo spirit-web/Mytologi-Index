@@ -70,6 +70,49 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 21 (2026-08-24): Karaktärsporträtt, karaktärsemblem, prioritetsnivåer
+
+**Karaktärsremsa under "Om boken"**: varje bok-sida visar nu porträtt (i
+en eller flera rader, radbryts naturligt) av alla karaktärer som
+förekommer i boken, med namn och `x/y` — x = avklarade berättelser med
+personen, y = totalt antal berättelser personen förekommer i, räknat
+GLOBALT över hela appen (inte bara den bok man står på), eftersom
+karaktärer som Mose/Elia nu återkommer över flera böcker. Porträtt är
+inte AI-genererade — samma återanvända scenbilder som redan fanns på
+`Character.portraitPath`; karaktärer utan bra bild får en enkel
+bokstavs-cirkel istället för en dålig bild.
+
+**Karaktärsemblem**: ny sektion på framsteg-sidan, ett emblem per
+karaktär (35 st) som "låses upp" när ALLA berättelser med den personen
+är avklarade — samma `x/y`-data som ovan, delad via en ny
+`getCharacterStats()`-funktion i `gamification.ts`.
+
+**Prioritetsnivåer** (synliga som små märken på varje berättelse-rad):
+- **Tier 1** — verifierat Peterson-innehåll finns (samma `hasPetersonContent`-
+  logik som redan användes för poängsystemet) → Jordan Petersons eget
+  porträtt som märke (croppad/cirkelbeskuren version av en bild
+  användaren tillhandahöll, sparad lokalt som `/images/badges/
+  jordan-peterson-badge.png` — används bara som en liten intern ikon i
+  denna privata app, inte återpublicerad någonstans).
+- **Tier 2** — handplockat känd/central berättelse (t.ex. Röda havet,
+  Bergspredikan, Bespisningen av de fem tusen) trots att Peterson ännu
+  inte kopplats till den → fylld stjärna i accentfärg. Byggd genom att
+  gå igenom alla berättelser UTAN Peterson-koppling och bedöma allmän
+  kändhet (`isWellKnown`-fält på Story, handplockad lista i seed.ts) —
+  se seed.ts-kommentaren för exakt lista och resonemang.
+- **Tier 3** — allt annat (default, inget märke). I nuvarande innehåll
+  bara två berättelser (Mose flyr till Midjan, Tabernaklet) — de allra
+  flesta redan inlagda berättelserna är antingen Peterson-täckta eller
+  välkända, vilket är en ärlig avspegling av hur boken byggts hittills.
+
+**Klarmarkering är nu grön, inte brun/svart**: nytt `--success`-
+designtoken (grönt, ljust+mörkt läge) ersätter `--accent` för
+klarmarkerings-bocken på både story-sidan och bok-listans rader.
+Bytte samtidigt Unicode-tecknet "✓" mot en egen SVG — vissa typsnitt
+renderar checkmark-tecknet som en färgad emoji-glyf som ignorerar
+CSS-färg, vilket var trolig orsak till att bocken syntes mörk/svart
+även med `text-white` satt.
+
 ## Fas 20 (2026-08-23): Tabernaklet + fyra nya Matteus-berättelser
 
 **Exodus** fick en tolfte berättelse, Tabernaklet (Exodus 25-40, 34

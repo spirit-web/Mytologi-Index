@@ -3689,6 +3689,47 @@ async function main() {
       `${genesisEpisodes.length + 1 + exodusClips.length} Peterson-videor, ` +
       `${segments.length} tidsstämplade segment, 1 exempel-Parallel.`
   );
+
+  // ======================================================================
+  // FAS 21: Prioritetsnivåer (Tier 1/2/3) — handplockad Tier 2-lista
+  // ======================================================================
+  // Tier 1 härleds i appen (hasPetersonContent), inte lagrat här. Denna
+  // lista är bara Tier 2 = "känd/central berättelse trots att Peterson
+  // (ännu) inte kopplats till den". Byggd 2026-08-23 genom att gå igenom
+  // ALLA stories utan petersonSegments/quote och bedöma allmän kändhet —
+  // se README för resonemang. Allt som INTE står här och saknar Peterson-
+  // koppling blir automatiskt Tier 3 (default isWellKnown=false).
+  const wellKnownSlugs: Array<{ bookSlug: string; storySlug: string }> = [
+    { bookSlug: "genesis", storySlug: "jacob-in-egypt-and-death" },
+    { bookSlug: "exodus", storySlug: "moses-in-the-basket" },
+    { bookSlug: "exodus", storySlug: "burning-bush" },
+    { bookSlug: "exodus", storySlug: "passover-and-exodus" },
+    { bookSlug: "exodus", storySlug: "crossing-the-red-sea" },
+    { bookSlug: "exodus", storySlug: "water-from-rock-and-amalek" },
+    { bookSlug: "matthew", storySlug: "nativity" },
+    { bookSlug: "matthew", storySlug: "baptism-of-jesus" },
+    { bookSlug: "matthew", storySlug: "temptation-in-wilderness" },
+    { bookSlug: "matthew", storySlug: "calling-of-first-disciples" },
+    { bookSlug: "matthew", storySlug: "sermon-on-the-mount" },
+    { bookSlug: "matthew", storySlug: "calming-the-storm" },
+    { bookSlug: "matthew", storySlug: "parable-of-the-sower" },
+    { bookSlug: "matthew", storySlug: "feeding-the-5000" },
+    { bookSlug: "matthew", storySlug: "walking-on-water" },
+    { bookSlug: "matthew", storySlug: "transfiguration" },
+    { bookSlug: "matthew", storySlug: "triumphal-entry" },
+    { bookSlug: "matthew", storySlug: "last-supper" },
+    { bookSlug: "matthew", storySlug: "gethsemane" },
+    { bookSlug: "matthew", storySlug: "trial-before-pilate" },
+    // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
+    // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
+  ];
+  for (const { bookSlug, storySlug } of wellKnownSlugs) {
+    await prisma.story.updateMany({
+      where: { slug: storySlug, book: { slug: bookSlug } },
+      data: { isWellKnown: true },
+    });
+  }
+  console.log(`Seedat Tier 2 (handplockat kända): ${wellKnownSlugs.length} berättelser.`);
 }
 
 main()

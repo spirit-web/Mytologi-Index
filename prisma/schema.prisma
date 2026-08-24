@@ -81,6 +81,13 @@ model Story {
   // se README om omslagsbilder.
   thumbnailOrder Int?
 
+  // Prioritetsnivå för läsordning, se README "Prioritetsnivåer":
+  // Tier 1 (härleds i appen, inte lagrat) = har verifierat Peterson-
+  // innehåll (petersonSegments eller quote). Tier 2 = isWellKnown=true,
+  // handplockat för kända/centrala berättelser som saknar Peterson-
+  // koppling än. Tier 3 (default) = allt annat, mindre kända/perifera.
+  isWellKnown Boolean @default(false)
+
   // Är denna story del av en berättelsecykel (t.ex. "Abraham", "Jakob")?
   // Om satt grupperas den ihop med syskon-storys som har samma seriesSlug.
   seriesSlug  String?

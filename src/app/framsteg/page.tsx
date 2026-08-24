@@ -1,14 +1,17 @@
+import Image from "next/image";
 import Link from "next/link";
-import { getGamificationStats, BADGES } from "@/lib/gamification";
+import { getGamificationStats, getCharacterStats, BADGES } from "@/lib/gamification";
 
 export default async function ProgressPage() {
-  const stats = await getGamificationStats();
+  const [stats, characterStats] = await Promise.all([getGamificationStats(), getCharacterStats()]);
 
   const overallPct = pct(stats.totalCompleted, stats.totalStories);
   const petersonPct = pct(stats.petersonCompleted, stats.petersonTotal);
   const earnedBadges = BADGES.filter((b) => b.isEarned(stats));
   const lockedBadges = BADGES.filter((b) => !b.isEarned(stats));
   const favorites = stats.stories.filter((s) => s.favorite);
+  const earnedCharacterBadges = characterStats.filter((c) => c.completed === c.total);
+  const lockedCharacterBadges = characterStats.filter((c) => c.completed !== c.total);
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
@@ -93,6 +96,56 @@ export default async function ProgressPage() {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* Karaktärsemblem — ett per person, klar när ALLA berättelser med
+          den karaktären (över hela appen, oavsett bok) är avklarade. */}
+      <section className="mb-10">
+        <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--text-faint)]">
+          Karaktärsemblem ({earnedCharacterBadges.length}/{characterStats.length})
+        </h2>
+        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+          {[...earnedCharacterBadges, ...lockedCharacterBadges].map((c) => (
+            <Link
+              key={c.slug}
+              href={`/personer/${c.slug}`}
+              className={`rounded-xl border p-3 text-center shadow-sm transition ${
+                c.completed === c.total
+                  ? "border-[var(--success-border)] bg-[var(--success-bg)]"
+                  : "border-[var(--border)] bg-[var(--bg-elevated)] opacity-70 hover:opacity-100"
+              }`}
+              title={`${c.name}: ${c.completed}/${c.total} berättelser avklarade`}
+            >
+              {c.portraitPath ? (
+                <Image
+                  src={c.portraitPath}
+                  alt=""
+                  width={48}
+                  height={48}
+                  className={`mx-auto mb-1.5 h-12 w-12 rounded-full border object-cover ${
+                    c.completed === c.total
+                      ? "border-[var(--success)]"
+                      : "border-[var(--border)] grayscale"
+                  }`}
+                />
+              ) : (
+                <span className="mx-auto mb-1.5 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg)] font-serif text-lg text-[var(--text-faint)]">
+                  {c.name.charAt(0)}
+                </span>
+              )}
+              <p
+                className={`truncate text-xs font-medium ${
+                  c.completed === c.total ? "text-[var(--success)]" : "text-[var(--text-muted)]"
+                }`}
+              >
+                {c.name}
+              </p>
+              <p className="mt-0.5 text-[10px] tabular-nums text-[var(--text-faint)]">
+                {c.completed}/{c.total}
+              </p>
+            </Link>
+          ))}
         </div>
       </section>
 

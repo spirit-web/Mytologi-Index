@@ -29,19 +29,33 @@ export function StoryProgressControls({
         }}
         className={`flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
           completed
-            ? "border-[var(--accent-border)] bg-[var(--accent-bg)] text-[var(--accent)]"
-            : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            ? "border-[var(--success-border)] bg-[var(--success-bg)] text-[var(--success)]"
+            : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--success)] hover:text-[var(--success)]"
         }`}
         aria-pressed={completed}
       >
         <span
-          className={`flex h-4 w-4 items-center justify-center rounded-full border text-[10px] leading-none ${
+          className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
             completed
-              ? "border-[var(--accent)] bg-[var(--accent)] text-white"
+              ? "border-[var(--success)] bg-[var(--success)]"
               : "border-[var(--text-faint)]"
           }`}
         >
-          {completed ? "✓" : ""}
+          {completed && (
+            // Egen SVG istället för Unicode-tecknet "✓" — vissa
+            // typsnitt/OS renderar det som en färgad emoji-glyf som
+            // ignorerar text-färg, vilket gjorde bocken svart även med
+            // text-white satt. SVG med currentColor är alltid pålitlig.
+            <svg viewBox="0 0 16 16" className="h-2.5 w-2.5 text-white" fill="none" aria-hidden>
+              <path
+                d="M3 8.5L6.2 11.5L13 4.5"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
         </span>
         {completed ? "Klarmarkerad" : "Markera som klar"}
       </button>

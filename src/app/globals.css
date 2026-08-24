@@ -23,6 +23,13 @@
   --link-bg: #eaf3ef;
   --link-border: #cfe6dd;
 
+  /* Grön "klarmarkerad"-status — medvetet skild från --link (som redan
+     är en grönton men används för teman/parallell-sektioner) och från
+     --accent (bruna/gula toner, används för Peterson-innehåll). */
+  --success: #1a7a34;
+  --success-bg: #eaf6ec;
+  --success-border: #c8e8ce;
+
   --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
 }
 
@@ -43,6 +50,10 @@
     --link: #5fd6b8;
     --link-bg: #16241e;
     --link-border: #294237;
+
+    --success: #4ade80;
+    --success-bg: #132417;
+    --success-border: #22432b;
   }
 }
 

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getCharacterStats } from "@/lib/gamification";
 
 export default async function BookPage({
   params,
@@ -30,6 +31,14 @@ export default async function BookPage({
   if (!book) notFound();
 
   const completedCount = book.stories.filter((s) => s.progress?.completedAt).length;
+
+  // Karaktärsremsan under "Om boken": bara karaktärerna som faktiskt
+  // förekommer i DEN HÄR bokens berättelser, men x/y räknas GLOBALT (över
+  // hela appen) — en karaktär som Mose räknas likadant oavsett om man
+  // tittar på den från Exodus- eller Matteus-sidan, se gamification.ts.
+  const bookCharacterSlugs = new Set(book.stories.flatMap((s) => s.characters.map((c) => c.character.slug)));
+  const allCharacterStats = await getCharacterStats();
+  const bookCharacterStats = allCharacterStats.filter((c) => bookCharacterSlugs.has(c.slug));
 
   // Gruppera: standalone-berättelser vs. cykler (seriesSlug).
   const standalone = book.stories.filter((s) => !s.seriesSlug);
@@ -100,6 +109,45 @@ export default async function BookPage({
         </section>
       )}
 
+      {bookCharacterStats.length > 0 && (
+        <section className="mb-10">
+          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-[var(--text-faint)]">
+            Karaktärer i boken
+          </h2>
+          <div className="flex flex-wrap gap-3">
+            {bookCharacterStats.map((c) => (
+              <Link
+                key={c.slug}
+                href={`/personer/${c.slug}`}
+                className="flex w-[76px] flex-col items-center gap-1.5 rounded-lg p-1.5 text-center transition hover:bg-[var(--accent-bg)]"
+              >
+                {c.portraitPath ? (
+                  <Image
+                    src={c.portraitPath}
+                    alt=""
+                    width={56}
+                    height={56}
+                    className="h-14 w-14 rounded-full border border-[var(--border)] object-cover"
+                  />
+                ) : (
+                  <span className="flex h-14 w-14 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg)] font-serif text-lg text-[var(--text-faint)]">
+                    {c.name.charAt(0)}
+                  </span>
+                )}
+                <span className="w-full truncate text-xs font-medium text-[var(--text)]">{c.name}</span>
+                <span
+                  className={`text-[11px] tabular-nums ${
+                    c.completed === c.total ? "text-[var(--success)]" : "text-[var(--text-faint)]"
+                  }`}
+                >
+                  {c.completed}/{c.total}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       {seriesMap.size > 0 && (
         <section className="mb-10">
           <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--text-faint)]">
@@ -159,9 +207,12 @@ function StoryRow({
     startRef: string;
     endRef: string;
     thumbnailOrder: number | null;
+    quote: string | null;
+    isWellKnown: boolean;
     characters: { character: { name: string; slug: string } }[];
     themes: { theme: { name: string; slug: string } }[];
     images: { order: number; path: string }[];
+    petersonSegments: unknown[];
     progress?: { completedAt: Date | null; isFavorite: boolean } | null;
   };
 }) {
@@ -172,6 +223,10 @@ function StoryRow({
   // som litet omslag), annars första bilden i galleriet som tidigare.
   const thumb =
     story.images.find((img) => img.order === (story.thumbnailOrder ?? 1)) ?? story.images[0];
+  // Prioritetsnivå: Tier 1 = har verifierat Peterson-innehåll (segment
+  // eller bokcitat), Tier 2 = handplockat känd/central (isWellKnown),
+  // Tier 3 = default, inget märke. Se README "Prioritetsnivåer".
+  const tier = story.petersonSegments.length > 0 || !!story.quote ? 1 : story.isWellKnown ? 2 : 3;
   return (
     <div className="flex items-center gap-3 px-5 py-4 transition hover:bg-[var(--accent-bg)]">
       <Link
@@ -193,9 +248,17 @@ function StoryRow({
               {completed && (
                 <span
                   aria-label="Avklarad"
-                  className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[10px] leading-none text-white"
+                  className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--success)]"
                 >
-                  ✓
+                  <svg viewBox="0 0 16 16" className="h-2.5 w-2.5 text-white" fill="none" aria-hidden>
+                    <path
+                      d="M3 8.5L6.2 11.5L13 4.5"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </span>
               )}
               {favorite && (
@@ -203,6 +266,7 @@ function StoryRow({
                   ★
                 </span>
               )}
+              <TierBadge tier={tier} />
               <span className="truncate">{story.title}</span>
             </span>
             <span className="shrink-0 text-xs text-[var(--text-faint)]">
@@ -236,4 +300,35 @@ function StoryRow({
       )}
     </div>
   );
+}
+
+// Prioritetsmärke: Tier 1 = Jordans porträtt (verifierat Peterson-
+// innehåll finns), Tier 2 = fylld stjärna (handplockat känd/central
+// berättelse), Tier 3 = inget märke alls (frånvaro = minst känd/relevant).
+// Se README "Prioritetsnivåer" för resonemang bakom indelningen.
+function TierBadge({ tier }: { tier: 1 | 2 | 3 }) {
+  if (tier === 1) {
+    return (
+      <Image
+        src="/images/badges/jordan-peterson-badge.png"
+        alt="Analyserad av Jordan Peterson"
+        title="Jordan Peterson har analyserat den här berättelsen"
+        width={18}
+        height={18}
+        className="h-[18px] w-[18px] shrink-0 rounded-full"
+      />
+    );
+  }
+  if (tier === 2) {
+    return (
+      <span
+        aria-label="Känd/central berättelse"
+        title="En känd, central berättelse"
+        className="shrink-0 text-sm leading-none text-[var(--accent)]"
+      >
+        ★
+      </span>
+    );
+  }
+  return null;
 }
