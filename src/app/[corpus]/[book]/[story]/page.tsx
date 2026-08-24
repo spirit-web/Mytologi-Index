@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { fetchBiblePassage, externalBibleUrl } from "@/lib/bible";
 import { StoryProgressControls } from "@/components/StoryProgressControls";
+import { QuoteFavoriteControls } from "@/components/QuoteFavoriteControls";
+import { countFavoriteQuotesForStory } from "@/lib/quotes";
 
 export default async function StoryPage({
   params,
@@ -75,16 +77,32 @@ export default async function StoryPage({
   // direkt inline efter rätt vers när texten radbryts vers för vers.
   const verseNotesByVerse = new Map<
     string,
-    { quote: string; summary: string; verseEnd: number | null }[]
+    {
+      id: string;
+      quote: string;
+      summary: string;
+      verseEnd: number | null;
+      quoteIsFavorite: boolean;
+      diaryNote: string | null;
+    }[]
   >();
   for (const seg of story.petersonSegments) {
     for (const note of seg.verseNotes) {
       const key = `${note.chapter}:${note.verse}`;
       const list = verseNotesByVerse.get(key) ?? [];
-      list.push({ quote: note.quote, summary: note.summary, verseEnd: note.verseEnd });
+      list.push({
+        id: note.id,
+        quote: note.quote,
+        summary: note.summary,
+        verseEnd: note.verseEnd,
+        quoteIsFavorite: note.quoteIsFavorite,
+        diaryNote: note.diaryNote,
+      });
       verseNotesByVerse.set(key, list);
     }
   }
+
+  const favoriteQuoteCount = countFavoriteQuotesForStory(story);
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
@@ -104,11 +122,23 @@ export default async function StoryPage({
         {story.seriesTitle ? ` · Del av ${story.seriesTitle}` : ""}
       </p>
 
-      <StoryProgressControls
-        storyId={story.id}
-        initialCompleted={!!story.progress?.completedAt}
-        initialFavorite={!!story.progress?.isFavorite}
-      />
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <StoryProgressControls
+          storyId={story.id}
+          initialCompleted={!!story.progress?.completedAt}
+          initialFavorite={!!story.progress?.isFavorite}
+        />
+        {favoriteQuoteCount > 0 && (
+          <Link
+            href="/citat"
+            className="flex items-center gap-1.5 rounded-full border border-[var(--link-border)] bg-[var(--link-bg)] px-3 py-1 text-xs font-medium text-[var(--link)] transition hover:bg-[var(--link-border)]"
+            title="Se alla sparade citat"
+          >
+            <span aria-hidden>★</span>
+            {favoriteQuoteCount} sparat{favoriteQuoteCount === 1 ? "" : "e"} citat i den här berättelsen
+          </Link>
+        )}
+      </div>
 
       {story.images.length > 0 && (
         <div className="mb-8">
@@ -225,6 +255,12 @@ export default async function StoryPage({
                           "{note.quote}"
                         </blockquote>
                         <p className="text-sm text-[var(--text-muted)]">{note.summary}</p>
+                        <QuoteFavoriteControls
+                          kind="verse"
+                          id={note.id}
+                          initialFavorite={note.quoteIsFavorite}
+                          initialDiaryNote={note.diaryNote}
+                        />
                       </div>
                     ))}
                   </div>
@@ -245,6 +281,14 @@ export default async function StoryPage({
             )}
             {story.summary && (
               <p className="text-sm leading-relaxed text-[var(--text-muted)]">{story.summary}</p>
+            )}
+            {story.quote && (
+              <QuoteFavoriteControls
+                kind="story"
+                id={story.id}
+                initialFavorite={story.quoteIsFavorite}
+                initialDiaryNote={story.diaryNote}
+              />
             )}
           </div>
         ) : (
@@ -326,6 +370,14 @@ export default async function StoryPage({
                   </blockquote>
                 )}
                 {seg.keyPoints && <p className="mt-1 text-[var(--text-muted)]">{seg.keyPoints}</p>}
+                {seg.quote && (
+                  <QuoteFavoriteControls
+                    kind="segment"
+                    id={seg.id}
+                    initialFavorite={seg.quoteIsFavorite}
+                    initialDiaryNote={seg.diaryNote}
+                  />
+                )}
               </li>
             ))}
           </ul>

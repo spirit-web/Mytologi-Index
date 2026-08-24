@@ -45,6 +45,12 @@ model Book {
   authorship  String? // vem som (traditionellt) skrivit den och varför
   traditions  String? // koppling till judendom/kristendom/islam
 
+  // Kort fritext-uppskattning av när boken tros vara skriven, t.ex.
+  // "ca 1400-400 f.Kr. (traditionellt); moderna forskare ofta ca 500-
+  // 400 f.Kr." — medvetet fri text eftersom exakt datering nästan alltid
+  // är omtvistad. Används av tidslinje-sidan (/tidslinje).
+  writtenEstimate String?
+
   stories Story[]
 
   @@unique([corpusId, slug])
@@ -73,6 +79,14 @@ model Story {
   // en bokrad för 12 Rules for Life) — hålls medvetet kort av
   // upphovsrättsskäl, se README "Viktig avgränsning: upphovsrätt"
   orderInBook Int
+
+  // Citat-stjärnmarkering (för framework-böcker som 12 Rules for Life,
+  // vars enda "citat" sitter direkt på Story, ingen PetersonSegment).
+  // Samma tre fält upprepas på PetersonSegment och VerseCommentary — se
+  // kommentaren där för resonemang bakom att inte ha en gemensam tabell.
+  quoteIsFavorite Boolean @default(false)
+  quoteRank       Int?
+  diaryNote       String?
 
   // Vilken StoryImage.order som ska visas som litet omslag i boklistan.
   // Default (null) = bild nr 1, precis som tidigare. Finns för att många
@@ -256,6 +270,16 @@ model PetersonSegment {
   // transkriberingsfel — proofreada innan citat sprids vidare.
   quote String?
 
+  // Citat-stjärnmarkering, ranking och egen dagbokskommentar — bara
+  // relevant när `quote` är satt (segmentets citat, inte versuppdelat).
+  // `quoteRank` är en GLOBAL sorteringsnyckel delad över alla tre
+  // citat-bärande modeller (Story/PetersonSegment/VerseCommentary), inte
+  // bara inom denna story — se /citat-sidan, som visar alla
+  // stjärnmärkta citat tvärs över hela appen i en enda rangordnad lista.
+  quoteIsFavorite Boolean @default(false)
+  quoteRank       Int?
+  diaryNote       String?
+
   verseNotes VerseCommentary[]
 
   @@unique([videoId, storyId])
@@ -286,6 +310,12 @@ model VerseCommentary {
 
   quote   String // Petersons exakta ord om just denna vers/detta spann
   summary String // egen sammanfattning av poängen han gör
+
+  // Se motsvarande kommentar på PetersonSegment — samma tre fält, samma
+  // globala rank-delning över /citat-sidan.
+  quoteIsFavorite Boolean @default(false)
+  quoteRank       Int?
+  diaryNote       String?
 
   @@unique([segmentId, chapter, verse])
   @@index([segmentId])

@@ -53,6 +53,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <Link href="/teman" className="transition hover:text-[var(--text)]">
                 Teman
               </Link>
+              <Link href="/citat" className="transition hover:text-[var(--text)]">
+                Citat
+              </Link>
               <Link
                 href="/framsteg"
                 title="Ditt framsteg"

@@ -17,7 +17,7 @@ export function StoryProgressControls({
   const [favorite, setOptimisticFavorite] = useOptimistic(initialFavorite);
 
   return (
-    <div className="mb-6 flex flex-wrap items-center gap-3">
+    <div className="flex flex-wrap items-center gap-3">
       <button
         type="button"
         onClick={() => {
