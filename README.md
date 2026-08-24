@@ -70,6 +70,16 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 23 (2026-08-24): Två till Matteus-berättelser
+
+Matteusevangeliet 20 → 22 berättelser: Liknelsen om de tio brudtärnorna
+(25:1-13, direkt före punden-liknelsen i samma kapitel) och Petrus
+förnekar Jesus (26:69-75, egen story trots att det ligger inom
+rättegångs-kapitlet — en egen psykologisk vändpunkt om svaghet under
+press, skild från Judas förräderi). Sökte även Fader vår (Matt
+6:9-13) men det enda hittade bildsetet hade explicit "A.I. adaptations
+prohibited" — utelämnat.
+
 ## Fas 22 (2026-08-24): Referens-baserad karaktärsremsa + tre nya Matteus-berättelser
 
 **Karaktärsremsan gäller nu även framework-böcker**: Maps of Meaning,
