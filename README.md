@@ -70,6 +70,36 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 20 (2026-08-23): Tabernaklet + fyra nya Matteus-berättelser
+
+**Exodus** fick en tolfte berättelse, Tabernaklet (Exodus 25-40, 34
+bilder) — sammanfattat som EN story eftersom kapitlen mest är
+detaljerade bygginstruktioner utan Peterson-kommentar att luta sig mot.
+Text-sektionen visar bara kap. 25 (förbundsarken) som representativt
+utdrag, medvetet inte hela 25-40, för att undvika en missvisande "kunde
+inte hämta"-varning (upptäckt live: hela intervallet 25-40 spänner över
+kapitel 32, som redan används av guldkalv-storyn, så versbladet visade
+fel berättelses text tills spannet begränsades).
+
+**Matteus** utökad från 13 till 17 berättelser: Jesus kallar sina
+första lärjungar (4:18-22), Bespisningen av de fem tusen (14:13-21),
+Jesus går på vattnet (14:22-33), Förklaringen på berget (17:1-13) — den
+sista länkar Mose och Elia till SAMMA Character-rader som redan
+används i Exodus, så de nu visas som återkommande över böcker.
+Medvetet undvek ett Lumo Project-bildset för lärjunga-kallelsen trots
+bättre tematisk träff, eftersom dess licens uttryckligen förbjuder
+"AI adaptations" — använde ett annat, CC BY-SA-licensierat set istället.
+
+**Öppen fråga, inte åtgärdad än**: gudsnamn-normaliseringen (byggd för
+Gamla testamentets "HERREN" = JHVH) visade sig också träffa Nya
+testamentets "Herre" som direkt tilltal till JESUS (t.ex. Petrus:
+"Herre, här är oss gott att vara" vid förklaringen på berget) — blev
+felaktigt "Gud", vilket får det att låta som att folk ber till Gud i
+tredje person istället för att tala direkt till Jesus som står framför
+dem. Minst 9 sådana fall hittade i Matteus kap. 3-27 (utöver 3 korrekta
+GT-citat som SKA vara "Gud"). Flaggat till användaren för beslut om hur
+det ska hanteras — se vidare diskussion i chatten/senare Fas.
+
 ## Fas 19 (2026-08-23): Bättre omslagsbilder + tre nya Exodus-berättelser
 
 **Omslagsbilder**: `Story.thumbnailOrder` (nytt fält) låter boklistans
