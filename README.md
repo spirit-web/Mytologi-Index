@@ -70,6 +70,26 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 25 (2026-08-24): Djupdykning i Eden — outnyttjat material i redan nedladdade transkript
+
+Användaren kom ihåg rätt att Jordan har mer att säga om Eden än de 2
+versnoteringar som fanns — samma föreläsning (Bibelserien avsnitt 4,
+`Ifi5KkXig3s`) var redan nedladdad från en tidigare fas men aldrig
+genomsökt fullt ut. Lade till 2 nya versnoteringar (Gen 2:8 om den
+"murade trädgården" som kultur/natur-balans, Gen 3:1 om ormens
+"listighet" och en gnostisk läsart av ormen som medvetenhetens
+frigörare) och 3 nya Peterson-referenser (en andra, distinkt
+Törnrosa-läsning om överbeskydd, en kritisk Frost-kommentar, och en
+Harry Potter/alkemi-koppling). Ett bra exempel på att mycket av det
+redan nedladdade materialet fortfarande är delvis outforskat — samma
+metod (gå tillbaka till transkriptet, sök brett, läs i sitt sammanhang)
+kan upprepas för andra redan täckta berättelser om användaren minns
+att Jordan sagt mer än vad som står inne.
+
+**GitHub**: projektet har nu ett privat repo på
+[github.com/spirit-web/biblisk-berattelse-index](https://github.com/spirit-web/biblisk-berattelse-index),
+skapat och pushat via GitHub CLI (`gh`).
+
 ## Fas 24 (2026-08-24): Genesis + Exodus helt klara
 
 De två sista luckorna i Andra Moseboken täpptes till, på uttrycklig
