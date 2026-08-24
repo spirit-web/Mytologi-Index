@@ -70,6 +70,35 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 26–27 (2026-08-24): Sparade citat, dagbok, rangordning, tidslinje
+
+**Citat-stjärnmärkning**: varje enskilt Peterson-citat (segment-citat,
+versnotering, eller framework-bok-citat som 12 Rules for Life) kan nu
+stjärnmärkas individuellt, oavsett vilken av de tre citat-bärande
+modellerna det sitter på (`Story.quote`/`PetersonSegment.quote`/
+`VerseCommentary.quote` — samma tre fält `quoteIsFavorite`/`quoteRank`/
+`diaryNote` upprepade på alla tre snarare än en gemensam polymorf
+tabell, se `src/lib/quotes.ts`). Ny **/citat**-sida visar alla
+stjärnmärkta citat i EN gemensam, globalt rangordnad lista — varje post
+med förklaringstext, berättelsens miniatyrbild (för snabb visuell
+igenkänning) och ett eget dagbokskommentar-fält (auto-sparas). Upp/ner-
+knappar för manuell rangordning (medvetet valt över drag-and-drop —
+samma resultat, mycket enklare att göra tillförlitligt). Story-sidan
+visar en liten räknare bredvid "Markera som klar" när berättelsen har
+sparade citat.
+
+**Ny /tidslinje-sida**: alla korpusar/böcker i kanonisk ordning, varje
+boks berättelser i sin `orderInBook`-sekvens, med avklarad/stjärnmärkt/
+Tier-status synlig per rad — tänkt för att kunna scanna efter luckor i
+sin egen läsordning. Varje bok visar en kort skrivtids-uppskattning
+(nytt `Book.writtenEstimate`-fält) bredvid författarskapet.
+Tidslinjen avslöjade direkt en genuin bugg: "Tabernaklet" (Exodus 25:1)
+låg placerad EFTER guldkalven (32) och de nya lagtavlorna (33–34) i
+läsordningen, trots att instruktionerna för tabernaklet gavs innan
+guldkalven hann hända — rättad till rätt kronologisk plats. Ett bra
+exempel på att en översiktsvy avslöjar data-fel som är osynliga när
+man bara bläddrar en bok i taget.
+
 ## Fas 25 (2026-08-24): Djupdykning i Eden — outnyttjat material i redan nedladdade transkript
 
 Användaren kom ihåg rätt att Jordan har mer att säga om Eden än de 2
