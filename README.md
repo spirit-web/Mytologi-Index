@@ -90,15 +90,17 @@ Medvetet undvek ett Lumo Project-bildset för lärjunga-kallelsen trots
 bättre tematisk träff, eftersom dess licens uttryckligen förbjuder
 "AI adaptations" — använde ett annat, CC BY-SA-licensierat set istället.
 
-**Öppen fråga, inte åtgärdad än**: gudsnamn-normaliseringen (byggd för
-Gamla testamentets "HERREN" = JHVH) visade sig också träffa Nya
-testamentets "Herre" som direkt tilltal till JESUS (t.ex. Petrus:
-"Herre, här är oss gott att vara" vid förklaringen på berget) — blev
-felaktigt "Gud", vilket får det att låta som att folk ber till Gud i
-tredje person istället för att tala direkt till Jesus som står framför
-dem. Minst 9 sådana fall hittade i Matteus kap. 3-27 (utöver 3 korrekta
-GT-citat som SKA vara "Gud"). Flaggat till användaren för beslut om hur
-det ska hanteras — se vidare diskussion i chatten/senare Fas.
+**Rättat samma dag**: gudsnamn-normaliseringen (byggd för Gamla
+testamentets "HERREN" = JHVH) visade sig också träffa Nya testamentets
+"Herre" som direkt tilltal till JESUS (t.ex. Petrus: "Herre, här är oss
+gott att vara" vid förklaringen på berget) — hade blivit felaktigt
+"Gud", vilket fick det att låta som att folk bad till Gud i tredje
+person istället för att tala direkt till Jesus som stod framför dem.
+Efter avstämning med användaren rättades 11 fall i Matteus kap. 8-27
+tillbaka till "Herre" (behöll "Gud" för de 3 fall som faktiskt är
+GT-citat om Gud, samt Jesu egen Psalm 22-referens "Min Gud, min Gud").
+Dokumenterat i `normalize_divine_name.py` så misstaget inte upprepas om
+fler NT-kapitel extraheras — regeln är bara säker att köra blint på GT.
 
 ## Fas 19 (2026-08-23): Bättre omslagsbilder + tre nya Exodus-berättelser
 
