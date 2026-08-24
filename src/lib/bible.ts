@@ -55,6 +55,15 @@ export function externalBibleUrl(startRef: string, endRef: string): string {
   return "https://www.bibeln.se/1917-ars-kyrkobibel";
 }
 
+// Räknar ord i en sträng — delar bara på whitespace, ingen försök att
+// hantera bindestreck/skiljetecken specialfall. Räcker gott för att
+// avgöra "lång eller kort berättelse", vilket är hela poängen.
+export function countWords(text: string): number {
+  const trimmed = text.trim();
+  if (trimmed === "") return 0;
+  return trimmed.split(/\s+/).length;
+}
+
 export async function fetchBiblePassage(
   startRef: string,
   endRef: string

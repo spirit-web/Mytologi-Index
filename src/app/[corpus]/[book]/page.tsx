@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCharacterStats } from "@/lib/gamification";
+import { fetchBiblePassage, countWords } from "@/lib/bible";
 
 export default async function BookPage({
   params,
@@ -51,6 +52,25 @@ export default async function BookPage({
   ]);
   const allCharacterStats = await getCharacterStats();
   const bookCharacterStats = allCharacterStats.filter((c) => bookCharacterSlugs.has(c.slug));
+
+  // Ordantal per story — "är det här en lång eller kort berättelse?"
+  // (direkt användarfeedback). Skriftkorpusar: räknar den faktiska
+  // bibeltexten (fetchBiblePassage läser bara redan inlästa lokala
+  // JSON-filer, ingen nätverksanrop — billigt att göra per story här).
+  // Framework-böcker saknar löpande källtext, så där räknas citat +
+  // sammanfattning istället (bästa tillgängliga proxy).
+  const wordCounts = new Map<string, number>();
+  await Promise.all(
+    book.stories.map(async (s) => {
+      if (book.corpus.kind === "scripture") {
+        const passage = await fetchBiblePassage(s.startRef, s.endRef);
+        const n = passage ? passage.verses.reduce((sum, v) => sum + countWords(v.text), 0) : 0;
+        wordCounts.set(s.id, n);
+      } else {
+        wordCounts.set(s.id, countWords(`${s.quote ?? ""} ${s.summary ?? ""}`));
+      }
+    }),
+  );
 
   // Gruppera: standalone-berättelser vs. cykler (seriesSlug).
   const standalone = book.stories.filter((s) => !s.seriesSlug);
@@ -180,7 +200,7 @@ export default async function BookPage({
                     .sort((a, b) => (a.seriesOrder ?? 0) - (b.seriesOrder ?? 0))
                     .map((s) => (
                       <li key={s.id}>
-                        <StoryRow book={book} story={s} />
+                        <StoryRow book={book} story={s} wordCount={wordCounts.get(s.id) ?? 0} />
                       </li>
                     ))}
                 </ol>
@@ -198,7 +218,7 @@ export default async function BookPage({
           <ul className="divide-y divide-[var(--border-soft)] overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-sm">
             {standalone.map((s) => (
               <li key={s.id}>
-                <StoryRow book={book} story={s} />
+                <StoryRow book={book} story={s} wordCount={wordCounts.get(s.id) ?? 0} />
               </li>
             ))}
           </ul>
@@ -211,8 +231,10 @@ export default async function BookPage({
 function StoryRow({
   book,
   story,
+  wordCount,
 }: {
   book: { slug: string; corpus: { slug: string } };
+  wordCount: number;
   story: {
     id: string;
     slug: string;
@@ -282,9 +304,12 @@ function StoryRow({
               <TierBadge tier={tier} />
               <span className="truncate">{story.title}</span>
             </span>
-            <span className="shrink-0 text-xs text-[var(--text-faint)]">
-              {story.startRef}
-              {story.endRef !== story.startRef ? `–${story.endRef.replace(/^.*?(\d)/, "$1")}` : ""}
+            <span className="shrink-0 text-right text-xs text-[var(--text-faint)]">
+              <span className="block">
+                {story.startRef}
+                {story.endRef !== story.startRef ? `–${story.endRef.replace(/^.*?(\d)/, "$1")}` : ""}
+              </span>
+              {wordCount > 0 && <span className="block">{wordCount} ord · {lengthLabel(wordCount)}</span>}
             </span>
           </div>
         </div>
@@ -344,4 +369,15 @@ function TierBadge({ tier }: { tier: 1 | 2 | 3 }) {
     );
   }
   return null;
+}
+
+// Grov, tregradig etikett så man direkt ser "lång eller kort" utan att
+// själv behöva tolka ett rått ordantal — trösklarna är satta löst efter
+// den faktiska spridningen i appens bibelberättelser (korta enskilda
+// scener som Kain och Abel ligger runt 150-200 ord, långa cykler som
+// Josef och hans bröder över 1500).
+function lengthLabel(wordCount: number): string {
+  if (wordCount < 300) return "Kort";
+  if (wordCount < 800) return "Medellång";
+  return "Lång";
 }
