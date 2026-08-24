@@ -70,6 +70,26 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 24 (2026-08-24): Genesis + Exodus helt klara
+
+De två sista luckorna i Andra Moseboken täpptes till, på uttrycklig
+begäran om fullständighet:
+
+- **Jetro ger Mose råd** (18:1-27) — Jetros besök och rådet att
+  delegera dömandet till lägre domare. Inget FreeBibleimages-set finns
+  för det här specifika kapitlet trots upprepad sökning (inte en
+  licensfråga den här gången — det verkar helt enkelt inte finnas) —
+  lades ändå in som appens FÖRSTA helt textbaserade story, utan
+  bildgalleri, hellre än att lämna kapitlet outtäckt.
+- **Nya lagtavlor och Guds härlighet** (33:1-34:35) — den direkta
+  uppföljningen till guldkalven: Mose ber för folket, ser Guds
+  härlighet passera, får nya tavlor efter att ha slagit sönder de
+  första, kommer ner med ett strålande ansikte.
+
+Andra Moseboken är nu 13 berättelser och täcker hela bokens narrativa
+båge kapitel för kapitel. **Genesis och Exodus är därmed båda
+fullständiga** — inga kända luckor kvar i något av de två böckerna.
+
 ## Fas 23 (2026-08-24): Två till Matteus-berättelser
 
 Matteusevangeliet 20 → 22 berättelser: Liknelsen om de tio brudtärnorna
