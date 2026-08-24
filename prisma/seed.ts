@@ -1346,6 +1346,16 @@ async function main() {
     { slug: "petrus", name: "Petrus" },
     { slug: "pontius-pilatus", name: "Pontius Pilatus" },
     { slug: "maria-magdalena", name: "Maria Magdalena" },
+    { slug: "andreas", name: "Andreas" },
+    { slug: "jakob-apostel", name: "Jakob (Sebedeus son)" },
+    { slug: "johannes-apostel", name: "Johannes (aposteln)" },
+    // Samma slug som i Exodus-avsnittet — upsert med matchande slug
+    // returnerar/uppdaterar bara samma rad, så Mose länkas ihop över
+    // böcker (han dyker upp igen på förklaringsberget). "mose" hinner
+    // inte deklareras i exCharacters än här i filen (Exodus seedas efter
+    // Matteus), därför läggs den till separat på nytt här.
+    { slug: "mose", name: "Mose" },
+    { slug: "elia", name: "Elia" },
   ];
   const ntCharacters: Record<string, { id: string }> = {};
   for (const c of ntCharacterDefs) {
@@ -1400,14 +1410,15 @@ async function main() {
       characterSlugs: ["jesus"], themeSlugs: ["testing-of-faith"],
     },
     {
-      slug: "sermon-on-the-mount", title: "Bergspredikan (saligprisningarna)",
-      startRef: "Matthew 5:1", endRef: "Matthew 5:12", orderInBook: 4,
-      characterSlugs: ["jesus"], themeSlugs: ["kingdom-of-god"],
+      // NY 2026-08-23: fyller luckan mellan frestelsen och Bergspredikan.
+      slug: "calling-of-first-disciples", title: "Jesus kallar sina första lärjungar",
+      startRef: "Matthew 4:18", endRef: "Matthew 4:22", orderInBook: 4,
+      characterSlugs: ["jesus", "petrus", "andreas", "jakob-apostel", "johannes-apostel"], themeSlugs: [],
     },
     {
-      slug: "parable-of-the-sower", title: "Liknelsen om såningsmannen",
-      startRef: "Matthew 13:1", endRef: "Matthew 13:23", orderInBook: 5,
-      characterSlugs: ["jesus"], themeSlugs: [],
+      slug: "sermon-on-the-mount", title: "Bergspredikan (saligprisningarna)",
+      startRef: "Matthew 5:1", endRef: "Matthew 5:12", orderInBook: 5,
+      characterSlugs: ["jesus"], themeSlugs: ["kingdom-of-god"],
     },
     {
       slug: "calming-the-storm", title: "Jesus stillar stormen",
@@ -1415,44 +1426,69 @@ async function main() {
       characterSlugs: ["jesus"], themeSlugs: ["chaos-order"],
     },
     {
+      slug: "parable-of-the-sower", title: "Liknelsen om såningsmannen",
+      startRef: "Matthew 13:1", endRef: "Matthew 13:23", orderInBook: 7,
+      characterSlugs: ["jesus"], themeSlugs: [],
+    },
+    {
+      // NY 2026-08-23: ett av de mest kända undren, tidigare inte med.
+      slug: "feeding-the-5000", title: "Bespisningen av de fem tusen",
+      startRef: "Matthew 14:13", endRef: "Matthew 14:21", orderInBook: 8,
+      characterSlugs: ["jesus"], themeSlugs: ["compassion"],
+    },
+    {
+      // NY 2026-08-23: direkt efterföljande scen i samma kapitel.
+      slug: "walking-on-water", title: "Jesus går på vattnet",
+      startRef: "Matthew 14:22", endRef: "Matthew 14:33", orderInBook: 9,
+      characterSlugs: ["jesus", "petrus"], themeSlugs: ["testing-of-faith"],
+    },
+    {
+      // NY 2026-08-23: teologisk vändpunkt (Petrus bekännelse följs
+      // direkt av förklaringen på berget) — Mose och Elia återknyter
+      // till samma Character-poster som i Exodus/framtida profetböcker.
+      slug: "transfiguration", title: "Förklaringen på berget",
+      startRef: "Matthew 17:1", endRef: "Matthew 17:13", orderInBook: 10,
+      characterSlugs: ["jesus", "petrus", "jakob-apostel", "johannes-apostel", "mose", "elia"], themeSlugs: ["kingdom-of-god"],
+    },
+    {
       slug: "triumphal-entry", title: "Intåget i Jerusalem",
-      startRef: "Matthew 21:1", endRef: "Matthew 21:11", orderInBook: 7,
+      startRef: "Matthew 21:1", endRef: "Matthew 21:11", orderInBook: 11,
       characterSlugs: ["jesus"], themeSlugs: [],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 1,
     },
     {
       slug: "last-supper", title: "Den sista måltiden",
-      startRef: "Matthew 26:17", endRef: "Matthew 26:30", orderInBook: 8,
+      startRef: "Matthew 26:17", endRef: "Matthew 26:30", orderInBook: 12,
       characterSlugs: ["jesus", "judas", "petrus"], themeSlugs: [],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 2,
     },
     {
       slug: "gethsemane", title: "Getsemane och tillfångatagandet",
-      startRef: "Matthew 26:36", endRef: "Matthew 26:56", orderInBook: 9,
+      startRef: "Matthew 26:36", endRef: "Matthew 26:56", orderInBook: 13,
       characterSlugs: ["jesus", "judas", "petrus"], themeSlugs: ["betrayal"],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 3,
     },
     {
       slug: "trial-before-pilate", title: "Rättegången inför Pilatus",
-      startRef: "Matthew 27:11", endRef: "Matthew 27:31", orderInBook: 10,
+      startRef: "Matthew 27:11", endRef: "Matthew 27:31", orderInBook: 14,
       characterSlugs: ["jesus", "pontius-pilatus"], themeSlugs: [],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 4,
     },
     {
       slug: "crucifixion", title: "Korsfästelsen",
-      startRef: "Matthew 27:32", endRef: "Matthew 27:44", orderInBook: 11,
+      startRef: "Matthew 27:32", endRef: "Matthew 27:44", orderInBook: 15,
       characterSlugs: ["jesus"], themeSlugs: ["sacrifice"],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 5,
     },
     {
       slug: "death-and-burial", title: "Jesu död och begravning",
-      startRef: "Matthew 27:45", endRef: "Matthew 27:66", orderInBook: 12,
+      startRef: "Matthew 27:45", endRef: "Matthew 27:66", orderInBook: 16,
       characterSlugs: ["jesus", "maria-magdalena"], themeSlugs: ["sacrifice"],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 6,
     },
     {
       slug: "resurrection", title: "Uppståndelsen",
-      startRef: "Matthew 28:1", endRef: "Matthew 28:20", orderInBook: 13,
+      startRef: "Matthew 28:1", endRef: "Matthew 28:20", orderInBook: 17,
       characterSlugs: ["jesus", "maria-magdalena", "petrus"], themeSlugs: [],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 7,
     },
@@ -1508,6 +1544,14 @@ async function main() {
     { storySlug: "crucifixion", code: "FB_GNPI_096_Jesus_Crucifixion", count: 11, credit: "Good News Productions Int. (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/gnpi-096-jesus-crucifixion/" },
     { storySlug: "death-and-burial", code: "FB_GNPI_098_Jesus_Dies", count: 11, credit: "Good News Productions Int. (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/gnpi-098-jesus-dies/" },
     { storySlug: "resurrection", code: "FB_LS_Jesus_Alive_2", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jesus-alive-2/" },
+    // NY 2026-08-23. OBS: Lumo Project-bildset avsiktligt UNDVIKNA här
+    // (och för "calling-of-first-disciples" nedan) — deras licens
+    // förbjuder uttryckligen "AI adaptations", till skillnad från övriga
+    // set på FreeBibleimages.
+    { storySlug: "calling-of-first-disciples", code: "FB_WDV_Four_Fishermen", count: 10, credit: "Willem de Vink – Jesus Messiah project (freebibleimages.org), CC BY-SA", creditUrl: "https://freebibleimages.org/illustrations/wdv-four-fishermen/" },
+    { storySlug: "feeding-the-5000", code: "FB_LS_Boy_Lunch", count: 10, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-boy-lunch/" },
+    { storySlug: "walking-on-water", code: "FB_LS_Peter_Water", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-peter-water/" },
+    { storySlug: "transfiguration", code: "FB_Jesus_Transfiguration", count: 11, credit: "Sweet Publishing / freebibleimages.org, CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/jesus-transfiguration/" },
   ];
 
   for (const set of ntImageSets) {
@@ -1534,6 +1578,9 @@ async function main() {
     gethsemane: 3, // Jesus ber ensam vid klippan
     "trial-before-pilate": 8, // Pilatus tvår sina händer
     crucifixion: 3, // korsfästelsen själv
+    "calling-of-first-disciples": 7, // Petrus vid det fyllda nätet, inte bara vyn över Kapernaum
+    "walking-on-water": 4, // Petrus går mot Jesus på vattnet
+    transfiguration: 4, // Jesu strålande, förvandlade gestalt
   };
   for (const [slug, order] of Object.entries(matthewThumbnails)) {
     await prisma.story.updateMany({ where: { bookId: matthew.id, slug }, data: { thumbnailOrder: order } });
