@@ -1470,45 +1470,59 @@ async function main() {
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 1,
     },
     {
+      // NY 2026-08-24: föregår punden-liknelsen direkt i samma kapitel.
+      slug: "ten-virgins", title: "Liknelsen om de tio brudtärnorna",
+      startRef: "Matthew 25:1", endRef: "Matthew 25:13", orderInBook: 14,
+      characterSlugs: ["jesus"], themeSlugs: ["testing-of-faith"],
+    },
+    {
       // NY 2026-08-24: en av Petersons mest citerade liknelser i eget
       // författarskap ("do your best with what you've been given").
       slug: "parable-of-the-talents", title: "Liknelsen om de anförtrodda punden",
-      startRef: "Matthew 25:14", endRef: "Matthew 25:30", orderInBook: 14,
+      startRef: "Matthew 25:14", endRef: "Matthew 25:30", orderInBook: 15,
       characterSlugs: ["jesus"], themeSlugs: [],
     },
     {
       slug: "last-supper", title: "Den sista måltiden",
-      startRef: "Matthew 26:17", endRef: "Matthew 26:30", orderInBook: 15,
+      startRef: "Matthew 26:17", endRef: "Matthew 26:30", orderInBook: 16,
       characterSlugs: ["jesus", "judas", "petrus"], themeSlugs: [],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 2,
     },
     {
       slug: "gethsemane", title: "Getsemane och tillfångatagandet",
-      startRef: "Matthew 26:36", endRef: "Matthew 26:56", orderInBook: 16,
+      startRef: "Matthew 26:36", endRef: "Matthew 26:56", orderInBook: 17,
       characterSlugs: ["jesus", "judas", "petrus"], themeSlugs: ["betrayal"],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 3,
     },
     {
+      // NY 2026-08-24: händer under själva rättegången (26:57 ff.), men
+      // fick en egen story eftersom den psykologiskt är en helt egen
+      // vändpunkt för Petrus — svaghet under press, inte förräderi.
+      slug: "peters-denial", title: "Petrus förnekar Jesus",
+      startRef: "Matthew 26:69", endRef: "Matthew 26:75", orderInBook: 18,
+      characterSlugs: ["jesus", "petrus"], themeSlugs: ["self-consciousness"],
+    },
+    {
       slug: "trial-before-pilate", title: "Rättegången inför Pilatus",
-      startRef: "Matthew 27:11", endRef: "Matthew 27:31", orderInBook: 17,
+      startRef: "Matthew 27:11", endRef: "Matthew 27:31", orderInBook: 19,
       characterSlugs: ["jesus", "pontius-pilatus"], themeSlugs: [],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 4,
     },
     {
       slug: "crucifixion", title: "Korsfästelsen",
-      startRef: "Matthew 27:32", endRef: "Matthew 27:44", orderInBook: 18,
+      startRef: "Matthew 27:32", endRef: "Matthew 27:44", orderInBook: 20,
       characterSlugs: ["jesus"], themeSlugs: ["sacrifice"],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 5,
     },
     {
       slug: "death-and-burial", title: "Jesu död och begravning",
-      startRef: "Matthew 27:45", endRef: "Matthew 27:66", orderInBook: 19,
+      startRef: "Matthew 27:45", endRef: "Matthew 27:66", orderInBook: 21,
       characterSlugs: ["jesus", "maria-magdalena"], themeSlugs: ["sacrifice"],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 6,
     },
     {
       slug: "resurrection", title: "Uppståndelsen",
-      startRef: "Matthew 28:1", endRef: "Matthew 28:20", orderInBook: 20,
+      startRef: "Matthew 28:1", endRef: "Matthew 28:20", orderInBook: 22,
       characterSlugs: ["jesus", "maria-magdalena", "petrus"], themeSlugs: [],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 7,
     },
@@ -1581,6 +1595,12 @@ async function main() {
     { storySlug: "peters-confession", code: "FB_LS_Peter_Rock", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/rg-peter-rock/" },
     { storySlug: "wheat-and-tares", code: "FB_LS_Wheat_Tares", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-wheat-tares/" },
     { storySlug: "parable-of-the-talents", code: "FB_LS_Parable_Talents", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-parable-talents/" },
+    // NY 2026-08-24. Sökte även efter Bergspredikans "Fader vår" (Matt
+    // 6:9-13) men enda hittade setet (GNPI_036) hade "A.I. adaptations
+    // prohibited" — utelämnat av samma skäl som Unforgiving
+    // servant/Sheep-and-goats i förra fasen.
+    { storySlug: "ten-virgins", code: "FB_RG_Wise_Foolish", count: 9, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-wise-foolish/" },
+    { storySlug: "peters-denial", code: "FB_LS_Peter_Rooster", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-peter-rooster/" },
   ];
 
   for (const set of ntImageSets) {
@@ -1613,6 +1633,8 @@ async function main() {
     "peters-confession": 6, // gruppscenen där Petrus svarar Jesus
     "wheat-and-tares": 6, // färgstark vete/ogräs-närbild, inte silhuett-titelkortet
     "parable-of-the-talents": 4, // guldmynten på bordet
+    "ten-virgins": 8, // de fem brudtärnorna med sina oljelampor
+    "peters-denial": 6, // den tredje anklagelsen, dramatisk gruppscen
   };
   for (const [slug, order] of Object.entries(matthewThumbnails)) {
     await prisma.story.updateMany({ where: { bookId: matthew.id, slug }, data: { thumbnailOrder: order } });
