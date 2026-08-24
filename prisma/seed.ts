@@ -693,13 +693,35 @@ async function main() {
       keyPoints:
         "Läser Genesis 2:7 (Gud formar människan av jord och blåser liv i " +
         "henne) och kopplar andetag/liv till begrepp som psyke, ande och " +
-        "inspiration.",
+        "inspiration. Föreläsningen som helhet går även djupt in på " +
+        "'den murade trädgården' som symbol för kultur/natur i balans " +
+        "och på ormens dubbeltydiga roll — se versnoteringarna nedan " +
+        "(2026-08-24, tillagt efter direkt fråga från användaren om mer " +
+        "material kring Eden/ormen från denna redan nedladdade föreläsning).",
       quote: "The breath is life, right? That's psyche, that's spirit, that's inspiration.",
       verseNotes: [
         {
           chapter: 2,
-          verse: 25,
+          verse: 8,
           order: 1,
+          quote: "The wall is culture and order, and the garden is nature.",
+          summary:
+            "'Paradis' kommer av ett persiskt ord för 'murad trädgård' — " +
+            "muren är kultur/ordning, trädgården är natur, och tanken är " +
+            "att människans rätta habitat är natur och kultur i balans, " +
+            "inte det ena utan det andra (en ren vildmark är lika " +
+            "livsfientlig som en ren betongöken). Avvisar uttryckligen " +
+            "tolkningen att uppmaningen att 'råda över jorden' legitimerar " +
+            "rovdrift — pekar istället på att människans roll uttryckligen " +
+            "beskrivs som att 'sköta trädgården', dvs. aktivt förvalta så " +
+            "att både natur och människor frodas. Nämner i förbigående att " +
+            "'Eden' betyder 'välvattnad plats' — särskilt begripligt för " +
+            "en ökenbefolkning.",
+        },
+        {
+          chapter: 2,
+          verse: 25,
+          order: 2,
           quote:
             "Someone who wrote that would only write it like that if they " +
             "were surprised that they weren't ashamed — because why would " +
@@ -712,8 +734,32 @@ async function main() {
         },
         {
           chapter: 3,
+          verse: 1,
+          order: 3,
+          quote:
+            "Subtle... crafty, cunning, sly, treacherous — it's something " +
+            "that sort of sneaks along, something you don't really pick " +
+            "up on that easily.",
+          summary:
+            "Gör en ordstudie av 'listig'/'subtle' (via Oxford English " +
+            "Dictionary, i Jungiansk dröm-tolkningsstil — undersöka ett " +
+            "ords alla bibetydelser) för att visa hur precist ordvalet " +
+            "speglar ormens natur. Berör också en gnostisk läsart där " +
+            "ormen (som lockar till medvetenhet) tolkas som en HÖGRE gud " +
+            "än den ursprungliga, medvetet omedvetna skaparguden — en idé " +
+            "som rensades bort ur klassisk kristendom men lämnat spår " +
+            "kvar (bl.a. i tanken att syndafallet, hur tragiskt det än " +
+            "var, var förutsättningen för Kristi födelse). Tillägger att " +
+            "ormens koppling till Satan INTE är given i själva Adam och " +
+            "Eva-texten (ingenting säger uttryckligen att ormen som " +
+            "frestar Eva är 'ondskans upphovsman') — kallar sammanflätningen " +
+            "av de två berättelserna 'lysande', och hänvisar till Gustave " +
+            "Dorés etsningar till Miltons Paradise Lost.",
+        },
+        {
+          chapter: 3,
           verse: 7,
-          order: 2,
+          order: 4,
           quote:
             "What sort of eye-opening is that? What does it mean to " +
             "realize that you're naked? It means to realize that you're " +
@@ -3186,6 +3232,7 @@ async function main() {
     { slug: "jacques-derrida", name: "Jacques Derrida" },
     { slug: "erich-neumann", name: "Erich Neumann" },
     { slug: "camille-paglia", name: "Camille Paglia" },
+    { slug: "frozen-disney", name: "Frost (Disneyfilm)" },
   ];
   const refCharacters: Record<string, { id: string }> = {};
   for (const c of refCharacterDefs) {
@@ -3586,6 +3633,40 @@ async function main() {
         "att hon trodde att hela den akademiska 'kulturkriget' hade " +
         "kunnat undvikas om universiteten på 1960–70-talen hade vänt sig " +
         "till Neumann istället för åt det håll de faktiskt gick.",
+    },
+
+    // --- Tillagda 2026-08-24: Bibelseriens föreläsning om Adam och Eva
+    // (Ifi5KkXig3s) — grävt fram efter direkt fråga från användaren om
+    // mer material kring Eden/ormen. Samma video/story som verse-
+    // noteringarna ovan i FAS 5-blocket. ---
+    {
+      videoYoutubeId: "Ifi5KkXig3s", storySlug: "garden-of-eden",
+      characterSlug: "tornrosa", atSec: 5037,
+      note:
+        "En ANNAN Törnrosa-läsning än den från Maps of Meaning (se ovan): " +
+        "här läses Maleficent som 'den uppslukande modern' i motsatt " +
+        "mening — kungaparets ÖVERbeskydd av Törnrosa (genom att hålla " +
+        "henne borta från allt hemskt) gör henne så naiv att hennes " +
+        "första kärleksmöte nästan knäcker henne helt.",
+    },
+    {
+      videoYoutubeId: "Ifi5KkXig3s", storySlug: "garden-of-eden",
+      characterSlug: "frozen-disney", atSec: 5201,
+      note:
+        "Nämner (mycket kritiskt — 'that absolutely appalling piece of " +
+        "rubbish') Frost som ett medvetet svar på kritiken att Törnrosa " +
+        "behöver en prins som räddare — utan att gå in på varför han " +
+        "ogillar filmen så starkt.",
+    },
+    {
+      videoYoutubeId: "Ifi5KkXig3s", storySlug: "garden-of-eden",
+      characterSlug: "harry-potter", atSec: 5591,
+      note:
+        "En annan Harry Potter-koppling än den från Maps of Meaning (se " +
+        "ovan): pekar på likheten mellan ett urgammalt alkemistiskt " +
+        "symbol (kallat 'the round chaos', en orm/drake som föregår " +
+        "manligt/kvinnligt) och den gyllene kvicken i Quidditch — och " +
+        "undrar högt hur J.K. Rowling kände till en så obskyr symbol.",
     },
   ];
 
