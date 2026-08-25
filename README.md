@@ -70,6 +70,27 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 28 (2026-08-24): Lukasevangeliet — ny bok
+
+Fjärde boken i Bibel-korpusen (efter Genesis, Exodus, Matteus): de tre
+mest kända Lukas-unika berättelserna som inte finns i Matteus alls —
+Den barmhärtige samariten (10:25-37), Liknelsen om den förlorade sonen
+(15:11-32), Sackeus i trädet (19:1-10). Alla tre Tier 2 (handplockat
+kända). Ny karaktär Sackeus, nytt tema Förlåtelse.
+
+**Viktig upptäckt under textextraktionen**: till skillnad från Matteus
+använder Lukas "Herren" även i BERÄTTAR-röst om Jesus (inte bara som
+vokativt tilltal) — t.ex. "utsåg Herren sjuttiotvå andra" (10:1) och
+"satte sig ned vid Herrens fötter" (10:39, Maria vid Jesu fötter). Den
+blinda gudsnamn-normaliseringen hade gjort båda till "Gud", vilket
+skulle ha läst som att GUD (inte Jesus) skickade ut lärjungarna/att
+Maria satt vid Guds fötter. Rättade 13 sådana fall i kap. 10 och 19
+INNAN de skeppades, genom att läsa varje förekomst i sitt sammanhang —
+behöll "Gud" för genuina tilltal till Gud Fadern (t.ex. "du himmelens
+och jordens Gud") och fasta fraser som "Guds rike". Sanity-checkade
+Matteus för samma mönster i efterhand — inga träffar där (Matteus
+narrator-röst kallar sällan Jesus "Herren" på samma sätt).
+
 ## Fas 26–27 (2026-08-24): Sparade citat, dagbok, rangordning, tidslinje
 
 **Citat-stjärnmärkning**: varje enskilt Peterson-citat (segment-citat,
