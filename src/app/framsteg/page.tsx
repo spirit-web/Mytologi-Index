@@ -1,14 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getGamificationStats, getCharacterStats, BADGES } from "@/lib/gamification";
+import { getGamificationStats, getCharacterStats, getDynamicBadges, BADGES } from "@/lib/gamification";
 
 export default async function ProgressPage() {
   const [stats, characterStats] = await Promise.all([getGamificationStats(), getCharacterStats()]);
 
   const overallPct = pct(stats.totalCompleted, stats.totalStories);
   const petersonPct = pct(stats.petersonCompleted, stats.petersonTotal);
-  const earnedBadges = BADGES.filter((b) => b.isEarned(stats));
-  const lockedBadges = BADGES.filter((b) => !b.isEarned(stats));
+  // Bok-/cykel-emblem härleds live från databasen (se getDynamicBadges)
+  // så en ny bok eller berättelsecykel får ett eget emblem automatiskt,
+  // ihop med de fasta, bok-oberoende emblemen i BADGES.
+  const allBadges = [...BADGES, ...getDynamicBadges(stats)];
+  const earnedBadges = allBadges.filter((b) => b.isEarned(stats));
+  const lockedBadges = allBadges.filter((b) => !b.isEarned(stats));
   const favorites = stats.stories.filter((s) => s.favorite);
   const earnedCharacterBadges = characterStats.filter((c) => c.completed === c.total);
   const lockedCharacterBadges = characterStats.filter((c) => c.completed !== c.total);
@@ -23,7 +27,7 @@ export default async function ProgressPage() {
       </h1>
       <p className="mb-10 text-sm text-[var(--text-muted)]">
         {stats.totalCompleted} av {stats.totalStories} berättelser avklarade · {stats.points} poäng ·{" "}
-        {earnedBadges.length}/{BADGES.length} emblem
+        {earnedBadges.length}/{allBadges.length} emblem
       </p>
 
       {/* Jordan Peterson-visdomsmätare */}
@@ -62,7 +66,7 @@ export default async function ProgressPage() {
       {/* Emblem */}
       <section className="mb-10">
         <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--text-faint)]">
-          Emblem ({earnedBadges.length}/{BADGES.length})
+          Emblem ({earnedBadges.length}/{allBadges.length})
         </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {[...earnedBadges, ...lockedBadges].map((badge) => {

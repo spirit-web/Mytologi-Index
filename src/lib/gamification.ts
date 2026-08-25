@@ -190,40 +190,66 @@ export type Badge = {
   progress: (s: GamificationStats) => number;
 };
 
-const bookBadge = (bookSlug: string, name: string, description: string, emoji: string): Badge => ({
-  slug: `book-${bookSlug}`,
-  name,
-  description,
-  emoji,
-  isEarned: (s) => {
-    const g = s.byBook.find((b) => b.slug === bookSlug);
-    return !!g && g.total > 0 && g.completed === g.total;
-  },
-  progress: (s) => {
-    const g = s.byBook.find((b) => b.slug === bookSlug);
-    return g && g.total > 0 ? g.completed / g.total : 0;
-  },
-});
+// --- Bok- och cykel-emblem: HÄRLEDDA, inte hårdkodade -------------------
+// Ett emblem per bok och ett per berättelsecykel (seriesSlug-grupp)
+// genereras automatiskt från stats.byBook/bySeries, se getDynamicBadges()
+// nedan — inte en statisk lista här. Det betyder att en ny bok (Lukas,
+// Koranen, ...) eller en ny cykel (t.ex. en Mose- eller Josef-cykel)
+// automatiskt får ett eget emblem så fort den seedas, utan att någon
+// kod behöver ändras — direkt önskemål från användaren 2026-08-25.
+//
+// De två kartorna nedan är HELT VALFRIA finputsningar (emoji + ett
+// finare namn) för några kända favoriter — saknas en bok/cykel här får
+// den bara en vettig generisk ikon/namn istället, aldrig inget emblem
+// alls. Lägg gärna till en rad här när en ny bok känns värd en egen
+// ikon, men det är aldrig ett krav för att emblemet ska dyka upp.
+const BOOK_BADGE_STYLE: Record<string, { emoji: string; name: string }> = {
+  genesis: { emoji: "🌍", name: "Genesis-mästare" },
+  exodus: { emoji: "🔥", name: "Exodus-mästare" },
+  matthew: { emoji: "✝️", name: "Matteus-mästare" },
+  luke: { emoji: "📖", name: "Lukas-mästare" },
+  "maps-of-meaning-2017": { emoji: "🗺️", name: "Maps of Meaning — invigd" },
+  "12-rules-for-life": { emoji: "📏", name: "12 regler bemästrade" },
+  "we-who-wrestle-with-god": { emoji: "🤼", name: "Brottas med Gud" },
+  "beyond-order": { emoji: "🌀", name: "Bortom ordningen" },
+};
+const SERIES_BADGE_STYLE: Record<string, { emoji: string }> = {
+  "genesis:jacob": { emoji: "🪜" },
+  "genesis:abraham": { emoji: "⭐" },
+  "genesis:noah": { emoji: "🌊" },
+};
+const DEFAULT_BOOK_EMOJI = "📖";
+const DEFAULT_SERIES_EMOJI = "🔗";
 
-const seriesBadge = (
-  seriesKey: string,
-  name: string,
-  description: string,
-  emoji: string,
-): Badge => ({
-  slug: `series-${seriesKey}`,
-  name,
-  description,
-  emoji,
-  isEarned: (s) => {
-    const g = s.bySeries.find((b) => b.slug === seriesKey);
-    return !!g && g.total > 0 && g.completed === g.total;
-  },
-  progress: (s) => {
-    const g = s.bySeries.find((b) => b.slug === seriesKey);
-    return g && g.total > 0 ? g.completed / g.total : 0;
-  },
-});
+// Bygger ett emblem per bok (stats.byBook) och ett per cykel
+// (stats.bySeries) — anropas med redan hämtad stats (se framsteg-sidan)
+// så att listan alltid speglar exakt vilka böcker/cykler som finns i
+// databasen just nu, oavsett hur många fler som läggs till framöver.
+export function getDynamicBadges(stats: GamificationStats): Badge[] {
+  const bookBadges: Badge[] = stats.byBook.map((b) => {
+    const style = BOOK_BADGE_STYLE[b.slug];
+    return {
+      slug: `book-${b.slug}`,
+      name: style?.name ?? `${b.name} klar`,
+      description: `Klarmarkera alla berättelser i ${b.name}.`,
+      emoji: style?.emoji ?? DEFAULT_BOOK_EMOJI,
+      isEarned: () => b.total > 0 && b.completed === b.total,
+      progress: () => (b.total > 0 ? b.completed / b.total : 0),
+    };
+  });
+  const seriesBadges: Badge[] = stats.bySeries.map((b) => {
+    const style = SERIES_BADGE_STYLE[b.slug];
+    return {
+      slug: `series-${b.slug}`,
+      name: `${b.name} klar`,
+      description: `Klarmarkera alla berättelser i ${b.name}.`,
+      emoji: style?.emoji ?? DEFAULT_SERIES_EMOJI,
+      isEarned: () => b.total > 0 && b.completed === b.total,
+      progress: () => (b.total > 0 ? b.completed / b.total : 0),
+    };
+  });
+  return [...bookBadges, ...seriesBadges];
+}
 
 export const BADGES: Badge[] = [
   {
@@ -258,36 +284,9 @@ export const BADGES: Badge[] = [
     isEarned: (s) => s.totalCompleted >= 50,
     progress: (s) => Math.min(1, s.totalCompleted / 50),
   },
-  bookBadge("genesis", "Genesis-mästare", "Klarmarkera alla berättelser i Första Moseboken.", "🌍"),
-  bookBadge("exodus", "Exodus-mästare", "Klarmarkera alla berättelser i Andra Moseboken.", "🔥"),
-  bookBadge("matthew", "Matteus-mästare", "Klarmarkera alla berättelser i Matteusevangeliet.", "✝️"),
-  bookBadge(
-    "maps-of-meaning-2017",
-    "Maps of Meaning — invigd",
-    "Klarmarkera alla 12 föreläsningar i Maps of Meaning.",
-    "🗺️",
-  ),
-  bookBadge("12-rules-for-life", "12 regler bemästrade", "Klarmarkera alla 12 regler för livet.", "📏"),
-  bookBadge(
-    "we-who-wrestle-with-god",
-    "Brottas med Gud",
-    "Klarmarkera alla 9 kapitel i We Who Wrestle with God.",
-    "🤼",
-  ),
-  bookBadge(
-    "beyond-order",
-    "Bortom ordningen",
-    "Klarmarkera alla 12 regler i Beyond Order.",
-    "🌀",
-  ),
-  seriesBadge("genesis:jacob", "Jakob-cykeln klar", "Klarmarkera alla berättelser i Jakob-cykeln.", "🪜"),
-  seriesBadge(
-    "genesis:abraham",
-    "Abraham-cykeln klar",
-    "Klarmarkera alla berättelser i Abraham-cykeln.",
-    "⭐",
-  ),
-  seriesBadge("genesis:noah", "Noa-cykeln klar", "Klarmarkera alla berättelser i Noa-cykeln.", "🌊",),
+  // Bok- och cykel-emblem genereras INTE här längre — se
+  // getDynamicBadges() ovan, som bygger ett emblem per bok/cykel direkt
+  // från databasen. Bara de bok-/cykel-oberoende emblemen nedan.
   {
     slug: "collector-5",
     name: "Samlare",
