@@ -8,6 +8,7 @@ import { PrismaClient } from "@prisma/client";
 import captionsByCode from "./image-captions.json";
 import matthewCaptionsByCode from "./image-captions-matthew.json";
 import exodusCaptionsByCode from "./image-captions-exodus.json";
+import lukeCaptionsByCode from "./image-captions-luke.json";
 
 const prisma = new PrismaClient();
 
@@ -1402,6 +1403,7 @@ async function main() {
     // Matteus), därför läggs den till separat på nytt här.
     { slug: "mose", name: "Mose" },
     { slug: "elia", name: "Elia" },
+    { slug: "sackeus", name: "Sackeus" },
   ];
   const ntCharacters: Record<string, { id: string }> = {};
   for (const c of ntCharacterDefs) {
@@ -1416,6 +1418,7 @@ async function main() {
     { slug: "betrayal", name: "Förräderi" },
     { slug: "compassion", name: "Medkänsla" },
     { slug: "kingdom-of-god", name: "Guds rike" },
+    { slug: "forgiveness", name: "Förlåtelse" },
   ] as const;
   const ntThemes: Record<string, { id: string }> = {};
   for (const t of ntThemeDefs) {
@@ -1809,6 +1812,112 @@ async function main() {
   }
 
   console.log(`Seedat Matteusevangeliet: ${ntStories.length} stories, ${christSegments.length} Peterson-segment.`);
+
+  // ======================================================================
+  // Lukasevangeliet — tredje evangeliet, ny bok i Bibel-korpusen.
+  // ======================================================================
+  // Fokuserar på de tre mest kända Lukas-unika berättelserna som INTE
+  // finns i Matteus alls: Den barmhärtige samariten, Den förlorade sonen,
+  // Sackeus. Bilder: alla tre Lambsongs (samma CC BY-NC, AI-adaptationer
+  // tillåtna, som redan används genomgående) — se README.
+  const luke = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "luke" } },
+    update: {},
+    create: {
+      corpusId: bible.id,
+      slug: "luke",
+      name: "Lukasevangeliet",
+      order: 4,
+      testament: "new",
+    },
+  });
+
+  type LukeStoryDef = {
+    slug: string; title: string; startRef: string; endRef: string; orderInBook: number;
+    characterSlugs: string[]; themeSlugs: string[];
+  };
+  const lukeStories: LukeStoryDef[] = [
+    {
+      slug: "good-samaritan", title: "Den barmhärtige samariten",
+      startRef: "Luke 10:25", endRef: "Luke 10:37", orderInBook: 1,
+      characterSlugs: ["jesus"], themeSlugs: ["compassion"],
+    },
+    {
+      slug: "prodigal-son", title: "Liknelsen om den förlorade sonen",
+      startRef: "Luke 15:11", endRef: "Luke 15:32", orderInBook: 2,
+      characterSlugs: ["jesus"], themeSlugs: ["forgiveness"],
+    },
+    {
+      slug: "zacchaeus", title: "Sackeus i trädet",
+      startRef: "Luke 19:1", endRef: "Luke 19:10", orderInBook: 3,
+      characterSlugs: ["jesus", "sackeus"], themeSlugs: ["forgiveness"],
+    },
+  ];
+  for (const s of lukeStories) {
+    const lukeStoryData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: luke.id, slug: s.slug } },
+      update: lukeStoryData,
+      create: { bookId: luke.id, slug: s.slug, ...lukeStoryData },
+    });
+    for (const charSlug of s.characterSlugs) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: ntCharacters[charSlug].id } },
+        update: {},
+        create: { storyId: story.id, characterId: ntCharacters[charSlug].id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      const theme = themes[themeSlug] ?? ntThemes[themeSlug];
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: theme.id } },
+        update: {},
+        create: { storyId: story.id, themeId: theme.id },
+      });
+    }
+  }
+
+  const lukeCaptions = lukeCaptionsByCode as Record<string, string[]>;
+  const lukeImageSets: Array<{ storySlug: string; code: string; count: number; credit: string; creditUrl: string }> = [
+    { storySlug: "good-samaritan", code: "FB_LS_Good_Samaritan", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-good-samaritan/" },
+    { storySlug: "prodigal-son", code: "FB_LS_Lost_Son", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-lost-son/" },
+    { storySlug: "zacchaeus", code: "FB_LS_Zacchaeus", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-zacchaeus/" },
+  ];
+  for (const set of lukeImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: luke.id, slug: set.storySlug } });
+    for (let fileNum = 1; fileNum <= set.count; fileNum++) {
+      const path = `/images/luke/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const caption = lukeCaptions[set.code]?.[fileNum - 1] ?? null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order: fileNum } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order: fileNum, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+
+  const lukePortraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
+    { slug: "sackeus", storySlug: "zacchaeus", imgOrder: 4 },
+  ];
+  for (const p of lukePortraits) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: luke.id, slug: p.storySlug } });
+    const img = await prisma.storyImage.findUniqueOrThrow({ where: { storyId_order: { storyId: story.id, order: p.imgOrder } } });
+    await prisma.character.update({
+      where: { slug: p.slug },
+      data: { portraitPath: img.path, portraitCredit: img.credit, portraitCreditUrl: img.creditUrl },
+    });
+  }
+
+  const lukeThumbnails: Record<string, number> = {
+    "good-samaritan": 7, // samariten hjälper den skadade mannen, inte bara vägen
+    "prodigal-son": 8, // fadern springer glatt emot sonen
+    zacchaeus: 4, // Sackeus uppe i trädet — berättelsens mest ikoniska bild
+  };
+  for (const [slug, order] of Object.entries(lukeThumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: luke.id, slug }, data: { thumbnailOrder: order } });
+  }
+
+  console.log(`Seedat Lukasevangeliet: ${lukeStories.length} stories.`);
 
   // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
@@ -3114,6 +3223,29 @@ async function main() {
         "alltså inte i islamsk skrift, även om huvudpersonen gör det.",
     },
     {
+      id: luke.id,
+      description:
+        "Jesu födelse (ur Marias och herdarnas perspektiv), hans liknelser " +
+        "och under, resan mot Jerusalem, och passionsveckan. Lägger stor " +
+        "vikt vid utstötta grupper (samariter, publikaner, kvinnor, fattiga) " +
+        "och innehåller flera av de mest kända liknelserna — Den barmhärtige " +
+        "samariten, Den förlorade sonen — som inte finns i Matteus alls.",
+      authorship:
+        "Traditionellt tillskriven Lukas, en grekisktalande läkare och " +
+        "följeslagare till aposteln Paulus (ej själv ögonvittne till Jesu " +
+        "liv). Skriven som första delen av ett tvådelat verk tillsammans " +
+        "med Apostlagärningarna, för en huvudsakligen icke-judisk " +
+        "läsekrets. Modern forskning daterar den ofta till ca 80–90 e.Kr., " +
+        "möjligen efter eller samtidigt med Matteus, och ser den — liksom " +
+        "Matteus — som byggd på Markusevangeliet plus källan \"Q\".",
+      traditions:
+        "Kristendom: central, en av de fyra evangelierna, källa till " +
+        "julevangeliets herdar och änglar (skilt från Matteus vise män). " +
+        "Judendom: ingår inte i judisk skrift. Islam: Jesus (Isa) och " +
+        "Johannes Döparen (Yahya) är centrala profeter i Koranen — men, " +
+        "liksom för Matteus, förnekar Koranen (sura 4:157) korsfästelsen.",
+    },
+    {
       id: mapsOfMeaningBook.id,
       description:
         "Petersons psykologiska tolkningsramverk för myt, religion och " +
@@ -3886,6 +4018,9 @@ async function main() {
     { bookSlug: "matthew", storySlug: "last-supper" },
     { bookSlug: "matthew", storySlug: "gethsemane" },
     { bookSlug: "matthew", storySlug: "trial-before-pilate" },
+    { bookSlug: "luke", storySlug: "good-samaritan" },
+    { bookSlug: "luke", storySlug: "prodigal-son" },
+    { bookSlug: "luke", storySlug: "zacchaeus" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
   ];
@@ -3908,6 +4043,7 @@ async function main() {
     { slug: "genesis", estimate: "Traditionellt ca 1200-talet f.Kr. (Mose) — moderna forskare daterar ofta källorna till ca 950–500 f.Kr., slutredigering ca 500–400 f.Kr." },
     { slug: "exodus", estimate: "Traditionellt ca 1200-talet f.Kr. — moderna forskare ofta ca 600–500 f.Kr. för slutredigeringen." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
+    { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "maps-of-meaning-2017", estimate: "Föreläsningar hållna 2017 (boken med samma namn gavs ut 1999)." },
     { slug: "12-rules-for-life", estimate: "2018" },
     { slug: "we-who-wrestle-with-god", estimate: "2024" },
