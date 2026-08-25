@@ -70,6 +70,17 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 30 (2026-08-25): Tre nya Lukas-berättelser
+
+Lukasevangeliet från 3 till 6 berättelser: Maria och Marta (10:38-42,
+direkt efter Barmhärtige samariten i samma kapitel), Det förlorade
+fåret och myntet (15:1-10, samma "förlorat och återfunnet"-trilogi som
+Förlorade sonen), Den rike mannen och Lasarus (16:19-31, Abraham
+återknyter till samma Character-rad som i Genesis). Ny karaktär "Maria
+från Betania" medvetet skild från "maria" (Jesu mor) för att undvika
+namnkollision. Alla tre tillagda i Tier 2 (lika kända/centrala som
+bokens övriga liknelser).
+
 ## Fas 29 (2026-08-25): Bok- och cykel-emblem blev automatiska
 
 De hårdkodade `bookBadge(...)`/`seriesBadge(...)`-anropen i
