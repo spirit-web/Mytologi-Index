@@ -70,6 +70,22 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 29 (2026-08-25): Bok- och cykel-emblem blev automatiska
+
+De hårdkodade `bookBadge(...)`/`seriesBadge(...)`-anropen i
+`gamification.ts` ersatta med `getDynamicBadges(stats)`, som bygger ett
+emblem per bok och ett per berättelsecykel direkt från `stats.byBook`/
+`bySeries` — alltså från vad som faktiskt finns i databasen just nu,
+inte en lista jag måste komma ihåg att uppdatera. Två små, helt
+VALFRIA stil-kartor låter kända favoriter (Genesis, Jakob-cykeln, ...)
+behålla sina handplockade emoji/namn; saknas en bok/cykel där får den
+bara en generisk ikon (📖/🔗) istället — aldrig inget emblem alls.
+Effekt, verifierat live: gick från 17 till 19 emblem automatiskt utan
+kodändring för själva innehållet — förutom Lukas-mästare dök en helt
+ny "Passionsveckan klar" upp för Matteus Passionsvecka-cykeln, som
+aldrig haft ett handskrivet emblem förut. Direkt användarönskemål: nya
+böcker/cykler ska få emblem automatiskt allteftersom de läggs till.
+
 ## Fas 28 (2026-08-24): Lukasevangeliet — ny bok
 
 Fjärde boken i Bibel-korpusen (efter Genesis, Exodus, Matteus): de tre
