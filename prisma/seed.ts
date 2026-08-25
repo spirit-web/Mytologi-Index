@@ -1404,6 +1404,14 @@ async function main() {
     { slug: "mose", name: "Mose" },
     { slug: "elia", name: "Elia" },
     { slug: "sackeus", name: "Sackeus" },
+    // NY 2026-08-25. OBS namnkollision undviken medvetet: detta är Maria
+    // FRÅN BETANIA (Martas syster), en annan person än "maria" ovan
+    // (Jesu mor) — separat slug så de inte blandas ihop i indexet.
+    { slug: "maria-av-betania", name: "Maria från Betania" },
+    { slug: "marta", name: "Marta" },
+    // Samma återknytningsmönster som Mose/Elia — Abraham dyker upp igen
+    // som karaktär i Jesu liknelse, samma Character-rad som i Genesis.
+    { slug: "abraham", name: "Abraham" },
   ];
   const ntCharacters: Record<string, { id: string }> = {};
   for (const c of ntCharacterDefs) {
@@ -1843,13 +1851,33 @@ async function main() {
       characterSlugs: ["jesus"], themeSlugs: ["compassion"],
     },
     {
-      slug: "prodigal-son", title: "Liknelsen om den förlorade sonen",
-      startRef: "Luke 15:11", endRef: "Luke 15:32", orderInBook: 2,
+      // NY 2026-08-25: direkt efterföljande scen i samma kapitel.
+      slug: "mary-and-martha", title: "Maria och Marta",
+      startRef: "Luke 10:38", endRef: "Luke 10:42", orderInBook: 2,
+      characterSlugs: ["jesus", "maria-av-betania", "marta"], themeSlugs: [],
+    },
+    {
+      // NY 2026-08-25: samma "förlorat och återfunnet"-trilogi (15:1-32)
+      // som förlorade sonen, de två kortare liknelserna direkt före den.
+      slug: "lost-sheep-and-coin", title: "Det förlorade fåret och det förlorade myntet",
+      startRef: "Luke 15:1", endRef: "Luke 15:10", orderInBook: 3,
       characterSlugs: ["jesus"], themeSlugs: ["forgiveness"],
     },
     {
+      slug: "prodigal-son", title: "Liknelsen om den förlorade sonen",
+      startRef: "Luke 15:11", endRef: "Luke 15:32", orderInBook: 4,
+      characterSlugs: ["jesus"], themeSlugs: ["forgiveness"],
+    },
+    {
+      // NY 2026-08-25: Abraham återknyter till samma Character-rad som
+      // i Genesis.
+      slug: "rich-man-and-lazarus", title: "Den rike mannen och Lasarus",
+      startRef: "Luke 16:19", endRef: "Luke 16:31", orderInBook: 5,
+      characterSlugs: ["jesus", "abraham"], themeSlugs: ["compassion"],
+    },
+    {
       slug: "zacchaeus", title: "Sackeus i trädet",
-      startRef: "Luke 19:1", endRef: "Luke 19:10", orderInBook: 3,
+      startRef: "Luke 19:1", endRef: "Luke 19:10", orderInBook: 6,
       characterSlugs: ["jesus", "sackeus"], themeSlugs: ["forgiveness"],
     },
   ];
@@ -1878,26 +1906,36 @@ async function main() {
   }
 
   const lukeCaptions = lukeCaptionsByCode as Record<string, string[]>;
-  const lukeImageSets: Array<{ storySlug: string; code: string; count: number; credit: string; creditUrl: string }> = [
+  const lukeImageSets: Array<{ storySlug: string; code: string; count: number; offset?: number; credit: string; creditUrl: string }> = [
     { storySlug: "good-samaritan", code: "FB_LS_Good_Samaritan", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-good-samaritan/" },
     { storySlug: "prodigal-son", code: "FB_LS_Lost_Son", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-lost-son/" },
     { storySlug: "zacchaeus", code: "FB_LS_Zacchaeus", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-zacchaeus/" },
+    // NY 2026-08-25.
+    { storySlug: "mary-and-martha", code: "FB_LS_Martha_Mary", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-martha-mary/" },
+    // Två källset i EN story-mapp (fåret 15:1-7 följt av myntet 15:8-10),
+    // samma offset-mönster som tidigare kombinerade set.
+    { storySlug: "lost-sheep-and-coin", code: "FB_RG_Lost_Sheep", count: 9, offset: 0, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-lost-sheep/" },
+    { storySlug: "lost-sheep-and-coin", code: "FB_LS_Lost_Coin", count: 12, offset: 9, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-lost-coin/" },
+    { storySlug: "rich-man-and-lazarus", code: "FB_RichMan_Lazarus", count: 11, credit: "Arabs for Christ (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/rich-man-lazarus/" },
   ];
   for (const set of lukeImageSets) {
     const story = await prisma.story.findFirstOrThrow({ where: { bookId: luke.id, slug: set.storySlug } });
     for (let fileNum = 1; fileNum <= set.count; fileNum++) {
-      const path = `/images/luke/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const order = (set.offset ?? 0) + fileNum;
+      const path = `/images/luke/${set.storySlug}/${String(order).padStart(2, "0")}.jpg`;
       const caption = lukeCaptions[set.code]?.[fileNum - 1] ?? null;
       await prisma.storyImage.upsert({
-        where: { storyId_order: { storyId: story.id, order: fileNum } },
+        where: { storyId_order: { storyId: story.id, order } },
         update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
-        create: { storyId: story.id, order: fileNum, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order, path, caption, credit: set.credit, creditUrl: set.creditUrl },
       });
     }
   }
 
   const lukePortraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
     { slug: "sackeus", storySlug: "zacchaeus", imgOrder: 4 },
+    { slug: "maria-av-betania", storySlug: "mary-and-martha", imgOrder: 6 },
+    { slug: "marta", storySlug: "mary-and-martha", imgOrder: 7 },
   ];
   for (const p of lukePortraits) {
     const story = await prisma.story.findFirstOrThrow({ where: { bookId: luke.id, slug: p.storySlug } });
@@ -1912,6 +1950,9 @@ async function main() {
     "good-samaritan": 7, // samariten hjälper den skadade mannen, inte bara vägen
     "prodigal-son": 8, // fadern springer glatt emot sonen
     zacchaeus: 4, // Sackeus uppe i trädet — berättelsens mest ikoniska bild
+    "mary-and-martha": 7, // Martas konflikt med Jesus, kärnan i berättelsen
+    "lost-sheep-and-coin": 8, // herden firar att han hittat det förlorade fåret
+    "rich-man-and-lazarus": 6, // den rike mannen i plågan, Abraham och Lasarus i fjärran
   };
   for (const [slug, order] of Object.entries(lukeThumbnails)) {
     await prisma.story.updateMany({ where: { bookId: luke.id, slug }, data: { thumbnailOrder: order } });
@@ -4021,6 +4062,10 @@ async function main() {
     { bookSlug: "luke", storySlug: "good-samaritan" },
     { bookSlug: "luke", storySlug: "prodigal-son" },
     { bookSlug: "luke", storySlug: "zacchaeus" },
+    // NY 2026-08-25: alla tre lika kända/centrala som de tre ovan.
+    { bookSlug: "luke", storySlug: "mary-and-martha" },
+    { bookSlug: "luke", storySlug: "lost-sheep-and-coin" },
+    { bookSlug: "luke", storySlug: "rich-man-and-lazarus" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
   ];
