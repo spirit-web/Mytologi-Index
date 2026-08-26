@@ -70,6 +70,23 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 33 (2026-08-26): Markusevangeliet — sjätte boken
+
+Markus tillagt som en ny, sjätte bok i Bibel-korpusen (efter Genesis,
+Exodus, Matteus, Lukas, Johannes) — en första grund med tre
+berättelser som inte redan täcks via de andra evangelierna: den rike
+unge mannen (10:17-31), blinde Bartimaios (10:46-52) och änkans två
+skärvar (12:41-44), alla markerade Tier 2 (välkända). Text extraherad
+och normaliserad från samma 1917-källa; vokativ-scan för "Herre"/"Gud"
+gav noll falska träffar den här gången (inklusive korrekt bevarat
+"Gud sade till min herre" i 12:36, ett Psalm 110-citat, inte
+tilltal). Valde bort Legion/den besatte mannen i Gerasa (Markus 5) —
+enda hittade bildsetet hade licens som uttryckligen förbjuder
+"A.I. adaptations", utan Lambsongs-alternativ. Bokinfo
+(beskrivning/författarskap/religiös koppling) och skrivtids-
+uppskattning (ca 65–75 e.Kr., troligen det äldsta evangeliet)
+tillagda enligt samma mönster som övriga böcker.
+
 ## Fas 32 (2026-08-26): Två till Johannes-berättelser + Tier 2-rättelse
 
 Johannes från 5 till 7 berättelser: Jesus tvättar lärjungarnas fötter

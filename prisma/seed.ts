@@ -10,6 +10,7 @@ import matthewCaptionsByCode from "./image-captions-matthew.json";
 import exodusCaptionsByCode from "./image-captions-exodus.json";
 import lukeCaptionsByCode from "./image-captions-luke.json";
 import johnCaptionsByCode from "./image-captions-john.json";
+import markCaptionsByCode from "./image-captions-mark.json";
 
 const prisma = new PrismaClient();
 
@@ -2131,6 +2132,131 @@ async function main() {
   console.log(`Seedat Johannesevangeliet: ${johnStories.length} stories.`);
 
   // ======================================================================
+  // Markusevangeliet — sjätte boken, ny bok i Bibel-korpusen.
+  // ======================================================================
+  // Bara en första grund (3 berättelser) — snarare än att duplicera
+  // synoptiskt material som redan finns via Matteus (bespisningen,
+  // stormen, förklaringen ...), valdes tre berättelser som INTE finns
+  // någon annanstans i appen än: Blinde Bartimaios, änkans två skärvar,
+  // och den rike unge mannen. (Legion/den besatte mannen i Gerasa
+  // hittades bara med en licens som uttryckligen förbjuder
+  // "A.I. adaptations" — utelämnad, se README.)
+  const mark = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "mark" } },
+    update: {},
+    create: {
+      corpusId: bible.id,
+      slug: "mark",
+      name: "Markusevangeliet",
+      order: 6,
+      testament: "new",
+    },
+  });
+
+  const markCharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "jesus", name: "Jesus" },
+    { slug: "petrus", name: "Petrus" },
+    { slug: "bartimaios", name: "Bartimaios" },
+  ];
+  const markCharacters: Record<string, { id: string }> = {};
+  for (const c of markCharacterDefs) {
+    markCharacters[c.slug] = await prisma.character.upsert({
+      where: { slug: c.slug },
+      update: {},
+      create: c,
+    });
+  }
+
+  type MarkStoryDef = {
+    slug: string; title: string; startRef: string; endRef: string; orderInBook: number;
+    characterSlugs: string[]; themeSlugs: string[];
+  };
+  const markStories: MarkStoryDef[] = [
+    {
+      slug: "rich-young-ruler", title: "Den rike unge mannen",
+      startRef: "Mark 10:17", endRef: "Mark 10:31", orderInBook: 1,
+      characterSlugs: ["jesus", "petrus"], themeSlugs: [],
+    },
+    {
+      slug: "blind-bartimaeus", title: "Blinde Bartimaios",
+      startRef: "Mark 10:46", endRef: "Mark 10:52", orderInBook: 2,
+      characterSlugs: ["jesus", "bartimaios"], themeSlugs: ["testing-of-faith"],
+    },
+    {
+      slug: "widows-mite", title: "Änkans två skärvar",
+      startRef: "Mark 12:41", endRef: "Mark 12:44", orderInBook: 3,
+      characterSlugs: ["jesus"], themeSlugs: ["sacrifice"],
+    },
+  ];
+  for (const s of markStories) {
+    const markStoryData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: mark.id, slug: s.slug } },
+      update: markStoryData,
+      create: { bookId: mark.id, slug: s.slug, ...markStoryData },
+    });
+    for (const charSlug of s.characterSlugs) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: markCharacters[charSlug].id } },
+        update: {},
+        create: { storyId: story.id, characterId: markCharacters[charSlug].id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      const theme = themes[themeSlug] ?? ntThemes[themeSlug];
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: theme.id } },
+        update: {},
+        create: { storyId: story.id, themeId: theme.id },
+      });
+    }
+  }
+
+  const markCaptions = markCaptionsByCode as Record<string, string[]>;
+  const markImageSets: Array<{ storySlug: string; code: string; count: number; credit: string; creditUrl: string }> = [
+    { storySlug: "rich-young-ruler", code: "FB_Jesus_Rich_Man", count: 11, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/jesus-rich-man/" },
+    { storySlug: "blind-bartimaeus", code: "FB_LS_Blind_Bartimaeus", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-blind-bartimaeus/" },
+    { storySlug: "widows-mite", code: "FB_LS_Widow_Coins", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-widow-coins/" },
+  ];
+  for (const set of markImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: mark.id, slug: set.storySlug } });
+    for (let fileNum = 1; fileNum <= set.count; fileNum++) {
+      const path = `/images/mark/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const caption = markCaptions[set.code]?.[fileNum - 1] ?? null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order: fileNum } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order: fileNum, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+
+  const markPortraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
+    // Bild 8: Bartimaios med öppna ögon, botad och leende mot Jesus —
+    // mer ikoniskt än en tidig bild där han fortfarande är blind.
+    { slug: "bartimaios", storySlug: "blind-bartimaeus", imgOrder: 8 },
+  ];
+  for (const p of markPortraits) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: mark.id, slug: p.storySlug } });
+    const img = await prisma.storyImage.findUniqueOrThrow({ where: { storyId_order: { storyId: story.id, order: p.imgOrder } } });
+    await prisma.character.update({
+      where: { slug: p.slug },
+      data: { portraitPath: img.path, portraitCredit: img.credit, portraitCreditUrl: img.creditUrl },
+    });
+  }
+
+  const markThumbnails: Record<string, number> = {
+    "rich-young-ruler": 2, // Rike mannen ansikte mot ansikte med Jesus.
+    "blind-bartimaeus": 8, // Bartimaios botad, ser Jesus för första gången.
+    "widows-mite": 5, // Änkan släpper sitt mynt i offerkistan.
+  };
+  for (const [slug, order] of Object.entries(markThumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: mark.id, slug }, data: { thumbnailOrder: order } });
+  }
+
+  console.log(`Seedat Markusevangeliet: ${markStories.length} stories.`);
+
+  // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
   // Bygger ett riktigt story-index för Exodus-narrativet (tidigare fanns
@@ -3483,6 +3609,27 @@ async function main() {
         "på Jesus som profet, inte Guds son.",
     },
     {
+      id: mark.id,
+      description:
+        "Det kortaste och (troligen) äldsta evangeliet — ett snabbt, " +
+        "handlingstätt porträtt av Jesus, med få långa tal och ett " +
+        "återkommande fokus på lidande, tjänande och den \"mänskliga\" " +
+        "sidan av Jesus (han blir trött, hungrig, förvånad, arg).",
+      authorship:
+        "Traditionellt tillskriven Johannes Markus, en följeslagare till " +
+        "Petrus (inte en av de tolv lärjungarna själv) — enligt tidig " +
+        "kyrklig tradition (Papias, ca 100-talet) byggd på Petrus egna " +
+        "predikoberättelser. Modern forskning daterar den ofta till strax " +
+        "före eller efter Jerusalems fall (ca 65–75 e.Kr.) och ser den som " +
+        "den äldsta av de fyra evangelierna — troligen en av källorna både " +
+        "Matteus och Lukas byggde vidare på.",
+      traditions:
+        "Kristendom: kanoniskt evangelium, traditionellt den symboliska " +
+        "\"lejonet\" bland evangelisternas symboler (Hesekiel/Uppenbarelsebokens " +
+        "väsen). Judendom: ingår inte i judisk skrift. Islam: Jesus (Isa) " +
+        "förekommer i Koranen, men inte via Markusevangeliets specifika text.",
+    },
+    {
       id: mapsOfMeaningBook.id,
       description:
         "Petersons psykologiska tolkningsramverk för myt, religion och " +
@@ -4271,6 +4418,11 @@ async function main() {
     { bookSlug: "john", storySlug: "lazarus-raised" },
     { bookSlug: "john", storySlug: "washing-of-feet" },
     { bookSlug: "john", storySlug: "doubting-thomas" },
+    // NY 2026-08-26: Markusevangeliets tre första berättelser — alla
+    // välkända bibelberättelser som ofta citeras oberoende av evangelium.
+    { bookSlug: "mark", storySlug: "rich-young-ruler" },
+    { bookSlug: "mark", storySlug: "blind-bartimaeus" },
+    { bookSlug: "mark", storySlug: "widows-mite" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
   ];
@@ -4292,6 +4444,7 @@ async function main() {
   const writtenEstimates: Array<{ slug: string; estimate: string }> = [
     { slug: "genesis", estimate: "Traditionellt ca 1200-talet f.Kr. (Mose) — moderna forskare daterar ofta källorna till ca 950–500 f.Kr., slutredigering ca 500–400 f.Kr." },
     { slug: "exodus", estimate: "Traditionellt ca 1200-talet f.Kr. — moderna forskare ofta ca 600–500 f.Kr. för slutredigeringen." },
+    { slug: "mark", estimate: "Traditionellt ca 55–65 e.Kr. (byggd på Petrus predikan) — moderna forskare ofta ca 65–75 e.Kr., troligen det äldsta evangeliet." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },
