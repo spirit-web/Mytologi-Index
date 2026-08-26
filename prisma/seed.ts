@@ -13,6 +13,7 @@ import johnCaptionsByCode from "./image-captions-john.json";
 import markCaptionsByCode from "./image-captions-mark.json";
 import jonahCaptionsByCode from "./image-captions-jonah.json";
 import ruthCaptionsByCode from "./image-captions-ruth.json";
+import estherCaptionsByCode from "./image-captions-esther.json";
 
 const prisma = new PrismaClient();
 
@@ -2532,6 +2533,159 @@ async function main() {
   console.log(`Seedat Rut: ${ruthStories.length} stories.`);
 
   // ======================================================================
+  // Ester — nionde boken. Rikast handling hittills av de korta OT-
+  // böckerna (10 kapitel), seedas som sex berättelser. Tre bildset
+  // (Sweet Publishing, samma serie som Rut, CC BY-SA, AI tillåtet)
+  // täcker hela boken, ett set per två kapitel-par — varje set delas i
+  // sin tur mellan två berättelser via fileStart/fileEnd. OBS: boken
+  // nämner aldrig Gud/HERREN vid namn i grundtexten (ett känt drag hos
+  // Ester) — normalize_divine_name.py hittade konsekvent noll träffar,
+  // vilket är korrekt, inte ett tecken på ett missat extraheringsfel.
+  // ======================================================================
+  const esther = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "esther" } },
+    update: {},
+    create: {
+      corpusId: bible.id,
+      slug: "esther",
+      name: "Ester",
+      order: 9,
+      testament: "old",
+    },
+  });
+
+  const estherCharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "ester", name: "Ester" },
+    { slug: "mordokai", name: "Mordokai" },
+    { slug: "haman", name: "Haman" },
+    { slug: "ahasveros", name: "Ahasveros (Xerxes)" },
+    { slug: "vasti", name: "Vasti" },
+  ];
+  const estherCharacters: Record<string, { id: string }> = {};
+  for (const c of estherCharacterDefs) {
+    estherCharacters[c.slug] = await prisma.character.upsert({
+      where: { slug: c.slug },
+      update: {},
+      create: c,
+    });
+  }
+
+  type EstherStoryDef = {
+    slug: string; title: string; startRef: string; endRef: string; orderInBook: number;
+    characterSlugs: string[]; themeSlugs: string[];
+  };
+  const estherStories: EstherStoryDef[] = [
+    {
+      slug: "vashti-and-the-search-for-a-queen", title: "Vasti och sökandet efter en ny drottning",
+      startRef: "Esther 1:1", endRef: "Esther 2:23", orderInBook: 1,
+      characterSlugs: ["ester", "mordokai", "ahasveros", "vasti"], themeSlugs: ["hierarchy"],
+    },
+    {
+      slug: "hamans-decree-against-the-jews", title: "Hamans påbud mot judarna",
+      startRef: "Esther 3:1", endRef: "Esther 3:15", orderInBook: 2,
+      characterSlugs: ["haman", "mordokai", "ahasveros"], themeSlugs: ["deception", "hierarchy"],
+    },
+    {
+      slug: "esther-risks-her-life", title: "Ester riskerar sitt liv",
+      startRef: "Esther 4:1", endRef: "Esther 5:14", orderInBook: 3,
+      characterSlugs: ["ester", "mordokai", "haman"], themeSlugs: ["sacrifice", "testing-of-faith"],
+    },
+    {
+      slug: "the-kings-sleepless-night", title: "Kungens sömnlösa natt",
+      startRef: "Esther 6:1", endRef: "Esther 6:14", orderInBook: 4,
+      characterSlugs: ["ahasveros", "mordokai", "haman"], themeSlugs: ["chaos-order"],
+    },
+    {
+      slug: "haman-falls", title: "Hamans fall",
+      startRef: "Esther 7:1", endRef: "Esther 8:17", orderInBook: 5,
+      characterSlugs: ["ester", "haman", "ahasveros"], themeSlugs: ["betrayal", "deception"],
+    },
+    {
+      slug: "purim-established", title: "Purimfesten instiftas",
+      startRef: "Esther 9:1", endRef: "Esther 10:3", orderInBook: 6,
+      characterSlugs: ["mordokai", "ester"], themeSlugs: ["covenant"],
+    },
+  ];
+  for (const s of estherStories) {
+    const estherStoryData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: esther.id, slug: s.slug } },
+      update: estherStoryData,
+      create: { bookId: esther.id, slug: s.slug, ...estherStoryData },
+    });
+    for (const charSlug of s.characterSlugs) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: estherCharacters[charSlug].id } },
+        update: {},
+        create: { storyId: story.id, characterId: estherCharacters[charSlug].id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      const theme = themes[themeSlug] ?? ntThemes[themeSlug];
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: theme.id } },
+        update: {},
+        create: { storyId: story.id, themeId: theme.id },
+      });
+    }
+  }
+
+  const estherCaptions = estherCaptionsByCode as Record<string, string[]>;
+  const estherImageSets: Array<{ storySlug: string; code: string; fileStart: number; fileEnd: number; orderStart: number; credit: string; creditUrl: string }> = [
+    { storySlug: "vashti-and-the-search-for-a-queen", code: "FB_Esther_Part_1", fileStart: 1, fileEnd: 13, orderStart: 1, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/esther-1/" },
+    { storySlug: "hamans-decree-against-the-jews", code: "FB_Esther_Part_1", fileStart: 14, fileEnd: 21, orderStart: 14, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/esther-1/" },
+    { storySlug: "esther-risks-her-life", code: "FB_Esther_Part_2", fileStart: 1, fileEnd: 14, orderStart: 1, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/esther-2/" },
+    { storySlug: "the-kings-sleepless-night", code: "FB_Esther_Part_2", fileStart: 15, fileEnd: 22, orderStart: 15, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/esther-2/" },
+    { storySlug: "haman-falls", code: "FB_Esther_Part_3", fileStart: 1, fileEnd: 11, orderStart: 1, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/esther-3/" },
+    { storySlug: "purim-established", code: "FB_Esther_Part_3", fileStart: 12, fileEnd: 16, orderStart: 12, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/esther-3/" },
+  ];
+  for (const set of estherImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: esther.id, slug: set.storySlug } });
+    for (let fileNum = set.fileStart; fileNum <= set.fileEnd; fileNum++) {
+      const order = set.orderStart + (fileNum - set.fileStart);
+      // orderStart == fileStart för alla set här (ingen mappdelning
+      // mellan flera koder), så order == fileNum rakt av — filerna ligger
+      // i respektive story-mapp under sitt ursprungliga filnummer.
+      const path = `/images/esther/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const caption = estherCaptions[set.code]?.[fileNum - 1] ?? null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+
+  const estherPortraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
+    { slug: "ester", storySlug: "vashti-and-the-search-for-a-queen", imgOrder: 11 }, // Ester krönt till drottning.
+    { slug: "ahasveros", storySlug: "hamans-decree-against-the-jews", imgOrder: 17 }, // Kungen i eftertänksam närbild.
+    { slug: "haman", storySlug: "esther-risks-her-life", imgOrder: 13 }, // Haman skryter för sin hustru och sina vänner.
+    { slug: "mordokai", storySlug: "the-kings-sleepless-night", imgOrder: 20 }, // Mordokai hedrad på kungens häst.
+  ];
+  for (const p of estherPortraits) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: esther.id, slug: p.storySlug } });
+    const img = await prisma.storyImage.findUniqueOrThrow({ where: { storyId_order: { storyId: story.id, order: p.imgOrder } } });
+    await prisma.character.update({
+      where: { slug: p.slug },
+      data: { portraitPath: img.path, portraitCredit: img.credit, portraitCreditUrl: img.creditUrl },
+    });
+  }
+
+  const estherThumbnails: Record<string, number> = {
+    "vashti-and-the-search-for-a-queen": 11, // Ester krönt till drottning.
+    "hamans-decree-against-the-jews": 17, // Kungen i eftertänksam närbild.
+    "esther-risks-her-life": 9, // Ester sträcker fram handen mot kungens gyllene spira.
+    "the-kings-sleepless-night": 20, // Mordokai på kungens häst, Haman leder den.
+    "haman-falls": 3, // "Denne skändlige Haman" — anklagelsen inför kungen.
+    "purim-established": 16, // Purimfestens glada firande.
+  };
+  for (const [slug, order] of Object.entries(estherThumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: esther.id, slug }, data: { thumbnailOrder: order } });
+  }
+
+  console.log(`Seedat Ester: ${estherStories.length} stories.`);
+
+  // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
   // Bygger ett riktigt story-index för Exodus-narrativet (tidigare fanns
@@ -3933,6 +4087,29 @@ async function main() {
         "namngivna i Koranen.",
     },
     {
+      id: esther.id,
+      description:
+        "En judinna blir persisk drottning utan att avslöja sitt ursprung, " +
+        "och räddar sitt folk från utplåning genom mod, timing och politiskt " +
+        "spel snarare än under. Berömd för en litterär särart: grundtexten " +
+        "nämner aldrig Gud eller HERREN vid namn — inte en enda gång i hela " +
+        "boken — vilket har gjort den till en långvarig judisk och kristen " +
+        "diskussion om \"dold\" gudomlig försyn kontra mänskligt handlande.",
+      authorship:
+        "Okänd författare, sannolikt en persisk jude med god kännedom om " +
+        "hovet i Susa. Handlingen utspelar sig under kung Xerxes I:s " +
+        "regeringstid (486–465 f.Kr.), men boken dateras vanligen till " +
+        "100-talet f.Kr. — flera generationer senare än händelserna den " +
+        "skildrar.",
+      traditions:
+        "Judendom: en av de fem \"Megillot\", läses i sin helhet vid " +
+        "Purim, den glada fest boken själv instiftar (9:20-32) — det enda " +
+        "bibliska påbudet om en helt ny högtid. Kristendom: ingen direkt " +
+        "koppling, men ofta lyft fram som exempel på försyn genom " +
+        "till synes vardagliga händelser. Islam: Ester och Mordokai " +
+        "förekommer inte namngivna i Koranen.",
+    },
+    {
       id: mark.id,
       description:
         "Det kortaste och (troligen) äldsta evangeliet — ett snabbt, " +
@@ -4760,6 +4937,14 @@ async function main() {
     { bookSlug: "ruth", storySlug: "ruth-gleans-in-boaz-field" },
     { bookSlug: "ruth", storySlug: "ruth-at-the-threshing-floor" },
     { bookSlug: "ruth", storySlug: "boaz-marries-ruth" },
+    // NY 2026-08-26: hela Ester-boken — en av GT:s mest dramatiska och
+    // mest kända berättelser, grunden för Purimfesten.
+    { bookSlug: "esther", storySlug: "vashti-and-the-search-for-a-queen" },
+    { bookSlug: "esther", storySlug: "hamans-decree-against-the-jews" },
+    { bookSlug: "esther", storySlug: "esther-risks-her-life" },
+    { bookSlug: "esther", storySlug: "the-kings-sleepless-night" },
+    { bookSlug: "esther", storySlug: "haman-falls" },
+    { bookSlug: "esther", storySlug: "purim-established" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
   ];
@@ -4784,6 +4969,7 @@ async function main() {
     { slug: "mark", estimate: "Traditionellt ca 55–65 e.Kr. (byggd på Petrus predikan) — moderna forskare ofta ca 65–75 e.Kr., troligen det äldsta evangeliet." },
     { slug: "jonah", estimate: "Traditionellt ca 780-talet f.Kr. (Jona själv, under kung Jerobeam II) — moderna forskare ofta ca 400-talet f.Kr., en betydligt senare, efterhandskonstruerad berättelse." },
     { slug: "ruth", estimate: "Okänd författare. Handlingen utspelar sig under domartiden (ca 1100-talet f.Kr.) — men boken kan vara nedtecknad betydligt senare, ofta daterad till ca 500-talet f.Kr." },
+    { slug: "esther", estimate: "Okänd författare. Handlingen utspelar sig under kung Xerxes I (486–465 f.Kr.), men boken dateras vanligen till 100-talet f.Kr." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },

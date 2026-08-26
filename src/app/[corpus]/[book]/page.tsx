@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCharacterStats } from "@/lib/gamification";
-import { fetchBiblePassage, countWords } from "@/lib/bible";
+import { fetchBiblePassage, countWords, lengthLabel } from "@/lib/bible";
 
 export default async function BookPage({
   params,
@@ -369,15 +369,4 @@ function TierBadge({ tier }: { tier: 1 | 2 | 3 }) {
     );
   }
   return null;
-}
-
-// Grov, tregradig etikett så man direkt ser "lång eller kort" utan att
-// själv behöva tolka ett rått ordantal — trösklarna är satta löst efter
-// den faktiska spridningen i appens bibelberättelser (korta enskilda
-// scener som Kain och Abel ligger runt 150-200 ord, långa cykler som
-// Josef och hans bröder över 1500).
-function lengthLabel(wordCount: number): string {
-  if (wordCount < 300) return "Kort";
-  if (wordCount < 800) return "Medellång";
-  return "Lång";
 }

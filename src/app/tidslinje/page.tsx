@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { fetchBiblePassage, countWords, lengthLabel } from "@/lib/bible";
 
 // Kronologisk (= kanonisk läsordning, se kommentar nedan) tidslinje över
 // ALLA berättelser i alla korpusar/böcker, grupperat med böckerna som
@@ -23,6 +24,28 @@ export default async function TidslinjePage() {
       },
     },
   });
+
+  // Ordantal per story, samma logik och samma anledning som på bok-sidan
+  // (se kommentar där) — här beräknat en gång för ALLA stories i alla
+  // korpusar, så att tidslinjen kan visa längden direkt i varje rad utan
+  // att man behöver klicka in sig för att se om det är en lång eller kort
+  // berättelse.
+  const wordCounts = new Map<string, number>();
+  await Promise.all(
+    corpora.flatMap((corpus) =>
+      corpus.books.flatMap((book) =>
+        book.stories.map(async (s) => {
+          if (corpus.kind === "scripture") {
+            const passage = await fetchBiblePassage(s.startRef, s.endRef);
+            const n = passage ? passage.verses.reduce((sum, v) => sum + countWords(v.text), 0) : 0;
+            wordCounts.set(s.id, n);
+          } else {
+            wordCounts.set(s.id, countWords(`${s.quote ?? ""} ${s.summary ?? ""}`));
+          }
+        }),
+      ),
+    ),
+  );
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
@@ -99,9 +122,16 @@ export default async function TidslinjePage() {
                               <span className="shrink-0 text-sm text-[var(--accent)]" aria-hidden>★</span>
                             )}
                             <span className="min-w-0 flex-1 truncate text-[var(--text)]">{s.title}</span>
-                            <span className="shrink-0 text-xs text-[var(--text-faint)]">
-                              {s.startRef}
-                              {s.endRef !== s.startRef ? `–${s.endRef.replace(/^.*?(\d)/, "$1")}` : ""}
+                            <span className="shrink-0 text-right text-xs text-[var(--text-faint)]">
+                              <span className="block">
+                                {s.startRef}
+                                {s.endRef !== s.startRef ? `–${s.endRef.replace(/^.*?(\d)/, "$1")}` : ""}
+                              </span>
+                              {(wordCounts.get(s.id) ?? 0) > 0 && (
+                                <span className="block">
+                                  {wordCounts.get(s.id)} ord · {lengthLabel(wordCounts.get(s.id)!)}
+                                </span>
+                              )}
                             </span>
                           </Link>
                         </li>

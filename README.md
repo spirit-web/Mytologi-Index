@@ -70,6 +70,31 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 37 (2026-08-26): Ordantal även på tidslinjen
+
+Samma "N ord · Kort/Medellång/Lång"-etikett som redan fanns på bok-
+sidorna visas nu under varje berättelses referens på `/tidslinje` med
+— önskemål från användaren, för att kunna se längden direkt utan att
+klicka in sig på varje berättelse. `lengthLabel()` flyttades från
+`[corpus]/[book]/page.tsx` till `src/lib/bible.ts` (bredvid
+`countWords()`) så båda sidorna delar exakt samma logik/trösklar
+istället för att duplicera den.
+
+## Fas 36 (2026-08-26): Ester — nionde boken
+
+Hela Ester-boken (10 kapitel) seedad som sex berättelser: Vasti och
+sökandet efter en ny drottning (1:1-2:23), Hamans påbud mot judarna
+(3:1-15), Ester riskerar sitt liv (4:1-5:14), Kungens sömnlösa natt
+(6:1-14), Hamans fall (7:1-8:17), Purimfesten instiftas (9:1-10:3).
+Text från 1917 års kyrkobibel — normaliseringsscriptet hittade
+konsekvent NOLL träffar på "Gud"/"HERRE", vilket är korrekt: Ester är
+den enda bibelboken vars grundtext aldrig nämner Gud vid namn, ett
+känt drag hos boken, inte ett missat extraheringsfel. Tre bildset i
+samma serie som Rut (Sweet Publishing, "Story of Esther" del 1-3, CC
+BY-SA, AI-adaptioner tillåtna) täcker hela boken, delade mellan sex
+berättelser via fileStart/fileEnd. Alla sex Tier 2. Bokinfo nämner
+den ovanliga avsaknaden av Guds namn samt kopplingen till Purimfesten.
+
 ## Fas 35 (2026-08-26): Rut — åttonde boken
 
 Hela Rut-boken (4 kapitel) seedad i ett svep, precis som Jona: fyra

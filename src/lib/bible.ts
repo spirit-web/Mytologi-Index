@@ -16,6 +16,7 @@ import johnData from "@/data/bible-sv-1917/john.json";
 import markData from "@/data/bible-sv-1917/mark.json";
 import jonahData from "@/data/bible-sv-1917/jonah.json";
 import ruthData from "@/data/bible-sv-1917/ruth.json";
+import estherData from "@/data/bible-sv-1917/esther.json";
 
 export type BibleVerse = {
   chapter: number;
@@ -52,6 +53,7 @@ const BOOKS: Record<string, { data: Record<string, Record<string, string>>; sven
   Mark: { data: markData as Record<string, Record<string, string>>, svenskt: "Markusevangeliet" },
   Jonah: { data: jonahData as Record<string, Record<string, string>>, svenskt: "Jona" },
   Ruth: { data: ruthData as Record<string, Record<string, string>>, svenskt: "Rut" },
+  Esther: { data: estherData as Record<string, Record<string, string>>, svenskt: "Ester" },
 };
 
 // Extern länk till en fullständig, fri bibelläsare för samma översättning
@@ -72,6 +74,16 @@ export function countWords(text: string): number {
   const trimmed = text.trim();
   if (trimmed === "") return 0;
   return trimmed.split(/\s+/).length;
+}
+
+// Delad mellan bok-sidan och tidslinjen — trösklarna är satta löst efter
+// den faktiska spridningen i appens bibelberättelser (korta enskilda
+// scener som Kain och Abel ligger runt 150-200 ord, långa cykler som
+// Josef och hans bröder över 1500).
+export function lengthLabel(wordCount: number): string {
+  if (wordCount < 300) return "Kort";
+  if (wordCount < 800) return "Medellång";
+  return "Lång";
 }
 
 export async function fetchBiblePassage(
