@@ -1995,6 +1995,11 @@ async function main() {
     // Egen slug (inte bara "lasarus") för att skilja från den namngivne
     // tiggaren i Jesu liknelse i Lukas 16 — olika personer, samma namn.
     { slug: "lasarus-fran-betania", name: "Lasarus från Betania" },
+    // Samma Character-rader som i Matteus — johnCharacters är en egen
+    // map, inte samma som ntCharacters, så de listas på nytt här.
+    { slug: "petrus", name: "Petrus" },
+    { slug: "judas", name: "Judas Iskariot" },
+    { slug: "tomas", name: "Tomas" },
   ];
   const johnCharacters: Record<string, { id: string }> = {};
   for (const c of johnCharacterDefs) {
@@ -2035,6 +2040,18 @@ async function main() {
       startRef: "John 11:1", endRef: "John 11:44", orderInBook: 5,
       characterSlugs: ["jesus", "maria-av-betania", "marta", "lasarus-fran-betania"], themeSlugs: ["testing-of-faith"],
     },
+    {
+      // NY 2026-08-25.
+      slug: "washing-of-feet", title: "Jesus tvättar lärjungarnas fötter",
+      startRef: "John 13:1", endRef: "John 13:17", orderInBook: 6,
+      characterSlugs: ["jesus", "petrus", "judas"], themeSlugs: [],
+    },
+    {
+      // NY 2026-08-25.
+      slug: "doubting-thomas", title: "Tomas som tvivlade",
+      startRef: "John 20:19", endRef: "John 20:29", orderInBook: 7,
+      characterSlugs: ["jesus", "tomas"], themeSlugs: ["testing-of-faith"],
+    },
   ];
   for (const s of johnStories) {
     const johnStoryData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
@@ -2066,6 +2083,9 @@ async function main() {
     { storySlug: "nicodemus", code: "FB_LS_Nicodemus", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-nicodemus/" },
     { storySlug: "woman-at-the-well", code: "FB_Jesus_Samaritan_Woman", count: 14, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/jesus-samaritan-woman/" },
     { storySlug: "lazarus-raised", code: "FB_LS_Lazarus", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-lazarus/" },
+    // NY 2026-08-25.
+    { storySlug: "washing-of-feet", code: "FB_LS_Washing_Feet", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-washing-feet/" },
+    { storySlug: "doubting-thomas", code: "FB_LS_Thomas_Doubts", count: 9, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-thomas-doubts/" },
     // ("john-prologue" har medvetet inget bildset, se kommentaren ovan.)
   ];
   for (const set of johnImageSets) {
@@ -2085,6 +2105,7 @@ async function main() {
     { slug: "nikodemus", storySlug: "nicodemus", imgOrder: 2 },
     { slug: "samariska-kvinnan", storySlug: "woman-at-the-well", imgOrder: 4 },
     { slug: "lasarus-fran-betania", storySlug: "lazarus-raised", imgOrder: 8 },
+    { slug: "tomas", storySlug: "doubting-thomas", imgOrder: 5 },
   ];
   for (const p of johnPortraits) {
     const story = await prisma.story.findFirstOrThrow({ where: { bookId: john.id, slug: p.storySlug } });
@@ -2100,6 +2121,8 @@ async function main() {
     nicodemus: 2, // Nikodemus möte med Jesus, inte en okänslig titelbild
     "woman-at-the-well": 4, // Jesus och kvinnan vid brunnen, berättelsens kärna
     "lazarus-raised": 8, // Lasarus vid liv, insvept i bindlar, med Maria och Marta
+    "washing-of-feet": 4, // Jesus tvättar en lärjunges fötter — själva kärnscenen
+    "doubting-thomas": 5, // Jesus visar sina sårmärken, "rör vid mina händer"
   };
   for (const [slug, order] of Object.entries(johnThumbnails)) {
     await prisma.story.updateMany({ where: { bookId: john.id, slug }, data: { thumbnailOrder: order } });
@@ -4239,6 +4262,15 @@ async function main() {
     { bookSlug: "luke", storySlug: "mary-and-martha" },
     { bookSlug: "luke", storySlug: "lost-sheep-and-coin" },
     { bookSlug: "luke", storySlug: "rich-man-and-lazarus" },
+    // NY 2026-08-25: alla fem lika kända/centrala — missades av misstag
+    // när Johannes lades till.
+    { bookSlug: "john", storySlug: "john-prologue" },
+    { bookSlug: "john", storySlug: "wedding-at-cana" },
+    { bookSlug: "john", storySlug: "nicodemus" },
+    { bookSlug: "john", storySlug: "woman-at-the-well" },
+    { bookSlug: "john", storySlug: "lazarus-raised" },
+    { bookSlug: "john", storySlug: "washing-of-feet" },
+    { bookSlug: "john", storySlug: "doubting-thomas" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
   ];
