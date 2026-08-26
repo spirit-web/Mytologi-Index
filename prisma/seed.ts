@@ -11,6 +11,7 @@ import exodusCaptionsByCode from "./image-captions-exodus.json";
 import lukeCaptionsByCode from "./image-captions-luke.json";
 import johnCaptionsByCode from "./image-captions-john.json";
 import markCaptionsByCode from "./image-captions-mark.json";
+import jonahCaptionsByCode from "./image-captions-jonah.json";
 
 const prisma = new PrismaClient();
 
@@ -2257,6 +2258,141 @@ async function main() {
   console.log(`Seedat Markusevangeliet: ${markStories.length} stories.`);
 
   // ======================================================================
+  // Jona — sjunde boken, den första "mindre profeten" i korpusen. Kort
+  // (4 kapitel) och mycket känd, så hela boken seedas i ett svep som
+  // fyra sammanhängande berättelser (kallelse/flykt, fisken, Nineves
+  // omvändelse, Jonas vrede) istället för utvalda utdrag.
+  // ======================================================================
+  const jonah = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "jonah" } },
+    update: {},
+    create: {
+      corpusId: bible.id,
+      slug: "jonah",
+      name: "Jona",
+      order: 7,
+      testament: "old",
+    },
+  });
+
+  const jonahCharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "jona", name: "Jona" },
+    { slug: "konungen-i-nineve", name: "Konungen av Nineve" },
+  ];
+  const jonahCharacters: Record<string, { id: string }> = {};
+  for (const c of jonahCharacterDefs) {
+    jonahCharacters[c.slug] = await prisma.character.upsert({
+      where: { slug: c.slug },
+      update: {},
+      create: c,
+    });
+  }
+
+  type JonahStoryDef = {
+    slug: string; title: string; startRef: string; endRef: string; orderInBook: number;
+    characterSlugs: string[]; themeSlugs: string[];
+  };
+  const jonahStories: JonahStoryDef[] = [
+    {
+      slug: "jonahs-calling-and-flight", title: "Jonas kallelse och flykt",
+      startRef: "Jonah 1:1", endRef: "Jonah 1:16", orderInBook: 1,
+      characterSlugs: ["jona"], themeSlugs: ["chaos-order", "testing-of-faith"],
+    },
+    {
+      slug: "jonah-in-the-fish", title: "Jona i fiskens buk",
+      startRef: "Jonah 2:1", endRef: "Jonah 2:11", orderInBook: 2,
+      characterSlugs: ["jona"], themeSlugs: ["testing-of-faith"],
+    },
+    {
+      slug: "nineveh-repents", title: "Nineve omvänder sig",
+      startRef: "Jonah 3:1", endRef: "Jonah 3:10", orderInBook: 3,
+      characterSlugs: ["jona", "konungen-i-nineve"], themeSlugs: ["forgiveness", "compassion"],
+    },
+    {
+      slug: "jonahs-anger-and-gods-lesson", title: "Jonas vrede och Guds lärdom",
+      startRef: "Jonah 4:1", endRef: "Jonah 4:11", orderInBook: 4,
+      characterSlugs: ["jona"], themeSlugs: ["forgiveness"],
+    },
+  ];
+  for (const s of jonahStories) {
+    const jonahStoryData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: jonah.id, slug: s.slug } },
+      update: jonahStoryData,
+      create: { bookId: jonah.id, slug: s.slug, ...jonahStoryData },
+    });
+    for (const charSlug of s.characterSlugs) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: jonahCharacters[charSlug].id } },
+        update: {},
+        create: { storyId: story.id, characterId: jonahCharacters[charSlug].id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      const theme = themes[themeSlug] ?? ntThemes[themeSlug];
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: theme.id } },
+        update: {},
+        create: { storyId: story.id, themeId: theme.id },
+      });
+    }
+  }
+
+  const jonahCaptions = jonahCaptionsByCode as Record<string, string[]>;
+  // Ett enda bildset (FB_RG_Jonah, 26 bilder) täcker hela boken — delas
+  // mellan de fyra berättelserna via fileStart/fileEnd/orderStart, precis
+  // som t.ex. FB_RG_Lot delas mellan "abraham-and-lot" och
+  // "sodom-and-gomorrah" i Genesis-avsnittet ovan.
+  const jonahImageSets: Array<{ storySlug: string; code: string; fileStart: number; fileEnd: number; orderStart: number; credit: string; creditUrl: string }> = [
+    { storySlug: "jonahs-calling-and-flight", code: "FB_RG_Jonah", fileStart: 1, fileEnd: 11, orderStart: 1, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-jonah/" },
+    { storySlug: "jonah-in-the-fish", code: "FB_RG_Jonah", fileStart: 12, fileEnd: 15, orderStart: 12, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-jonah/" },
+    { storySlug: "nineveh-repents", code: "FB_RG_Jonah", fileStart: 16, fileEnd: 18, orderStart: 16, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-jonah/" },
+    { storySlug: "jonahs-anger-and-gods-lesson", code: "FB_RG_Jonah", fileStart: 19, fileEnd: 26, orderStart: 19, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-jonah/" },
+  ];
+  for (const set of jonahImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: jonah.id, slug: set.storySlug } });
+    for (let fileNum = set.fileStart; fileNum <= set.fileEnd; fileNum++) {
+      const order = set.orderStart + (fileNum - set.fileStart);
+      // Bildfilerna ligger i story-mappen under sitt URSPRUNGLIGA
+      // filnummer (samma laddades ner separat per story-mapp) — path
+      // bygger alltså på fileNum, medan `order` är visningsordningen.
+      const path = `/images/jonah/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const caption = jonahCaptions[set.code]?.[fileNum - 1] ?? null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+
+  const jonahPortraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
+    // Bild 16: Jona ser ut över Nineve — tydligt ansikte, mitt i sin roll
+    // som motvillig profet.
+    { slug: "jona", storySlug: "nineveh-repents", imgOrder: 16 },
+  ];
+  for (const p of jonahPortraits) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: jonah.id, slug: p.storySlug } });
+    const img = await prisma.storyImage.findUniqueOrThrow({ where: { storyId_order: { storyId: story.id, order: p.imgOrder } } });
+    await prisma.character.update({
+      where: { slug: p.slug },
+      data: { portraitPath: img.path, portraitCredit: img.credit, portraitCreditUrl: img.creditUrl },
+    });
+  }
+
+  const jonahThumbnails: Record<string, number> = {
+    "jonahs-calling-and-flight": 6, // Stormen — sjömännen i skräck.
+    "jonah-in-the-fish": 13, // Den stora fisken sväljer Jona.
+    "nineveh-repents": 16, // Jona ser ut över Nineve.
+    "jonahs-anger-and-gods-lesson": 22, // Jona njuter av skuggan under plantan.
+  };
+  for (const [slug, order] of Object.entries(jonahThumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: jonah.id, slug }, data: { thumbnailOrder: order } });
+  }
+
+  console.log(`Seedat Jona: ${jonahStories.length} stories.`);
+
+  // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
   // Bygger ett riktigt story-index för Exodus-narrativet (tidigare fanns
@@ -3609,6 +3745,31 @@ async function main() {
         "på Jesus som profet, inte Guds son.",
     },
     {
+      id: jonah.id,
+      description:
+        "Kort, fristående berättelse om en profet som flyr sitt uppdrag " +
+        "istället för att utföra det — kastas i havet, sväljs av en stor " +
+        "fisk, ångrar sig och predikar till slut för Nineve, som omvänder " +
+        "sig. Slutar öppet, med Guds retoriska fråga till en Jona som är " +
+        "mer arg över en vissnad planta än glad över en räddad stad.",
+      authorship:
+        "Traditionellt tillskriven profeten Jona själv (aktiv under kung " +
+        "Jerobeam II, ca 780-talet f.Kr., se 2 Kung. 14:25). Modern " +
+        "forskning daterar boken ofta betydligt senare (ca 400-talet " +
+        "f.Kr.) och ser den som en efterhandskonstruerad, satirisk/" +
+        "didaktisk berättelse om Jona snarare än en samtida uppteckning — " +
+        "till skillnad från de andra \"mindre profeterna\" innehåller " +
+        "boken nästan ingen profetia, bara berättelse.",
+      traditions:
+        "Judendom: läses i sin helhet vid Jom Kippur (försoningsdagen) " +
+        "som en påminnelse om Guds vilja att förlåta även icke-judar som " +
+        "omvänder sig. Kristendom: Jesus refererar själv till \"Jonas " +
+        "tecken\" (Matt. 12:39-40) som en förebild till sin egen död och " +
+        "uppståndelse efter tre dagar. Islam: Yunus (Jona) är en erkänd " +
+        "profet i Koranen, som har en egen sura (10, Yunus) uppkallad " +
+        "efter honom, och nämns även i suran om \"Männen i fisken\".",
+    },
+    {
       id: mark.id,
       description:
         "Det kortaste och (troligen) äldsta evangeliet — ett snabbt, " +
@@ -4423,6 +4584,12 @@ async function main() {
     { bookSlug: "mark", storySlug: "rich-young-ruler" },
     { bookSlug: "mark", storySlug: "blind-bartimaeus" },
     { bookSlug: "mark", storySlug: "widows-mite" },
+    // NY 2026-08-26: hela Jona-boken — en av GT:s mest kända berättelser
+    // oavsett religiös bakgrund (valen, fisken, Nineve).
+    { bookSlug: "jonah", storySlug: "jonahs-calling-and-flight" },
+    { bookSlug: "jonah", storySlug: "jonah-in-the-fish" },
+    { bookSlug: "jonah", storySlug: "nineveh-repents" },
+    { bookSlug: "jonah", storySlug: "jonahs-anger-and-gods-lesson" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
   ];
@@ -4445,6 +4612,7 @@ async function main() {
     { slug: "genesis", estimate: "Traditionellt ca 1200-talet f.Kr. (Mose) — moderna forskare daterar ofta källorna till ca 950–500 f.Kr., slutredigering ca 500–400 f.Kr." },
     { slug: "exodus", estimate: "Traditionellt ca 1200-talet f.Kr. — moderna forskare ofta ca 600–500 f.Kr. för slutredigeringen." },
     { slug: "mark", estimate: "Traditionellt ca 55–65 e.Kr. (byggd på Petrus predikan) — moderna forskare ofta ca 65–75 e.Kr., troligen det äldsta evangeliet." },
+    { slug: "jonah", estimate: "Traditionellt ca 780-talet f.Kr. (Jona själv, under kung Jerobeam II) — moderna forskare ofta ca 400-talet f.Kr., en betydligt senare, efterhandskonstruerad berättelse." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },

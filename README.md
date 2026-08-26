@@ -70,6 +70,23 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 34 (2026-08-26): Jona — sjunde boken, första "mindre profeten"
+
+Hela Jona-boken (4 korta kapitel) seedad i ett svep, uppdelad i fyra
+sammanhängande berättelser: Jonas kallelse och flykt (1:1-16), Jona i
+fiskens buk (2:1-11), Nineve omvänder sig (3:1-10), Jonas vrede och
+Guds lärdom (4:1-11). Text extraherad från 1917 års kyrkobibel — som
+GT-text normaliserades "HERREN"/"Herre" blint till "Gud" utan behov av
+NT-vokativ-scan (den regeln gäller bara NT, se tidigare faser). Ett
+enda rikt bildset (Richard Gunther, 26 bilder, CC BY-NC, AI-adaptioner
+tillåtna) delades mellan de fyra berättelserna via
+fileStart/fileEnd/orderStart — samma mönster som redan användes för
+delade bildset i Genesis (t.ex. FB_RG_Lot mellan Abraham/Lot- och
+Sodom/Gomorra-berättelserna). Alla fyra markerade Tier 2 — Jona är en
+av de mest kända GT-berättelserna oavsett religiös bakgrund (judendom:
+läses vid Jom Kippur; kristendom: "Jonas tecken" hos Jesus; islam: Yunus
+har en egen sura i Koranen).
+
 ## Fas 33 (2026-08-26): Markusevangeliet — sjätte boken
 
 Markus tillagt som en ny, sjätte bok i Bibel-korpusen (efter Genesis,

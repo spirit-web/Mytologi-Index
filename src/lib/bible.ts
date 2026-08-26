@@ -14,6 +14,7 @@ import matthewData from "@/data/bible-sv-1917/matthew.json";
 import lukeData from "@/data/bible-sv-1917/luke.json";
 import johnData from "@/data/bible-sv-1917/john.json";
 import markData from "@/data/bible-sv-1917/mark.json";
+import jonahData from "@/data/bible-sv-1917/jonah.json";
 
 export type BibleVerse = {
   chapter: number;
@@ -48,6 +49,7 @@ const BOOKS: Record<string, { data: Record<string, Record<string, string>>; sven
   Luke: { data: lukeData as Record<string, Record<string, string>>, svenskt: "Lukasevangeliet" },
   John: { data: johnData as Record<string, Record<string, string>>, svenskt: "Johannesevangeliet" },
   Mark: { data: markData as Record<string, Record<string, string>>, svenskt: "Markusevangeliet" },
+  Jonah: { data: jonahData as Record<string, Record<string, string>>, svenskt: "Jona" },
 };
 
 // Extern länk till en fullständig, fri bibelläsare för samma översättning
