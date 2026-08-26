@@ -70,6 +70,16 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 32 (2026-08-26): Två till Johannes-berättelser + Tier 2-rättelse
+
+Johannes från 5 till 7 berättelser: Jesus tvättar lärjungarnas fötter
+(13:1-17, Petrus/Judas återknyter till Matteus) och Tomas som tvivlade
+(20:19-29). Valde bort ett Good Shepherd-set (Johannes 10) — enda
+hittade alternativet hade licens som uttryckligen förbjuder
+"A.I. adaptations". Rättade även ett missat steg från Fas 31: alla sju
+Johannes-berättelser markerade som Tier 2 i seed.ts (glömdes bort när
+boken ursprungligen lades till).
+
 ## Fas 31 (2026-08-25): Johannesevangeliet — femte boken
 
 Ny bok: 5 berättelser, allt material som INTE finns i Matteus/Lukas
