@@ -9,6 +9,7 @@ import captionsByCode from "./image-captions.json";
 import matthewCaptionsByCode from "./image-captions-matthew.json";
 import exodusCaptionsByCode from "./image-captions-exodus.json";
 import lukeCaptionsByCode from "./image-captions-luke.json";
+import johnCaptionsByCode from "./image-captions-john.json";
 
 const prisma = new PrismaClient();
 
@@ -1961,6 +1962,152 @@ async function main() {
   console.log(`Seedat Lukasevangeliet: ${lukeStories.length} stories.`);
 
   // ======================================================================
+  // Johannesevangeliet — fjärde evangeliet, ny bok i Bibel-korpusen.
+  // ======================================================================
+  // Helt fristående jämfört med de tre synoptiska evangelierna (Matteus/
+  // Markus/Lukas) — ingen av dessa fem berättelser finns i Matteus eller
+  // Lukas. Prologen (1:1-18, "I begynnelsen var Ordet") är medvetet
+  // textbaserad UTAN bildgalleri — hittade inget bra scenbaserat bildset
+  // för ett filosofiskt/teologiskt stycke (skiljer sig från de fyra
+  // narrativa scenerna), men den är för tematiskt central (Logos-temat
+  // som redan återkommer i appens Genesis- och Maps of Meaning-material,
+  // se Jacques Derrida-referensen vid Skapelsen) för att utelämnas helt.
+  const john = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "john" } },
+    update: {},
+    create: {
+      corpusId: bible.id,
+      slug: "john",
+      name: "Johannesevangeliet",
+      order: 5,
+      testament: "new",
+    },
+  });
+
+  const johnCharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "nikodemus", name: "Nikodemus" },
+    { slug: "samariska-kvinnan", name: "Kvinnan vid Sykars brunn" },
+    // Samma Character-rader som redan finns från Lukas — Maria från
+    // Betania och Marta är systrar till Lasarus, återknyter över böcker.
+    { slug: "maria-av-betania", name: "Maria från Betania" },
+    { slug: "marta", name: "Marta" },
+    { slug: "jesus", name: "Jesus" },
+    // Egen slug (inte bara "lasarus") för att skilja från den namngivne
+    // tiggaren i Jesu liknelse i Lukas 16 — olika personer, samma namn.
+    { slug: "lasarus-fran-betania", name: "Lasarus från Betania" },
+  ];
+  const johnCharacters: Record<string, { id: string }> = {};
+  for (const c of johnCharacterDefs) {
+    johnCharacters[c.slug] = await prisma.character.upsert({
+      where: { slug: c.slug },
+      update: {},
+      create: c,
+    });
+  }
+
+  type JohnStoryDef = {
+    slug: string; title: string; startRef: string; endRef: string; orderInBook: number;
+    characterSlugs: string[]; themeSlugs: string[];
+  };
+  const johnStories: JohnStoryDef[] = [
+    {
+      slug: "john-prologue", title: "I begynnelsen var Ordet",
+      startRef: "John 1:1", endRef: "John 1:18", orderInBook: 1,
+      characterSlugs: ["jesus"], themeSlugs: ["kingdom-of-god"],
+    },
+    {
+      slug: "wedding-at-cana", title: "Bröllopet i Kana",
+      startRef: "John 2:1", endRef: "John 2:11", orderInBook: 2,
+      characterSlugs: ["jesus"], themeSlugs: [],
+    },
+    {
+      slug: "nicodemus", title: "Nikodemus och den nya födelsen",
+      startRef: "John 3:1", endRef: "John 3:21", orderInBook: 3,
+      characterSlugs: ["jesus", "nikodemus"], themeSlugs: ["kingdom-of-god"],
+    },
+    {
+      slug: "woman-at-the-well", title: "Kvinnan vid Sykars brunn",
+      startRef: "John 4:1", endRef: "John 4:42", orderInBook: 4,
+      characterSlugs: ["jesus", "samariska-kvinnan"], themeSlugs: ["compassion"],
+    },
+    {
+      slug: "lazarus-raised", title: "Lasarus uppväcks från de döda",
+      startRef: "John 11:1", endRef: "John 11:44", orderInBook: 5,
+      characterSlugs: ["jesus", "maria-av-betania", "marta", "lasarus-fran-betania"], themeSlugs: ["testing-of-faith"],
+    },
+  ];
+  for (const s of johnStories) {
+    const johnStoryData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: john.id, slug: s.slug } },
+      update: johnStoryData,
+      create: { bookId: john.id, slug: s.slug, ...johnStoryData },
+    });
+    for (const charSlug of s.characterSlugs) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: johnCharacters[charSlug].id } },
+        update: {},
+        create: { storyId: story.id, characterId: johnCharacters[charSlug].id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      const theme = themes[themeSlug] ?? ntThemes[themeSlug];
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: theme.id } },
+        update: {},
+        create: { storyId: story.id, themeId: theme.id },
+      });
+    }
+  }
+
+  const johnCaptions = johnCaptionsByCode as Record<string, string[]>;
+  const johnImageSets: Array<{ storySlug: string; code: string; count: number; credit: string; creditUrl: string }> = [
+    { storySlug: "wedding-at-cana", code: "FB_LS_Jesus_Wedding", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jesus-wedding/" },
+    { storySlug: "nicodemus", code: "FB_LS_Nicodemus", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-nicodemus/" },
+    { storySlug: "woman-at-the-well", code: "FB_Jesus_Samaritan_Woman", count: 14, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/jesus-samaritan-woman/" },
+    { storySlug: "lazarus-raised", code: "FB_LS_Lazarus", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-lazarus/" },
+    // ("john-prologue" har medvetet inget bildset, se kommentaren ovan.)
+  ];
+  for (const set of johnImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: john.id, slug: set.storySlug } });
+    for (let fileNum = 1; fileNum <= set.count; fileNum++) {
+      const path = `/images/john/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const caption = johnCaptions[set.code]?.[fileNum - 1] ?? null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order: fileNum } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order: fileNum, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+
+  const johnPortraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
+    { slug: "nikodemus", storySlug: "nicodemus", imgOrder: 2 },
+    { slug: "samariska-kvinnan", storySlug: "woman-at-the-well", imgOrder: 4 },
+    { slug: "lasarus-fran-betania", storySlug: "lazarus-raised", imgOrder: 8 },
+  ];
+  for (const p of johnPortraits) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: john.id, slug: p.storySlug } });
+    const img = await prisma.storyImage.findUniqueOrThrow({ where: { storyId_order: { storyId: story.id, order: p.imgOrder } } });
+    await prisma.character.update({
+      where: { slug: p.slug },
+      data: { portraitPath: img.path, portraitCredit: img.credit, portraitCreditUrl: img.creditUrl },
+    });
+  }
+
+  const johnThumbnails: Record<string, number> = {
+    "wedding-at-cana": 6, // vattnet blir vin — själva undret
+    nicodemus: 2, // Nikodemus möte med Jesus, inte en okänslig titelbild
+    "woman-at-the-well": 4, // Jesus och kvinnan vid brunnen, berättelsens kärna
+    "lazarus-raised": 8, // Lasarus vid liv, insvept i bindlar, med Maria och Marta
+  };
+  for (const [slug, order] of Object.entries(johnThumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: john.id, slug }, data: { thumbnailOrder: order } });
+  }
+
+  console.log(`Seedat Johannesevangeliet: ${johnStories.length} stories.`);
+
+  // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
   // Bygger ett riktigt story-index för Exodus-narrativet (tidigare fanns
@@ -3287,6 +3434,32 @@ async function main() {
         "liksom för Matteus, förnekar Koranen (sura 4:157) korsfästelsen.",
     },
     {
+      id: john.id,
+      description:
+        "Ett helt fristående fjärde evangelium — delar nästan inga " +
+        "berättelser med de tre synoptiska (Matteus/Markus/Lukas). Öppnar " +
+        "filosofiskt (\"I begynnelsen var Ordet\") och fokuserar på ett " +
+        "fåtal längre, teologiskt djupa scener och samtal (Nikodemus, " +
+        "kvinnan vid brunnen, Lasarus uppväckt) istället för många korta " +
+        "liknelser.",
+      authorship:
+        "Traditionellt tillskriven aposteln Johannes, en av Jesu tolv " +
+        "lärjungar och ögonvittne. Modern forskning daterar den ofta " +
+        "senare än de övriga evangelierna (ca 90–100 e.Kr.) och ser den " +
+        "som skriven av en \"johanneisk\" krets/tradition snarare än " +
+        "nödvändigtvis av aposteln själv — stilistiskt och teologiskt " +
+        "mycket olik de synoptiska evangelierna (bl.a. inga liknelser, " +
+        "ingen nattvardsinstiftelse, men långa monologer och \"Jag är\"-" +
+        "uttalanden).",
+      traditions:
+        "Kristendom: central, det \"andliga\" evangeliet — Logos-prologen " +
+        "(1:1-18) har haft enormt inflytande på kristen teologi om Kristi " +
+        "gudomlighet. Judendom: ingår inte i judisk skrift. Islam: Jesus " +
+        "(Isa) central i Koranen, men Johannesevangeliets specifika " +
+        "gudoms-teologi (\"Ordet var Gud\") går emot den islamiska synen " +
+        "på Jesus som profet, inte Guds son.",
+    },
+    {
       id: mapsOfMeaningBook.id,
       description:
         "Petersons psykologiska tolkningsramverk för myt, religion och " +
@@ -4089,6 +4262,7 @@ async function main() {
     { slug: "exodus", estimate: "Traditionellt ca 1200-talet f.Kr. — moderna forskare ofta ca 600–500 f.Kr. för slutredigeringen." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
+    { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },
     { slug: "maps-of-meaning-2017", estimate: "Föreläsningar hållna 2017 (boken med samma namn gavs ut 1999)." },
     { slug: "12-rules-for-life", estimate: "2018" },
     { slug: "we-who-wrestle-with-god", estimate: "2024" },
