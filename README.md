@@ -70,6 +70,19 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 31 (2026-08-25): Johannesevangeliet — femte boken
+
+Ny bok: 5 berättelser, allt material som INTE finns i Matteus/Lukas
+(Johannes delar nästan inga scener med de synoptiska evangelierna) —
+Bröllopet i Kana, Nikodemus, Kvinnan vid Sykars brunn, Lasarus
+uppväckt, samt prologen "I begynnelsen var Ordet" (1:1-18), medvetet
+utan bildgalleri (inget bra scenbaserat bildset för ett filosofiskt
+stycke) men för tematiskt central för att utelämna — Logos-temat
+hänger direkt ihop med Genesis/Jacques Derrida-referensen redan i
+appen. Maria från Betania och Marta återknyter till samma
+Character-rader som i Lukas (Lasarus systrar). Samma NT Herre/Gud-fel
+som tidigare hittat och rättat i kap. 4 och 11 INNAN det skeppades.
+
 ## Fas 30 (2026-08-25): Tre nya Lukas-berättelser
 
 Lukasevangeliet från 3 till 6 berättelser: Maria och Marta (10:38-42,
