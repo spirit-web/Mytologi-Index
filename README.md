@@ -70,6 +70,20 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 35 (2026-08-26): Rut — åttonde boken
+
+Hela Rut-boken (4 kapitel) seedad i ett svep, precis som Jona: fyra
+sammanhängande berättelser — Noomi och Ruts trohet (1:1-22), Rut
+plockar ax på Boas åker (2:1-23), Rut vid tröskplatsen (3:1-18), Boas
+gifter sig med Rut (4:1-22). Text från 1917 års kyrkobibel, GT-normalisering
+utan komplikationer. Tre bildset i samma konstnärsstil (Sweet
+Publishing, "The story of Ruth" del 1-3, CC BY-SA, AI-adaptioner
+tillåtna) täcker hela boken — del 3 (kapitel 3-4) delas i sin tur
+mellan de två sista berättelserna via samma fileStart/fileEnd-mönster
+som Jona. Alla fyra Tier 2. Bokinfo nämner den akademiska debatten om
+Ruts syfte som möjligt motargument mot Esra/Nehemjas krav på etnisk
+renhet, samt kopplingen till Jesu släkttavla (Matt. 1:5).
+
 ## Fas 34 (2026-08-26): Jona — sjunde boken, första "mindre profeten"
 
 Hela Jona-boken (4 korta kapitel) seedad i ett svep, uppdelad i fyra

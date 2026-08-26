@@ -12,6 +12,7 @@ import lukeCaptionsByCode from "./image-captions-luke.json";
 import johnCaptionsByCode from "./image-captions-john.json";
 import markCaptionsByCode from "./image-captions-mark.json";
 import jonahCaptionsByCode from "./image-captions-jonah.json";
+import ruthCaptionsByCode from "./image-captions-ruth.json";
 
 const prisma = new PrismaClient();
 
@@ -2393,6 +2394,144 @@ async function main() {
   console.log(`Seedat Jona: ${jonahStories.length} stories.`);
 
   // ======================================================================
+  // Rut — åttonde boken. Precis som Jona kort (4 kapitel) och mycket
+  // känd, seedas hela boken i ett svep som fyra sammanhängande
+  // berättelser. Tre bildset (Sweet Publishing, samma konstnärsstil
+  // genom hela boken) delar upp kapitlen: Part1=kap 1, Part2=kap 2,
+  // Part3=kap 3-4 (delas i sin tur mellan de två sista berättelserna).
+  // ======================================================================
+  const ruth = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "ruth" } },
+    update: {},
+    create: {
+      corpusId: bible.id,
+      slug: "ruth",
+      name: "Rut",
+      order: 8,
+      testament: "old",
+    },
+  });
+
+  const ruthCharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "rut", name: "Rut" },
+    { slug: "noomi", name: "Noomi" },
+    { slug: "boas", name: "Boas" },
+  ];
+  const ruthCharacters: Record<string, { id: string }> = {};
+  for (const c of ruthCharacterDefs) {
+    ruthCharacters[c.slug] = await prisma.character.upsert({
+      where: { slug: c.slug },
+      update: {},
+      create: c,
+    });
+  }
+
+  type RuthStoryDef = {
+    slug: string; title: string; startRef: string; endRef: string; orderInBook: number;
+    characterSlugs: string[]; themeSlugs: string[];
+  };
+  const ruthStories: RuthStoryDef[] = [
+    {
+      slug: "naomi-and-ruths-loyalty", title: "Noomi och Ruts trohet",
+      startRef: "Ruth 1:1", endRef: "Ruth 1:22", orderInBook: 1,
+      characterSlugs: ["rut", "noomi"], themeSlugs: ["covenant", "sacrifice"],
+    },
+    {
+      slug: "ruth-gleans-in-boaz-field", title: "Rut plockar ax på Boas åker",
+      startRef: "Ruth 2:1", endRef: "Ruth 2:23", orderInBook: 2,
+      characterSlugs: ["rut", "boas", "noomi"], themeSlugs: ["compassion"],
+    },
+    {
+      slug: "ruth-at-the-threshing-floor", title: "Rut vid tröskplatsen",
+      startRef: "Ruth 3:1", endRef: "Ruth 3:18", orderInBook: 3,
+      characterSlugs: ["rut", "boas", "noomi"], themeSlugs: ["covenant"],
+    },
+    {
+      slug: "boaz-marries-ruth", title: "Boas gifter sig med Rut",
+      startRef: "Ruth 4:1", endRef: "Ruth 4:22", orderInBook: 4,
+      characterSlugs: ["rut", "boas"], themeSlugs: ["compassion"],
+    },
+  ];
+  for (const s of ruthStories) {
+    const ruthStoryData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: ruth.id, slug: s.slug } },
+      update: ruthStoryData,
+      create: { bookId: ruth.id, slug: s.slug, ...ruthStoryData },
+    });
+    for (const charSlug of s.characterSlugs) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: ruthCharacters[charSlug].id } },
+        update: {},
+        create: { storyId: story.id, characterId: ruthCharacters[charSlug].id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      const theme = themes[themeSlug] ?? ntThemes[themeSlug];
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: theme.id } },
+        update: {},
+        create: { storyId: story.id, themeId: theme.id },
+      });
+    }
+  }
+
+  const ruthCaptions = ruthCaptionsByCode as Record<string, string[]>;
+  const ruthImageSets: Array<{ storySlug: string; code: string; fileStart: number; fileEnd: number; orderStart: number; credit: string; creditUrl: string }> = [
+    { storySlug: "naomi-and-ruths-loyalty", code: "FB_Ruth_Part1", fileStart: 1, fileEnd: 13, orderStart: 1, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/ruth-1/" },
+    { storySlug: "ruth-gleans-in-boaz-field", code: "FB_Ruth_Part2", fileStart: 1, fileEnd: 11, orderStart: 1, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/ruth-2/" },
+    // FB_Ruth_Part3 delas mellan de två sista berättelserna: bild 1-5 är
+    // tröskplats-scenen (kap 3), bild 6-11 är stadsporten/bröllopet (kap 4).
+    { storySlug: "ruth-at-the-threshing-floor", code: "FB_Ruth_Part3", fileStart: 1, fileEnd: 5, orderStart: 1, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/ruth-3/" },
+    { storySlug: "boaz-marries-ruth", code: "FB_Ruth_Part3", fileStart: 6, fileEnd: 11, orderStart: 6, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/ruth-3/" },
+  ];
+  for (const set of ruthImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: ruth.id, slug: set.storySlug } });
+    for (let fileNum = set.fileStart; fileNum <= set.fileEnd; fileNum++) {
+      const order = set.orderStart + (fileNum - set.fileStart);
+      // Filerna ligger i respektive story-mapp under sitt URSPRUNGLIGA
+      // filnummer (samma kod laddades ner separat per story-mapp där den
+      // delas, precis som FB_RG_Lot i Genesis-avsnittet).
+      const path = `/images/ruth/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const caption = ruthCaptions[set.code]?.[fileNum - 1] ?? null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+
+  const ruthPortraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
+    // Bild 10 i Part1: Ruts trohetslöfte ("Dit du går vill också jag gå") — hennes mest ikoniska ögonblick.
+    { slug: "rut", storySlug: "naomi-and-ruths-loyalty", imgOrder: 10 },
+    // Bild 6 i Part1: Noomi i samtal med sina sonhustrur, tydligt ansikte.
+    { slug: "noomi", storySlug: "naomi-and-ruths-loyalty", imgOrder: 6 },
+    // Bild 4 i Part2: Boas talar vänligt med Rut på åkern.
+    { slug: "boas", storySlug: "ruth-gleans-in-boaz-field", imgOrder: 4 },
+  ];
+  for (const p of ruthPortraits) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: ruth.id, slug: p.storySlug } });
+    const img = await prisma.storyImage.findUniqueOrThrow({ where: { storyId_order: { storyId: story.id, order: p.imgOrder } } });
+    await prisma.character.update({
+      where: { slug: p.slug },
+      data: { portraitPath: img.path, portraitCredit: img.credit, portraitCreditUrl: img.creditUrl },
+    });
+  }
+
+  const ruthThumbnails: Record<string, number> = {
+    "naomi-and-ruths-loyalty": 10, // Ruts trohetslöfte till Noomi.
+    "ruth-gleans-in-boaz-field": 4, // Boas talar med Rut på åkern.
+    "ruth-at-the-threshing-floor": 5, // Rut och Boas ansikte mot ansikte i natten.
+    "boaz-marries-ruth": 11, // Glad familjescen med den nyfödde Obed.
+  };
+  for (const [slug, order] of Object.entries(ruthThumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: ruth.id, slug }, data: { thumbnailOrder: order } });
+  }
+
+  console.log(`Seedat Rut: ${ruthStories.length} stories.`);
+
+  // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
   // Bygger ett riktigt story-index för Exodus-narrativet (tidigare fanns
@@ -3770,6 +3909,30 @@ async function main() {
         "efter honom, och nämns även i suran om \"Männen i fisken\".",
     },
     {
+      id: ruth.id,
+      description:
+        "En liten, varm familjeberättelse mitt i domartidens kaos (jfr. " +
+        "Domarboken, som utspelar sig samtidigt) — om trohet mellan en " +
+        "moabitisk svärdotter och hennes israelitiska svärmor, och om " +
+        "Boas som tar sitt ansvar som \"återlösare\" på allvar. Slutar med " +
+        "en släkttavla som binder ihop berättelsen med kung David.",
+      authorship:
+        "Okänd författare. Traditionellt tillskriven profeten Samuel. " +
+        "Modern forskning är delad mellan en tidig datering (nära " +
+        "domartiden den skildrar, ca 1000-talet f.Kr.) och en betydligt " +
+        "senare (ca 500-talet f.Kr., efter den babyloniska fångenskapen) " +
+        "— den senare dateringen ser boken som ett medvetet motargument " +
+        "mot Esras och Nehemjas krav på att skilja sig från utländska " +
+        "hustrur, genom att visa en moabitisk kvinna som blir kung Davids " +
+        "gammelmormor.",
+      traditions:
+        "Judendom: en av de fem \"Megillot\" (bokrullarna), läses i sin " +
+        "helhet vid Shavuot (veckohögtiden). Kristendom: Rut nämns i " +
+        "Jesu släkttavla i Matteusevangeliet (1:5) — en av endast fyra " +
+        "kvinnor som nämns där. Islam: Rut och Boas förekommer inte " +
+        "namngivna i Koranen.",
+    },
+    {
       id: mark.id,
       description:
         "Det kortaste och (troligen) äldsta evangeliet — ett snabbt, " +
@@ -4590,6 +4753,13 @@ async function main() {
     { bookSlug: "jonah", storySlug: "jonah-in-the-fish" },
     { bookSlug: "jonah", storySlug: "nineveh-repents" },
     { bookSlug: "jonah", storySlug: "jonahs-anger-and-gods-lesson" },
+    // NY 2026-08-26: hela Rut-boken — en av GT:s mest lästa och älskade
+    // berättelser, central i judisk tradition (Shavuot) och i Jesu
+    // släkttavla.
+    { bookSlug: "ruth", storySlug: "naomi-and-ruths-loyalty" },
+    { bookSlug: "ruth", storySlug: "ruth-gleans-in-boaz-field" },
+    { bookSlug: "ruth", storySlug: "ruth-at-the-threshing-floor" },
+    { bookSlug: "ruth", storySlug: "boaz-marries-ruth" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
   ];
@@ -4613,6 +4783,7 @@ async function main() {
     { slug: "exodus", estimate: "Traditionellt ca 1200-talet f.Kr. — moderna forskare ofta ca 600–500 f.Kr. för slutredigeringen." },
     { slug: "mark", estimate: "Traditionellt ca 55–65 e.Kr. (byggd på Petrus predikan) — moderna forskare ofta ca 65–75 e.Kr., troligen det äldsta evangeliet." },
     { slug: "jonah", estimate: "Traditionellt ca 780-talet f.Kr. (Jona själv, under kung Jerobeam II) — moderna forskare ofta ca 400-talet f.Kr., en betydligt senare, efterhandskonstruerad berättelse." },
+    { slug: "ruth", estimate: "Okänd författare. Handlingen utspelar sig under domartiden (ca 1100-talet f.Kr.) — men boken kan vara nedtecknad betydligt senare, ofta daterad till ca 500-talet f.Kr." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },
