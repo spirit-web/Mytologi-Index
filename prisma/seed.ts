@@ -16,6 +16,7 @@ import ruthCaptionsByCode from "./image-captions-ruth.json";
 import estherCaptionsByCode from "./image-captions-esther.json";
 import danielCaptionsByCode from "./image-captions-daniel.json";
 import samuelCaptionsByCode from "./image-captions-1samuel.json";
+import deutCaptionsByCode from "./image-captions-deuteronomy.json";
 
 const prisma = new PrismaClient();
 
@@ -3215,6 +3216,177 @@ async function main() {
   console.log(`Seedat Första Samuelsboken: ${samuelStories.length} stories.`);
 
   // ======================================================================
+  // Fyra korta tillägg, alla på användarens direkta begäran (2026-08-27,
+  // uppföljning av den publicerade Bibel-överblicken): Levitikus och
+  // Deuteronomium får var sin enda berättelse (deras enda riktiga
+  // narrativa inslag), Job får en enda berättelse byggd av bara ramen
+  // (prolog+epilog, inte den poetiska mittdelen), och Höga Visan läggs
+  // till i sin helhet som ren text utan bilder (kärleksdikt, ingen scen
+  // att illustrera — samma princip som "Fåren och getterna" i Matteus).
+  // ======================================================================
+
+  // --- Tredje Moseboken (Leviticus) — enda berättelsen ------------------
+  const leviticus = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "leviticus" } },
+    update: {},
+    create: { corpusId: bible.id, slug: "leviticus", name: "Tredje Moseboken", order: 12, testament: "old" },
+  });
+  // Samma slug som Aron redan har i Exodus-avsnittet — länkas ihop.
+  const aronChar = await prisma.character.upsert({ where: { slug: "aron" }, update: {}, create: { slug: "aron", name: "Aron" } });
+  const nadabStory = await prisma.story.upsert({
+    where: { bookId_slug: { bookId: leviticus.id, slug: "nadab-and-abihu" } },
+    update: { title: "Nadab och Abihus död", startRef: "Leviticus 10:1", endRef: "Leviticus 10:20", orderInBook: 1 },
+    create: { bookId: leviticus.id, slug: "nadab-and-abihu", title: "Nadab och Abihus död", startRef: "Leviticus 10:1", endRef: "Leviticus 10:20", orderInBook: 1 },
+  });
+  await prisma.storyCharacter.upsert({
+    where: { storyId_characterId: { storyId: nadabStory.id, characterId: aronChar.id } },
+    update: {},
+    create: { storyId: nadabStory.id, characterId: aronChar.id },
+  });
+  const chaosOrderTheme = themes["chaos-order"];
+  await prisma.storyTheme.upsert({
+    where: { storyId_themeId: { storyId: nadabStory.id, themeId: chaosOrderTheme.id } },
+    update: {},
+    create: { storyId: nadabStory.id, themeId: chaosOrderTheme.id },
+  });
+  await prisma.book.update({
+    where: { id: leviticus.id },
+    data: {
+      description:
+        "Så gott som hela boken är offer- och renhetslagstiftning, inte " +
+        "berättelse — det enda riktiga narrativa inslaget är Nadab och " +
+        "Abihus död (kap. 10): Arons två äldre söner offrar \"främmande " +
+        "eld\" på fel sätt inför Gud och dör momentant. En kärv påminnelse " +
+        "om att inte närma sig det heliga på egna villkor.",
+      authorship: "Traditionellt tillskriven Mose. Modern forskning ser den som prästerlig lagtext, sammanställd och redigerad över lång tid, delvis samtidigt med Genesis/Exodus källor.",
+      traditions: "Judendom: tredje boken i Toran, central för prästerlig renhetslag och offerkult. Kristendom: läses ofta symboliskt/typologiskt (offerlagarna som förebild till Kristi offer). Islam: ingen direkt motsvarighet.",
+    },
+  });
+  console.log("Seedat Tredje Moseboken: 1 story.");
+
+  // --- Femte Moseboken (Deuteronomium) — enda nya berättelsen -----------
+  const deuteronomy = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "deuteronomy" } },
+    update: {},
+    create: { corpusId: bible.id, slug: "deuteronomy", name: "Femte Moseboken", order: 13, testament: "old" },
+  });
+  const mosesDeathStory = await prisma.story.upsert({
+    where: { bookId_slug: { bookId: deuteronomy.id, slug: "death-of-moses" } },
+    update: { title: "Moses död", startRef: "Deuteronomy 34:1", endRef: "Deuteronomy 34:12", orderInBook: 1 },
+    create: { bookId: deuteronomy.id, slug: "death-of-moses", title: "Moses död", startRef: "Deuteronomy 34:1", endRef: "Deuteronomy 34:12", orderInBook: 1 },
+  });
+  // Samma slug som i Exodus-avsnittet — upsert returnerar/uppdaterar bara
+  // samma rad, så Mose länkas ihop över böcker (se motsvarande mönster
+  // för mose/elia i Matteus-sektionen).
+  const moseChar = await prisma.character.upsert({ where: { slug: "mose" }, update: {}, create: { slug: "mose", name: "Mose" } });
+  await prisma.storyCharacter.upsert({
+    where: { storyId_characterId: { storyId: mosesDeathStory.id, characterId: moseChar.id } },
+    update: {},
+    create: { storyId: mosesDeathStory.id, characterId: moseChar.id },
+  });
+  const deutCaptions = deutCaptionsByCode as Record<string, string[]>;
+  for (let fileNum = 12; fileNum <= 17; fileNum++) {
+    const order = fileNum - 11;
+    const path = `/images/deuteronomy/death-of-moses/${String(fileNum).padStart(2, "0")}.jpg`;
+    const caption = deutCaptions["FB_Moses_Joshua"]?.[fileNum - 1] ?? null;
+    await prisma.storyImage.upsert({
+      where: { storyId_order: { storyId: mosesDeathStory.id, order } },
+      update: { path, caption, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/moses-joshua/" },
+      create: { storyId: mosesDeathStory.id, order, path, caption, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/moses-joshua/" },
+    });
+  }
+  await prisma.story.update({ where: { id: mosesDeathStory.id }, data: { thumbnailOrder: 4 } }); // Mose ser ut över landet från Nebo (fil 15)
+  await prisma.book.update({
+    where: { id: deuteronomy.id },
+    data: {
+      description:
+        "Mest Moses avskedstal — en genomgång/förnyelse av lagen inför " +
+        "generationen som ska gå in i det utlovade landet. Det enda nya " +
+        "narrativa inslaget är slutet (kap. 34): Mose får se landet från " +
+        "berget Nebo men inte gå in i det (straff för olydnad vid " +
+        "Meriba), och dör där, begravd av Gud på okänd plats.",
+      authorship: "Traditionellt tillskriven Mose själv (i talform). Modern forskning ser den ofta som skriven/redigerad betydligt senare, kopplad till Josias reform (2 Kung. 22-23, ca 620 f.Kr.) — \"lagboken\" som återfinns då tros av många vara en tidig version av Deuteronomium.",
+      traditions: "Judendom: femte och sista boken i Toran, innehåller Shema (6:4, judendomens centrala trosbekännelse). Kristendom: Jesus citerar Deuteronomium tre gånger när han frestas i öknen (Matt. 4). Islam: ingen direkt motsvarighet, men Musa (Mose) är den mest omnämnda profeten i Koranen.",
+    },
+  });
+  console.log("Seedat Femte Moseboken: 1 story.");
+
+  // --- Job — en enda berättelse av ramen (prolog + epilog) ---------------
+  const jobBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "job" } },
+    update: {},
+    create: { corpusId: bible.id, slug: "job", name: "Job", order: 14, testament: "old" },
+  });
+  const jobChar = await prisma.character.upsert({ where: { slug: "job" }, update: {}, create: { slug: "job", name: "Job" } });
+  const jobStory = await prisma.story.upsert({
+    where: { bookId_slug: { bookId: jobBook.id, slug: "jobs-trial" } },
+    update: { title: "Jobs prövning", startRef: "Job 1:1", endRef: "Job 2:13", orderInBook: 1 },
+    create: { bookId: jobBook.id, slug: "jobs-trial", title: "Jobs prövning", startRef: "Job 1:1", endRef: "Job 2:13", orderInBook: 1 },
+  });
+  await prisma.storyCharacter.upsert({
+    where: { storyId_characterId: { storyId: jobStory.id, characterId: jobChar.id } },
+    update: {},
+    create: { storyId: jobStory.id, characterId: jobChar.id },
+  });
+  const testingTheme = themes["testing-of-faith"];
+  await prisma.storyTheme.upsert({
+    where: { storyId_themeId: { storyId: jobStory.id, themeId: testingTheme.id } },
+    update: {},
+    create: { storyId: jobStory.id, themeId: testingTheme.id },
+  });
+  for (let fileNum = 1; fileNum <= 7; fileNum++) {
+    const path = `/images/job/jobs-trial/${String(fileNum).padStart(2, "0")}.jpg`;
+    const caption = deutCaptions["FB_LS_Job"]?.[fileNum - 1] ?? null;
+    await prisma.storyImage.upsert({
+      where: { storyId_order: { storyId: jobStory.id, order: fileNum } },
+      update: { path, caption, credit: "Lambsongs / Jill Kemp & Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/ls-job/" },
+      create: { storyId: jobStory.id, order: fileNum, path, caption, credit: "Lambsongs / Jill Kemp & Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/ls-job/" },
+    });
+  }
+  await prisma.story.update({ where: { id: jobStory.id }, data: { thumbnailOrder: 3 } }); // budbäraren med de dåliga nyheterna
+  await prisma.book.update({
+    where: { id: jobBook.id },
+    data: {
+      description:
+        "En enda berättelse byggd av bokens narrativa RAM — prologen " +
+        "(kap. 1-2: Job mister allt, Satans vadslagning med Gud) och " +
+        "epilogen (kap. 42: upprättelsen) — snarare än hela boken. Den " +
+        "poetiska mittdelen (kap. 3-41, Jobs och hans vänners långa " +
+        "dialog om lidandets mening) är inte indexerad här; den är " +
+        "diktform/argumentation, inte handling.",
+      authorship: "Okänd författare. Bland de mest omdebatterade dateringarna i GT — förslag spänner från patriark-tid (tidigast) till efter den babyloniska fångenskapen (senast), eftersom berättelsen själv utspelar sig i en obestämd, mycket gammal tid \"i österlandet\".",
+      traditions: "Judendom: en av \"Ketuvim\" (Skrifterna), central visdomstext om lidande utan enkla svar. Kristendom: Job nämns som uthållighetens föredöme (Jak. 5:11). Islam: Ayyub (Job) är en erkänd profet i Koranen, prisad för sitt tålamod.",
+    },
+  });
+  console.log("Seedat Job: 1 story.");
+
+  // --- Höga Visan — hela boken, ren text utan bilder ---------------------
+  const songOfSongs = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "song-of-songs" } },
+    update: {},
+    create: { corpusId: bible.id, slug: "song-of-songs", name: "Höga Visan", order: 15, testament: "old" },
+  });
+  await prisma.story.upsert({
+    where: { bookId_slug: { bookId: songOfSongs.id, slug: "song-of-songs" } },
+    update: { title: "Höga Visan", startRef: "Song of Songs 1:1", endRef: "Song of Songs 8:14", orderInBook: 1 },
+    create: { bookId: songOfSongs.id, slug: "song-of-songs", title: "Höga Visan", startRef: "Song of Songs 1:1", endRef: "Song of Songs 8:14", orderInBook: 1 },
+  });
+  await prisma.book.update({
+    where: { id: songOfSongs.id },
+    data: {
+      description:
+        "Kärleksdikt/dialog mellan två älskande, inte berättelse — " +
+        "ingen handling med skeenden att sammanfatta. Lagd till i sin " +
+        "HELHET som ren text (inga bilder — det finns ingen enskild " +
+        "scen att illustrera), på användarens uttryckliga önskan om att " +
+        "kunna läsa den i appen.",
+      authorship: "Traditionellt tillskriven Salomo (\"Salomos höga visa\"). Modern forskning daterar den ofta senare, ibland betydligt senare (efterexilisk tid), utifrån språkliga drag.",
+      traditions: "Judendom: en av de fem \"Megillot\", läses vid påsken (Pesach); tolkas traditionellt allegoriskt som Guds kärlek till Israel. Kristendom: tolkas ofta allegoriskt som Kristi kärlek till kyrkan. Islam: ingen motsvarighet i Koranen.",
+    },
+  });
+  console.log("Seedat Höga Visan: 1 story (hela boken, ingen bilddelning).");
+
+  // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
   // Bygger ett riktigt story-index för Exodus-narrativet (tidigare fanns
@@ -5560,6 +5732,11 @@ async function main() {
     { bookSlug: "1-samuel", storySlug: "david-and-jonathans-friendship" },
     { bookSlug: "1-samuel", storySlug: "david-spares-sauls-life" },
     { bookSlug: "1-samuel", storySlug: "death-of-saul" },
+    // NY 2026-08-27: fyra korta boktillägg på användarens begäran.
+    { bookSlug: "leviticus", storySlug: "nadab-and-abihu" },
+    { bookSlug: "deuteronomy", storySlug: "death-of-moses" },
+    { bookSlug: "job", storySlug: "jobs-trial" },
+    { bookSlug: "song-of-songs", storySlug: "song-of-songs" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
   ];
@@ -5587,6 +5764,10 @@ async function main() {
     { slug: "esther", estimate: "Okänd författare. Handlingen utspelar sig under kung Xerxes I (486–465 f.Kr.), men boken dateras vanligen till 100-talet f.Kr." },
     { slug: "daniel", estimate: "Traditionellt tillskriven Daniel själv (500-talet f.Kr.) — moderna forskare daterar ofta berättelsedelen (kap. 1-6) till 500/400-talet f.Kr. och synerna (kap. 7-12) till ca 160-talet f.Kr." },
     { slug: "1-samuel", estimate: "Okänd författare — handlingen utspelar sig ca 1100–1000-talet f.Kr., men boken sammanställdes troligen under eller efter kungatiden, med slutredaktion under/efter den babyloniska fångenskapen (ca 500-talet f.Kr.)." },
+    { slug: "leviticus", estimate: "Traditionellt Mose (ca 1200-talet f.Kr.) — moderna forskare ser den ofta som prästerlig text sammanställd över lång tid." },
+    { slug: "deuteronomy", estimate: "Traditionellt Mose (ca 1200-talet f.Kr.) — moderna forskare kopplar den ofta till Josias reform (ca 620 f.Kr.)." },
+    { slug: "job", estimate: "Okänd författare och en av GT:s mest omdebatterade dateringar — förslag spänner från patriark-tid till efter den babyloniska fångenskapen." },
+    { slug: "song-of-songs", estimate: "Traditionellt Salomo (ca 900-talet f.Kr.) — moderna forskare daterar den ofta senare, ibland till efterexilisk tid." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },

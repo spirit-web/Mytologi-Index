@@ -19,6 +19,10 @@ import ruthData from "@/data/bible-sv-1917/ruth.json";
 import estherData from "@/data/bible-sv-1917/esther.json";
 import danielData from "@/data/bible-sv-1917/daniel.json";
 import firstSamuelData from "@/data/bible-sv-1917/1samuel.json";
+import leviticusData from "@/data/bible-sv-1917/leviticus.json";
+import deuteronomyData from "@/data/bible-sv-1917/deuteronomy.json";
+import jobData from "@/data/bible-sv-1917/job.json";
+import songOfSongsData from "@/data/bible-sv-1917/songofsongs.json";
 
 export type BibleVerse = {
   chapter: number;
@@ -58,6 +62,10 @@ const BOOKS: Record<string, { data: Record<string, Record<string, string>>; sven
   Esther: { data: estherData as Record<string, Record<string, string>>, svenskt: "Ester" },
   Daniel: { data: danielData as Record<string, Record<string, string>>, svenskt: "Daniel" },
   "1 Samuel": { data: firstSamuelData as Record<string, Record<string, string>>, svenskt: "Första Samuelsboken" },
+  Leviticus: { data: leviticusData as Record<string, Record<string, string>>, svenskt: "Tredje Moseboken" },
+  Deuteronomy: { data: deuteronomyData as Record<string, Record<string, string>>, svenskt: "Femte Moseboken" },
+  Job: { data: jobData as Record<string, Record<string, string>>, svenskt: "Job" },
+  "Song of Songs": { data: songOfSongsData as Record<string, Record<string, string>>, svenskt: "Höga Visan" },
 };
 
 // Extern länk till en fullständig, fri bibelläsare för samma översättning

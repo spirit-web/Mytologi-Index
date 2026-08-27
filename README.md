@@ -70,6 +70,31 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 43 (2026-08-27): Fyra korta boktillägg på direkt användarförfrågan
+
+Uppföljning av Bibel-överblicken (Fas 42): fyra nya, korta böcker,
+alla med bara EN berättelse vardera eftersom resten av respektive bok
+är icke-narrativ:
+
+- **Tredje Moseboken (Leviticus)**: Nadab och Abihus död (kap. 10) —
+  bokens enda riktiga narrativa inslag. Ingen bildkälla hittad (för
+  obskyrt ämne för barnbibel-illustrationer) — ren text.
+- **Femte Moseboken (Deuteronomium)**: Moses död (kap. 34) — bokens
+  enda NYA narrativa inslag utöver lagtexten. Sex bilder (delmängd av
+  ett större 21-bilders Sweet Publishing-set om Moses död/Josuas
+  tillträde, CC BY-SA, AI tillåtet).
+- **Job**: "Jobs prövning", EN berättelse byggd av bara ramen (prolog
+  kap. 1-2 + epilog kap. 42, inte den 39 kapitel långa poetiska
+  mittdelen). Sju bilder (Lambsongs, CC BY-NC, AI tillåtet).
+- **Höga Visan**: hela boken (8 kapitel) som ren text UTAN bilder —
+  kärleksdikt/dialog, ingen scen att illustrera, tillagd enbart för
+  att kunna läsas i appen på användarens uttryckliga önskan.
+
+Även: en fullständig, publicerad överblick över alla 66 böcker i den
+protestantiska kanon (status per bok — klar/stark kandidat/icke-
+narrativ) samt skriftliga svar om Juda & Tamar, Dina, Paulusbreven i
+korthet, och var Satan/ärkeänglarna förekommer i Bibeln.
+
 ## Fas 42 (2026-08-27): Första Samuelsboken — elfte boken
 
 Den starkaste kandidaten i hela Gamla testamentet (se den publicerade
