@@ -1476,6 +1476,9 @@ async function main() {
     // Samma återknytningsmönster som Mose/Elia — Abraham dyker upp igen
     // som karaktär i Jesu liknelse, samma Character-rad som i Genesis.
     { slug: "abraham", name: "Abraham" },
+    // NY 2026-08-27: en av de två lärjungarna på vägen till Emmaus,
+    // uttryckligen namngiven i Luk. 24:18 (den andre förblir onämnd).
+    { slug: "kleopas", name: "Kleopas" },
   ];
   const ntCharacters: Record<string, { id: string }> = {};
   for (const c of ntCharacterDefs) {
@@ -1935,39 +1938,70 @@ async function main() {
   };
   const lukeStories: LukeStoryDef[] = [
     {
+      // NY 2026-08-27: Lukas egen, mest ikoniska julberättelse (herdarna,
+      // ängla­skaran, krubban) — skiljer sig helt från Matteus vinkel
+      // (de vise männen) och läggs till som en egen berättelse trots att
+      // Matteus redan har "Jesu födelse", eftersom det är en annan scen
+      // med annan bildkälla och annat fokus.
+      slug: "shepherds-and-the-birth-of-jesus", title: "Herdarna och Jesu födelse",
+      startRef: "Luke 2:1", endRef: "Luke 2:20", orderInBook: 1,
+      characterSlugs: ["jesus", "maria", "josef-ny"], themeSlugs: [],
+    },
+    {
+      // NY 2026-08-27: den enda bevarade episoden ur Jesu barndom/
+      // ungdom i något evangelium.
+      slug: "jesus-in-the-temple-at-twelve", title: "Tolvårige Jesus i templet",
+      startRef: "Luke 2:41", endRef: "Luke 2:52", orderInBook: 2,
+      characterSlugs: ["jesus", "maria", "josef-ny"], themeSlugs: [],
+    },
+    {
       slug: "good-samaritan", title: "Den barmhärtige samariten",
-      startRef: "Luke 10:25", endRef: "Luke 10:37", orderInBook: 1,
+      startRef: "Luke 10:25", endRef: "Luke 10:37", orderInBook: 3,
       characterSlugs: ["jesus"], themeSlugs: ["compassion"],
     },
     {
       // NY 2026-08-25: direkt efterföljande scen i samma kapitel.
       slug: "mary-and-martha", title: "Maria och Marta",
-      startRef: "Luke 10:38", endRef: "Luke 10:42", orderInBook: 2,
+      startRef: "Luke 10:38", endRef: "Luke 10:42", orderInBook: 4,
       characterSlugs: ["jesus", "maria-av-betania", "marta"], themeSlugs: [],
     },
     {
       // NY 2026-08-25: samma "förlorat och återfunnet"-trilogi (15:1-32)
       // som förlorade sonen, de två kortare liknelserna direkt före den.
       slug: "lost-sheep-and-coin", title: "Det förlorade fåret och det förlorade myntet",
-      startRef: "Luke 15:1", endRef: "Luke 15:10", orderInBook: 3,
+      startRef: "Luke 15:1", endRef: "Luke 15:10", orderInBook: 5,
       characterSlugs: ["jesus"], themeSlugs: ["forgiveness"],
     },
     {
       slug: "prodigal-son", title: "Liknelsen om den förlorade sonen",
-      startRef: "Luke 15:11", endRef: "Luke 15:32", orderInBook: 4,
+      startRef: "Luke 15:11", endRef: "Luke 15:32", orderInBook: 6,
       characterSlugs: ["jesus"], themeSlugs: ["forgiveness"],
     },
     {
       // NY 2026-08-25: Abraham återknyter till samma Character-rad som
       // i Genesis.
       slug: "rich-man-and-lazarus", title: "Den rike mannen och Lasarus",
-      startRef: "Luke 16:19", endRef: "Luke 16:31", orderInBook: 5,
+      startRef: "Luke 16:19", endRef: "Luke 16:31", orderInBook: 7,
       characterSlugs: ["jesus", "abraham"], themeSlugs: ["compassion"],
     },
     {
+      // NY 2026-08-27: en av Petersons favoritteman — självbedrägeri och
+      // falsk rättfärdighet kontra ärlig ödmjukhet.
+      slug: "pharisee-and-tax-collector", title: "Liknelsen om fariséen och publikanen",
+      startRef: "Luke 18:9", endRef: "Luke 18:14", orderInBook: 8,
+      characterSlugs: ["jesus"], themeSlugs: ["self-consciousness"],
+    },
+    {
       slug: "zacchaeus", title: "Sackeus i trädet",
-      startRef: "Luke 19:1", endRef: "Luke 19:10", orderInBook: 6,
+      startRef: "Luke 19:1", endRef: "Luke 19:10", orderInBook: 9,
       characterSlugs: ["jesus", "sackeus"], themeSlugs: ["forgiveness"],
+    },
+    {
+      // NY 2026-08-27: en av Lukas mest älskade berättelser, unik för
+      // detta evangelium — den uppståndne Jesus okänd tills brödet bryts.
+      slug: "road-to-emmaus", title: "Vandringen till Emmaus",
+      startRef: "Luke 24:13", endRef: "Luke 24:35", orderInBook: 10,
+      characterSlugs: ["jesus", "kleopas"], themeSlugs: ["testing-of-faith"],
     },
   ];
   for (const s of lukeStories) {
@@ -2006,6 +2040,10 @@ async function main() {
     { storySlug: "lost-sheep-and-coin", code: "FB_RG_Lost_Sheep", count: 9, offset: 0, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-lost-sheep/" },
     { storySlug: "lost-sheep-and-coin", code: "FB_LS_Lost_Coin", count: 12, offset: 9, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-lost-coin/" },
     { storySlug: "rich-man-and-lazarus", code: "FB_RichMan_Lazarus", count: 11, credit: "Arabs for Christ (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/rich-man-lazarus/" },
+    { storySlug: "shepherds-and-the-birth-of-jesus", code: "FB_LS_Shepherds_Angels", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-shepherds-angels/" },
+    { storySlug: "jesus-in-the-temple-at-twelve", code: "FB_LS_Lost_Temple", count: 8, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-lost-temple/" },
+    { storySlug: "pharisee-and-tax-collector", code: "FB_Pharisee_TaxCollector", count: 6, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://freebibleimages.org/illustrations/pharisee-tax-collector/" },
+    { storySlug: "road-to-emmaus", code: "FB_LS_Emmaus", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-emmaus/" },
   ];
   for (const set of lukeImageSets) {
     const story = await prisma.story.findFirstOrThrow({ where: { bookId: luke.id, slug: set.storySlug } });
@@ -2025,6 +2063,7 @@ async function main() {
     { slug: "sackeus", storySlug: "zacchaeus", imgOrder: 4 },
     { slug: "maria-av-betania", storySlug: "mary-and-martha", imgOrder: 6 },
     { slug: "marta", storySlug: "mary-and-martha", imgOrder: 7 },
+    { slug: "kleopas", storySlug: "road-to-emmaus", imgOrder: 7 },
   ];
   for (const p of lukePortraits) {
     const story = await prisma.story.findFirstOrThrow({ where: { bookId: luke.id, slug: p.storySlug } });
@@ -2042,6 +2081,10 @@ async function main() {
     "mary-and-martha": 7, // Martas konflikt med Jesus, kärnan i berättelsen
     "lost-sheep-and-coin": 8, // herden firar att han hittat det förlorade fåret
     "rich-man-and-lazarus": 6, // den rike mannen i plågan, Abraham och Lasarus i fjärran
+    "shepherds-and-the-birth-of-jesus": 7, // Jesusbarnet i krubban
+    "jesus-in-the-temple-at-twelve": 3, // pojken Jesus omgiven av de lärde i templet
+    "pharisee-and-tax-collector": 5, // publikanen ber med sänkt blick
+    "road-to-emmaus": 7, // brödet bryts — ögonblicket de känner igen Jesus
   };
   for (const [slug, order] of Object.entries(lukeThumbnails)) {
     await prisma.story.updateMany({ where: { bookId: luke.id, slug }, data: { thumbnailOrder: order } });
@@ -2124,21 +2167,46 @@ async function main() {
       characterSlugs: ["jesus", "samariska-kvinnan"], themeSlugs: ["compassion"],
     },
     {
+      // NY 2026-08-27: en av evangeliernas mest citerade scener ("den
+      // av eder som är utan synd...") — saknas i de äldsta handskrifterna
+      // men ingår i 1917 års text liksom i de flesta traditionella biblar.
+      slug: "woman-caught-in-adultery", title: "Kvinnan som ertappades med äktenskapsbrott",
+      startRef: "John 8:1", endRef: "John 8:11", orderInBook: 5,
+      characterSlugs: ["jesus"], themeSlugs: ["compassion", "self-consciousness"],
+    },
+    {
+      // NY 2026-08-27: ett helt kapitel ägnas åt denna botade mannens
+      // eskalerande förhör inför fariséerna — ovanligt utförligt även
+      // för Johannes mått.
+      slug: "man-born-blind", title: "Mannen som var född blind",
+      startRef: "John 9:1", endRef: "John 9:41", orderInBook: 6,
+      characterSlugs: ["jesus"], themeSlugs: ["testing-of-faith"],
+    },
+    {
       slug: "lazarus-raised", title: "Lasarus uppväcks från de döda",
-      startRef: "John 11:1", endRef: "John 11:44", orderInBook: 5,
+      startRef: "John 11:1", endRef: "John 11:44", orderInBook: 7,
       characterSlugs: ["jesus", "maria-av-betania", "marta", "lasarus-fran-betania"], themeSlugs: ["testing-of-faith"],
     },
     {
       // NY 2026-08-25.
       slug: "washing-of-feet", title: "Jesus tvättar lärjungarnas fötter",
-      startRef: "John 13:1", endRef: "John 13:17", orderInBook: 6,
+      startRef: "John 13:1", endRef: "John 13:17", orderInBook: 8,
       characterSlugs: ["jesus", "petrus", "judas"], themeSlugs: [],
     },
     {
       // NY 2026-08-25.
       slug: "doubting-thomas", title: "Tomas som tvivlade",
-      startRef: "John 20:19", endRef: "John 20:29", orderInBook: 7,
+      startRef: "John 20:19", endRef: "John 20:29", orderInBook: 9,
       characterSlugs: ["jesus", "tomas"], themeSlugs: ["testing-of-faith"],
+    },
+    {
+      // NY 2026-08-27: Petrus upprättelse vid Galileiska sjön — svarar
+      // direkt mot hans tredubbla förnekelse hos Matteus (26:69-75) med
+      // en tredubbel bekräftelse, en av NT:s tydligaste "gottgörelse"-
+      // berättelser.
+      slug: "peter-restored", title: "Petrus upprättas",
+      startRef: "John 21:1", endRef: "John 21:25", orderInBook: 10,
+      characterSlugs: ["jesus", "petrus"], themeSlugs: ["forgiveness"],
     },
   ];
   for (const s of johnStories) {
@@ -2174,6 +2242,12 @@ async function main() {
     // NY 2026-08-25.
     { storySlug: "washing-of-feet", code: "FB_LS_Washing_Feet", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-washing-feet/" },
     { storySlug: "doubting-thomas", code: "FB_LS_Thomas_Doubts", count: 9, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-thomas-doubts/" },
+    // NY 2026-08-27. OBS: GNPI-bildseten för både "woman-adultery" och
+    // "peter-restored" hittades men förbjuder uttryckligen AI-adaptioner
+    // — Arabs for Christ-alternativ användes istället för båda.
+    { storySlug: "woman-caught-in-adultery", code: "FB_Jesus_Question_Adultery", count: 10, credit: "Arabs for Christ (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/jesus-question-adultery/" },
+    { storySlug: "man-born-blind", code: "FB_Blind_Man", count: 10, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/blind-man/" },
+    { storySlug: "peter-restored", code: "FB_Peter_Reinstated", count: 16, credit: "Arabs for Christ (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/peter-reinstated/" },
     // ("john-prologue" har medvetet inget bildset, se kommentaren ovan.)
   ];
   for (const set of johnImageSets) {
@@ -2211,6 +2285,9 @@ async function main() {
     "lazarus-raised": 8, // Lasarus vid liv, insvept i bindlar, med Maria och Marta
     "washing-of-feet": 4, // Jesus tvättar en lärjunges fötter — själva kärnscenen
     "doubting-thomas": 5, // Jesus visar sina sårmärken, "rör vid mina händer"
+    "woman-caught-in-adultery": 5, // Jesus böjer sig ner och skriver i sanden
+    "man-born-blind": 2, // Jesus stryker lera på den blinde mannens ögon
+    "peter-restored": 10, // Jesus och Petrus samtalar enskilt vid sjön
   };
   for (const [slug, order] of Object.entries(johnThumbnails)) {
     await prisma.story.updateMany({ where: { bookId: john.id, slug }, data: { thumbnailOrder: order } });
@@ -5189,6 +5266,11 @@ async function main() {
     { bookSlug: "luke", storySlug: "mary-and-martha" },
     { bookSlug: "luke", storySlug: "lost-sheep-and-coin" },
     { bookSlug: "luke", storySlug: "rich-man-and-lazarus" },
+    // NY 2026-08-27: fyra till av Lukas mest kända berättelser.
+    { bookSlug: "luke", storySlug: "shepherds-and-the-birth-of-jesus" },
+    { bookSlug: "luke", storySlug: "jesus-in-the-temple-at-twelve" },
+    { bookSlug: "luke", storySlug: "pharisee-and-tax-collector" },
+    { bookSlug: "luke", storySlug: "road-to-emmaus" },
     // NY 2026-08-25: alla fem lika kända/centrala — missades av misstag
     // när Johannes lades till.
     { bookSlug: "john", storySlug: "john-prologue" },
@@ -5198,6 +5280,10 @@ async function main() {
     { bookSlug: "john", storySlug: "lazarus-raised" },
     { bookSlug: "john", storySlug: "washing-of-feet" },
     { bookSlug: "john", storySlug: "doubting-thomas" },
+    // NY 2026-08-27: tre till av Johannes mest kända berättelser.
+    { bookSlug: "john", storySlug: "woman-caught-in-adultery" },
+    { bookSlug: "john", storySlug: "man-born-blind" },
+    { bookSlug: "john", storySlug: "peter-restored" },
     // NY 2026-08-26: Markusevangeliets tre första berättelser — alla
     // välkända bibelberättelser som ofta citeras oberoende av evangelium.
     { bookSlug: "mark", storySlug: "rich-young-ruler" },

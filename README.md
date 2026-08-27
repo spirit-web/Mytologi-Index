@@ -70,6 +70,33 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 40 (2026-08-27): Lukas och Johannes fyllda ut med fler kända berättelser
+
+**Lukas** (6 → 10 stories): Herdarna och Jesu födelse (2:1-20, Lukas
+egen julberättelse — skiljer sig helt från Matteus vise män, egen
+bildkälla), Tolvårige Jesus i templet (2:41-52, den enda bevarade
+episoden ur Jesu barndom), Liknelsen om fariséen och publikanen
+(18:9-14), Vandringen till Emmaus (24:13-35, unik för Lukas). Ny
+karaktär: Kleopas (uttryckligen namngiven i 24:18).
+
+**Johannes** (7 → 10 stories): Kvinnan som ertappades med
+äktenskapsbrott (8:1-11, "den av eder som är utan synd..."), Mannen
+som var född blind (9:1-41, ett helt kapitel ägnas åt förhöret),
+Petrus upprättas (21:1-25, tredubbel bekräftelse som svarar mot den
+tredubbla förnekelsen hos Matteus).
+
+Text extraherad för sex nya kapitel (Luk 2, 18, 24; Joh 8, 9, 21).
+NT-vokativ-scan gav en (1) riktig träff: Simeons lovsång (Luk 2:29,
+"Herre, nu låter du din tjänare fara hädan i frid") är riktad till
+Gud, inte till spädbarnet Jesus — korrigerad till "Gud". Övriga sju
+träffar (18:41, 8:11, 9:36, 9:38, 21:15-17, 21:20-21) är alla genuint
+tilltal till Jesus och lämnades orörda.
+
+GNPI-bildset för både kvinnan vid äktenskapsbrottet och Petrus
+upprättelse hittades men förbjuder AI-adaptioner — Arabs for Christ-
+alternativ användes istället för båda (samma mönster som upprepade
+gånger tidigare i projektet).
+
 ## Fas 39 (2026-08-27): Daniel — tionde boken
 
 De sex klassiska, berättande kapitlen (1-6) i Daniels bok: Daniel
