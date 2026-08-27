@@ -18,6 +18,7 @@ import danielCaptionsByCode from "./image-captions-daniel.json";
 import samuelCaptionsByCode from "./image-captions-1samuel.json";
 import deutCaptionsByCode from "./image-captions-deuteronomy.json";
 import jeremiahCaptionsByCode from "./image-captions-jeremiah.json";
+import joshuaCaptionsByCode from "./image-captions-joshua.json";
 
 const prisma = new PrismaClient();
 
@@ -3471,6 +3472,57 @@ async function main() {
   });
   console.log("Seedat Jeremia: 1 story.");
 
+  // --- Josua — Jeriko murar faller ---------------------------------------
+  // NY 2026-08-27, se README Fas 45: fortsätter listan över "starka
+  // kandidater" bland de ännu otäckta böckerna. Josuas erövring av Jeriko
+  // (kap. 6) är den mest kända enskilda episoden i boken.
+  const joshuaBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "joshua" } },
+    update: {},
+    create: { corpusId: bible.id, slug: "joshua", name: "Josua", order: 17, testament: "old" },
+  });
+  const joshuaChar = await prisma.character.upsert({ where: { slug: "joshua" }, update: {}, create: { slug: "joshua", name: "Josua" } });
+  const jerichoStory = await prisma.story.upsert({
+    where: { bookId_slug: { bookId: joshuaBook.id, slug: "battle-of-jericho" } },
+    update: { title: "Jerikos murar faller", startRef: "Joshua 6:1", endRef: "Joshua 6:27", orderInBook: 1 },
+    create: { bookId: joshuaBook.id, slug: "battle-of-jericho", title: "Jerikos murar faller", startRef: "Joshua 6:1", endRef: "Joshua 6:27", orderInBook: 1 },
+  });
+  await prisma.storyCharacter.upsert({
+    where: { storyId_characterId: { storyId: jerichoStory.id, characterId: joshuaChar.id } },
+    update: {},
+    create: { storyId: jerichoStory.id, characterId: joshuaChar.id },
+  });
+  await prisma.storyTheme.upsert({
+    where: { storyId_themeId: { storyId: jerichoStory.id, themeId: testingTheme.id } },
+    update: {},
+    create: { storyId: jerichoStory.id, themeId: testingTheme.id },
+  });
+  const joshuaCaptions = joshuaCaptionsByCode as Record<string, string[]>;
+  for (let fileNum = 1; fileNum <= 9; fileNum++) {
+    const path = `/images/joshua/battle-of-jericho/${String(fileNum).padStart(2, "0")}.jpg`;
+    const caption = joshuaCaptions["FB_LS_Joshua_Jericho"]?.[fileNum - 1] || null;
+    await prisma.storyImage.upsert({
+      where: { storyId_order: { storyId: jerichoStory.id, order: fileNum } },
+      update: { path, caption, credit: "Lambsongs / Jill Kemp & Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/ls-joshua-jericho/" },
+      create: { storyId: jerichoStory.id, order: fileNum, path, caption, credit: "Lambsongs / Jill Kemp & Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/ls-joshua-jericho/" },
+    });
+  }
+  await prisma.story.update({ where: { id: jerichoStory.id }, data: { thumbnailOrder: 8 } }); // muren rasar, Josua och prästernas trumpeter
+  await prisma.book.update({
+    where: { id: joshuaBook.id },
+    data: {
+      description:
+        "Erövringen av det utlovade landet under Josuas ledning, efter " +
+        "Moses död. Den mest kända enskilda episoden — och den enda som " +
+        "indexeras här — är Jerikos fall (kap. 6): Israels folk går runt " +
+        "den befästa staden i sju dagar tills murarna rasar, medan " +
+        "spionen Rahab och hennes familj skonas för sin hjälp.",
+      authorship: "Traditionellt tillskriven Josua själv (eller Pinehas/Eleasar). Modern forskning ser boken som del av det s.k. deuteronomistiska historieverket, sammanställt betydligt senare (ca 600-talet f.Kr. eller senare).",
+      traditions: "Judendom: första boken i \"Nevi'im\" (Profeterna), följer direkt efter Toran. Kristendom: Rahab nämns i Nya testamentets släkttavla för Jesus (Matt. 1:5) och som trons föredöme (Hebr. 11:31). Islam: ingen direkt motsvarighet, men Yusha (Josua) omnämns i viss islamisk tradition som Moses efterträdare.",
+    },
+  });
+  console.log("Seedat Josua: 1 story.");
+
   // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
@@ -5827,6 +5879,7 @@ async function main() {
     { bookSlug: "job", storySlug: "jobs-trial" },
     { bookSlug: "song-of-songs", storySlug: "song-of-songs" },
     { bookSlug: "jeremiah", storySlug: "jeremiah-in-the-cistern" },
+    { bookSlug: "joshua", storySlug: "battle-of-jericho" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
   ];
@@ -5859,6 +5912,7 @@ async function main() {
     { slug: "job", estimate: "Okänd författare och en av GT:s mest omdebatterade dateringar — förslag spänner från patriark-tid till efter den babyloniska fångenskapen." },
     { slug: "song-of-songs", estimate: "Traditionellt Salomo (ca 900-talet f.Kr.) — moderna forskare daterar den ofta senare, ibland till efterexilisk tid." },
     { slug: "jeremiah", estimate: "Traditionellt Jeremia/Baruk (sent 600-talet–tidigt 500-talet f.Kr., under och efter Jerusalems fall 587 f.Kr.) — moderna forskare ser boken som redigerad/utvidgad i flera steg efteråt." },
+    { slug: "joshua", estimate: "Traditionellt Josua själv (ca 1200-talet f.Kr.) — moderna forskare daterar slutredigeringen ofta till ca 600-talet f.Kr. eller senare, som del av det deuteronomistiska historieverket." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },

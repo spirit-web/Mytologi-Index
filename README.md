@@ -70,6 +70,14 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 45 (2026-08-27): Josua — Jerikos murar faller
+
+Fortsätter listan över "starka kandidater" bland de otäckta böckerna
+(Numbers, Josua, Domarboken, Andra Samuelsboken, Kungaböckerna,
+Nehemja, Apostlagärningarna): Josua som tolfte bok, en enda story —
+Jerikos fall (kap. 6), den mest kända episoden i boken. Nio bilder
+(Lambsongs, CC BY-NC, AI-adaptationer tillåtna).
+
 ## Fas 44 (2026-08-27): Dina, Juda & Tamar, samt Jeremia i brunnen
 
 Direkt uppföljning av frågorna i Fas 43 (svaren gavs, sen genomfördes
