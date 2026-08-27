@@ -70,6 +70,32 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 38 (2026-08-27): Genesis och Matteus fyllda ut med fler kända berättelser
+
+Svar på "gör klart Genesis, Exodus och Matteus": Exodus bedömdes redan
+täcka hela sin huvudberättelse (13 stories, kallelse → plågor →
+uttåg → öken → Sinai → guldkalv → förnyat förbund) — inga fler
+tillägg gjorda där denna gång. Genesis och Matteus fick däremot fyra
+respektive två nya, välkända berättelser:
+
+**Genesis** (18 → 22 stories): Hagar och Ismael föds (16:1-16), Isak
+föds — Hagar och Ismael skickas bort (21:1-21), Rebecka vid brunnen
+(24:1-67, Abraham-cykelns avslutande episod), Jakob och Esau försonas
+(33:1-20, Jakob-cykelns avslutande episod — löser upp spänningen från
+"Jakob köper Esaus förstfödslorätt" och "...lurar till sig Isaks
+välsignelse"). Fyra nya bildset (Sweet Publishing/Lambsongs, CC BY-SA
+och CC BY-NC, alla AI-adaptioner tillåtna), ny karaktär "Hagar".
+
+**Matteus** (22 → 24 stories): Tempelrensningen (21:12-17, ny episod
+i Passionsveckan direkt efter Intåget i Jerusalem) och Fåren och
+getterna (25:31-46, avslutar kapitel 25:s liknelse-trilogi tillsammans
+med de tio brudtärnorna och de anförtrodda punden). Den senare har
+medvetet INGA bilder — samma sökning som redan gjordes i Fas 24
+bekräftades: alla hittade bildset för "Sheep and goats" har licens
+som förbjuder AI-adaptioner. Bibeltexten fanns redan fullt extraherad
+för båda kapitlen sedan tidigare faser, så inget nytt extraherings-
+arbete krävdes för Matteus den här gången.
+
 ## Fas 37 (2026-08-26): Ordantal även på tidslinjen
 
 Samma "N ord · Kort/Medellång/Lång"-etikett som redan fanns på bok-

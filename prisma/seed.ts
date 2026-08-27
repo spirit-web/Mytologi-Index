@@ -201,12 +201,13 @@ async function main() {
   const characterNames = [
     "adam", "eve", "cain", "abel", "noah", "abraham", "sarah", "lot",
     "isaac", "jacob", "esau", "joseph", "rebekah", "laban", "rachel", "leah",
+    "hagar",
   ] as const;
   const displayName: Record<string, string> = {
     adam: "Adam", eve: "Eva", cain: "Kain", abel: "Abel", noah: "Noa",
     abraham: "Abraham", sarah: "Sara", lot: "Lot", isaac: "Isak",
     jacob: "Jakob", esau: "Esau", joseph: "Josef", rebekah: "Rebecka",
-    laban: "Laban", rachel: "Rakel", leah: "Lea",
+    laban: "Laban", rachel: "Rakel", leah: "Lea", hagar: "Hagar",
   };
   const characters: Record<string, { id: string }> = {};
   for (const slug of characterNames) {
@@ -321,28 +322,64 @@ async function main() {
       themeSlugs: ["covenant"],
     },
     {
+      // NY 2026-08-27: fyller en lucka mellan förbundslöftet och Sodom —
+      // Abrams och Sarais eget, mänskliga försök att "hjälpa" löftet på
+      // traven genom Hagar, och de spänningar det utlöser.
+      slug: "hagar-and-ishmael",
+      title: "Hagar och Ismael föds",
+      startRef: "Genesis 16:1", endRef: "Genesis 16:16",
+      orderInBook: 9,
+      seriesSlug: "abraham", seriesTitle: "Abraham-cykeln", seriesOrder: 4,
+      characterSlugs: ["abraham", "sarah", "hagar"],
+      themeSlugs: ["sibling-rivalry", "deception"],
+    },
+    {
       slug: "sodom-and-gomorrah",
       title: "Sodom och Gomorra",
       startRef: "Genesis 18:16", endRef: "Genesis 19:29",
-      orderInBook: 9,
-      seriesSlug: "abraham", seriesTitle: "Abraham-cykeln", seriesOrder: 4,
+      orderInBook: 10,
+      seriesSlug: "abraham", seriesTitle: "Abraham-cykeln", seriesOrder: 5,
       characterSlugs: ["abraham", "lot"],
       themeSlugs: ["chaos-order"],
+    },
+    {
+      // NY 2026-08-27: Isaks födelse (det utlovade löftesbarnet) och den
+      // smärtsamma konsekvensen för Hagar och Ismael — avslutar deras
+      // tråd som påbörjades i kap. 16.
+      slug: "isaac-born-and-ishmael-sent-away",
+      title: "Isak föds — Hagar och Ismael skickas bort",
+      startRef: "Genesis 21:1", endRef: "Genesis 21:21",
+      orderInBook: 11,
+      seriesSlug: "abraham", seriesTitle: "Abraham-cykeln", seriesOrder: 6,
+      characterSlugs: ["abraham", "sarah", "hagar", "isaac"],
+      themeSlugs: ["sibling-rivalry", "chaos-order"],
     },
     {
       slug: "binding-of-isaac",
       title: "Isaks offer (Akedah)",
       startRef: "Genesis 22:1", endRef: "Genesis 22:19",
-      orderInBook: 10,
-      seriesSlug: "abraham", seriesTitle: "Abraham-cykeln", seriesOrder: 5,
+      orderInBook: 12,
+      seriesSlug: "abraham", seriesTitle: "Abraham-cykeln", seriesOrder: 7,
       characterSlugs: ["abraham", "isaac"],
       themeSlugs: ["sacrifice", "testing-of-faith"],
+    },
+    {
+      // NY 2026-08-27: Abraham-cykelns sista episod — hans tjänare finner
+      // Rebecka åt Isak, en klassisk "typscen" (möte vid en brunn) som
+      // återkommer för både Jakob (29:1-14) och Mose (Exodus 2:15-21).
+      slug: "rebekah-at-the-well",
+      title: "Rebecka vid brunnen",
+      startRef: "Genesis 24:1", endRef: "Genesis 24:67",
+      orderInBook: 13,
+      seriesSlug: "abraham", seriesTitle: "Abraham-cykeln", seriesOrder: 8,
+      characterSlugs: ["abraham", "isaac", "rebekah"],
+      themeSlugs: ["covenant"],
     },
     {
       slug: "jacob-buys-birthright",
       title: "Jakob köper Esaus förstfödslorätt",
       startRef: "Genesis 25:19", endRef: "Genesis 25:34",
-      orderInBook: 11,
+      orderInBook: 14,
       seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 1,
       characterSlugs: ["jacob", "esau", "isaac", "rebekah"],
       themeSlugs: ["sibling-rivalry", "deception"],
@@ -351,7 +388,7 @@ async function main() {
       slug: "jacob-steals-blessing",
       title: "Jakob lurar till sig Isaks välsignelse",
       startRef: "Genesis 27:1", endRef: "Genesis 27:45",
-      orderInBook: 12,
+      orderInBook: 15,
       seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 2,
       characterSlugs: ["jacob", "esau", "isaac", "rebekah"],
       themeSlugs: ["deception", "hierarchy"],
@@ -360,7 +397,7 @@ async function main() {
       slug: "jacobs-ladder",
       title: "Jakobs stege",
       startRef: "Genesis 28:10", endRef: "Genesis 28:22",
-      orderInBook: 13,
+      orderInBook: 16,
       seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 3,
       characterSlugs: ["jacob"],
       themeSlugs: ["hierarchy"],
@@ -369,7 +406,7 @@ async function main() {
       slug: "jacob-serves-laban-for-rachel-and-leah",
       title: "Jakob arbetar för Rakel — men får Lea",
       startRef: "Genesis 29:1", endRef: "Genesis 30:24",
-      orderInBook: 14,
+      orderInBook: 17,
       seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 4,
       characterSlugs: ["jacob", "laban", "rachel", "leah"],
       themeSlugs: ["deception", "sibling-rivalry"],
@@ -378,7 +415,7 @@ async function main() {
       slug: "jacob-flees-laban",
       title: "Jakob blir rik och flyr från Laban",
       startRef: "Genesis 30:25", endRef: "Genesis 31:55",
-      orderInBook: 15,
+      orderInBook: 18,
       seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 5,
       characterSlugs: ["jacob", "laban", "rachel"],
       themeSlugs: ["deception", "chaos-order"],
@@ -387,16 +424,28 @@ async function main() {
       slug: "jacob-wrestling",
       title: "Jakob brottas med Gud",
       startRef: "Genesis 32:22", endRef: "Genesis 32:32",
-      orderInBook: 16,
+      orderInBook: 19,
       seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 6,
       characterSlugs: ["jacob", "esau"],
       themeSlugs: ["testing-of-faith"],
     },
     {
+      // NY 2026-08-27: Jakob-cykelns försoningsavslut — löser upp
+      // spänningen som såtts redan i "Jakob köper Esaus förstfödslorätt"
+      // och "Jakob lurar till sig Isaks välsignelse".
+      slug: "jacob-and-esau-reconciled",
+      title: "Jakob och Esau försonas",
+      startRef: "Genesis 33:1", endRef: "Genesis 33:20",
+      orderInBook: 20,
+      seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 7,
+      characterSlugs: ["jacob", "esau"],
+      themeSlugs: ["sibling-rivalry"],
+    },
+    {
       slug: "joseph-and-his-brothers",
       title: "Josef och hans bröder",
       startRef: "Genesis 37:1", endRef: "Genesis 45:28",
-      orderInBook: 17,
+      orderInBook: 21,
       characterSlugs: ["joseph", "jacob"],
       themeSlugs: ["sibling-rivalry", "sacrifice"],
     },
@@ -409,7 +458,7 @@ async function main() {
       slug: "jacob-in-egypt-and-death",
       title: "Jakob i Egypten — välsignelsen och döden",
       startRef: "Genesis 46:1", endRef: "Genesis 50:26",
-      orderInBook: 18,
+      orderInBook: 22,
       characterSlugs: ["jacob", "joseph"],
       themeSlugs: ["covenant"],
     },
@@ -499,13 +548,17 @@ async function main() {
     { storySlug: "abraham-and-lot", code: "FB_RG_Lot", fileStart: 1, fileEnd: 3, orderStart: 1, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-lot/" },
     { storySlug: "sodom-and-gomorrah", code: "FB_RG_Lot", fileStart: 4, fileEnd: 9, orderStart: 1, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-lot/" },
     { storySlug: "covenant-with-abram", code: "FB_LS_Abram", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-abram/" },
+    { storySlug: "hagar-and-ishmael", code: "FB_Hagar_Ishmael", fileStart: 1, fileEnd: 10, orderStart: 1, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/hagar-ishmael/" },
+    { storySlug: "isaac-born-and-ishmael-sent-away", code: "FB_LS_Hagar_Ishmael", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-hagar-ishmael/" },
     { storySlug: "binding-of-isaac", code: "FB_LS_Abraham_Isaac", fileStart: 1, fileEnd: 10, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-abraham-isaac/" },
+    { storySlug: "rebekah-at-the-well", code: "FB_LS_Isaac_Bride", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-isaac-bride/" },
     { storySlug: "jacob-buys-birthright", code: "FB_LS_Jacob_Esau", fileStart: 1, fileEnd: 9, orderStart: 1, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-jacob-esau/" },
     { storySlug: "jacob-steals-blessing", code: "FB_Jacob_Deceives", fileStart: 1, fileEnd: 13, orderStart: 1, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/jacob-deceives/" },
     { storySlug: "jacobs-ladder", code: "FB_LS_Jacob_Ladder", fileStart: 1, fileEnd: 9, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jacob-ladder/" },
     { storySlug: "jacob-serves-laban-for-rachel-and-leah", code: "FB_Jacob_Wedding", fileStart: 1, fileEnd: 14, orderStart: 1, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/jacob-wedding/" },
     { storySlug: "jacob-flees-laban", code: "FB_Jacob_Returns", fileStart: 1, fileEnd: 16, orderStart: 1, credit: "freebibleimages.org, CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/jacob-returns/" },
     { storySlug: "jacob-wrestling", code: "FB_LS_Jacob_Israel", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jacob-israel/" },
+    { storySlug: "jacob-and-esau-reconciled", code: "FB_LS_Jacob_Esau_Forgive", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jacob-esau-forgive/" },
     { storySlug: "joseph-and-his-brothers", code: "FB_LS_Joseph_Dreams", fileStart: 1, fileEnd: 9, orderStart: 1, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-joseph-dreams/" },
     { storySlug: "joseph-and-his-brothers", code: "FB_LS_Joseph_Coat", fileStart: 1, fileEnd: 10, orderStart: 10, renamedToOrder: true, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-joseph-coat/" },
     { storySlug: "joseph-and-his-brothers", code: "FB_LS_Joseph_Brothers", fileStart: 1, fileEnd: 9, orderStart: 20, renamedToOrder: true, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-joseph-brothers/" },
@@ -574,6 +627,10 @@ async function main() {
     "noahs-flood": 5, // arken i vågorna
     "tower-of-babel": 3, // själva tornet syns i bakgrunden
     "jacob-wrestling": 7, // familjeåterförening (inget i setet visar själva brottningen)
+    "hagar-and-ishmael": 4, // Hagar ensam vid källan i öknen
+    "isaac-born-and-ishmael-sent-away": 4, // Hagar och Ismael vandrar oroligt ut i öknen
+    "rebekah-at-the-well": 5, // Rebecka möter tjänaren vid brunnen
+    "jacob-and-esau-reconciled": 8, // familjeåterförening och försoning
   };
   for (const [slug, order] of Object.entries(genesisThumbnails)) {
     await prisma.story.updateMany({ where: { bookId: genesis.id, slug }, data: { thumbnailOrder: order } });
@@ -603,6 +660,7 @@ async function main() {
     { slug: "rachel", storySlug: "jacob-serves-laban-for-rachel-and-leah", imgOrder: 4 },
     { slug: "leah", storySlug: "jacob-serves-laban-for-rachel-and-leah", imgOrder: 9 },
     { slug: "laban", storySlug: "jacob-serves-laban-for-rachel-and-leah", imgOrder: 5 },
+    { slug: "hagar", storySlug: "hagar-and-ishmael", imgOrder: 4 },
   ];
 
   for (const p of portraits) {
@@ -1532,61 +1590,80 @@ async function main() {
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 1,
     },
     {
+      // NY 2026-08-27: dagen efter intåget (traditionellt "annandag"
+      // i Passionsveckans kronologi) — ett av Petersons favoritexempel
+      // på rättfärdig vrede/att sätta gränser mot korruption som fått
+      // gro under ordnens täckmantel.
+      slug: "cleansing-of-the-temple", title: "Tempelrensningen",
+      startRef: "Matthew 21:12", endRef: "Matthew 21:17", orderInBook: 14,
+      characterSlugs: ["jesus"], themeSlugs: ["chaos-order"],
+      seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 2,
+    },
+    {
       // NY 2026-08-24: föregår punden-liknelsen direkt i samma kapitel.
       slug: "ten-virgins", title: "Liknelsen om de tio brudtärnorna",
-      startRef: "Matthew 25:1", endRef: "Matthew 25:13", orderInBook: 14,
+      startRef: "Matthew 25:1", endRef: "Matthew 25:13", orderInBook: 15,
       characterSlugs: ["jesus"], themeSlugs: ["testing-of-faith"],
     },
     {
       // NY 2026-08-24: en av Petersons mest citerade liknelser i eget
       // författarskap ("do your best with what you've been given").
       slug: "parable-of-the-talents", title: "Liknelsen om de anförtrodda punden",
-      startRef: "Matthew 25:14", endRef: "Matthew 25:30", orderInBook: 15,
+      startRef: "Matthew 25:14", endRef: "Matthew 25:30", orderInBook: 16,
       characterSlugs: ["jesus"], themeSlugs: [],
     },
     {
+      // NY 2026-08-27: avslutar samma kapitels tre-delade liknelse-
+      // trilogi (brudtärnorna/punden/fåren och getterna) — en av de mest
+      // citerade texterna i kristen etik ("vad ni har gjort mot en av
+      // dessa minsta...").
+      slug: "sheep-and-the-goats", title: "Fåren och getterna",
+      startRef: "Matthew 25:31", endRef: "Matthew 25:46", orderInBook: 17,
+      characterSlugs: ["jesus"], themeSlugs: ["compassion"],
+    },
+    {
       slug: "last-supper", title: "Den sista måltiden",
-      startRef: "Matthew 26:17", endRef: "Matthew 26:30", orderInBook: 16,
+      startRef: "Matthew 26:17", endRef: "Matthew 26:30", orderInBook: 18,
       characterSlugs: ["jesus", "judas", "petrus"], themeSlugs: [],
-      seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 2,
+      seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 3,
     },
     {
       slug: "gethsemane", title: "Getsemane och tillfångatagandet",
-      startRef: "Matthew 26:36", endRef: "Matthew 26:56", orderInBook: 17,
+      startRef: "Matthew 26:36", endRef: "Matthew 26:56", orderInBook: 19,
       characterSlugs: ["jesus", "judas", "petrus"], themeSlugs: ["betrayal"],
-      seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 3,
+      seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 4,
     },
     {
       // NY 2026-08-24: händer under själva rättegången (26:57 ff.), men
       // fick en egen story eftersom den psykologiskt är en helt egen
       // vändpunkt för Petrus — svaghet under press, inte förräderi.
       slug: "peters-denial", title: "Petrus förnekar Jesus",
-      startRef: "Matthew 26:69", endRef: "Matthew 26:75", orderInBook: 18,
+      startRef: "Matthew 26:69", endRef: "Matthew 26:75", orderInBook: 20,
       characterSlugs: ["jesus", "petrus"], themeSlugs: ["self-consciousness"],
     },
     {
       slug: "trial-before-pilate", title: "Rättegången inför Pilatus",
-      startRef: "Matthew 27:11", endRef: "Matthew 27:31", orderInBook: 19,
+      startRef: "Matthew 27:11", endRef: "Matthew 27:31", orderInBook: 21,
       characterSlugs: ["jesus", "pontius-pilatus"], themeSlugs: [],
-      seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 4,
-    },
-    {
-      slug: "crucifixion", title: "Korsfästelsen",
-      startRef: "Matthew 27:32", endRef: "Matthew 27:44", orderInBook: 20,
-      characterSlugs: ["jesus"], themeSlugs: ["sacrifice"],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 5,
     },
     {
-      slug: "death-and-burial", title: "Jesu död och begravning",
-      startRef: "Matthew 27:45", endRef: "Matthew 27:66", orderInBook: 21,
-      characterSlugs: ["jesus", "maria-magdalena"], themeSlugs: ["sacrifice"],
+      slug: "crucifixion", title: "Korsfästelsen",
+      startRef: "Matthew 27:32", endRef: "Matthew 27:44", orderInBook: 22,
+      characterSlugs: ["jesus"], themeSlugs: ["sacrifice"],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 6,
     },
     {
-      slug: "resurrection", title: "Uppståndelsen",
-      startRef: "Matthew 28:1", endRef: "Matthew 28:20", orderInBook: 22,
-      characterSlugs: ["jesus", "maria-magdalena", "petrus"], themeSlugs: [],
+      slug: "death-and-burial", title: "Jesu död och begravning",
+      startRef: "Matthew 27:45", endRef: "Matthew 27:66", orderInBook: 23,
+      characterSlugs: ["jesus", "maria-magdalena"], themeSlugs: ["sacrifice"],
       seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 7,
+    },
+    {
+      slug: "resurrection", title: "Uppståndelsen",
+      startRef: "Matthew 28:1", endRef: "Matthew 28:20", orderInBook: 24,
+      characterSlugs: ["jesus", "maria-magdalena", "petrus"], themeSlugs: [],
+      seriesSlug: "passion-week", seriesTitle: "Passionsveckan", seriesOrder: 8,
     },
   ];
 
@@ -1634,6 +1711,11 @@ async function main() {
     { storySlug: "parable-of-the-sower", code: "FB_LS_Parable_Sower", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-parable-sower/" },
     { storySlug: "calming-the-storm", code: "FB_GNPI_043_Jesus_Storm", count: 8, credit: "Good News Productions Int. (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/gnpi-043-jesus-storm/" },
     { storySlug: "triumphal-entry", code: "FB_LS_Palm_Sunday", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-palm-sunday/" },
+    { storySlug: "cleansing-of-the-temple", code: "FB_Jesus_Cleansing_Temple", count: 7, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/jesus-cleansing-temple/" },
+    // "sheep-and-the-goats" (25:31-46) har medvetet INGA bilder — se
+    // kommentaren om "Sheep and goats" ovan vid Fas 24 (2026-08-24):
+    // sökt igenom flera gånger, alla hittade bildset hade "A.I.
+    // adaptations prohibited". Snarare textbaserad än fel bildkälla.
     { storySlug: "last-supper", code: "FB_LS_Last_Supper", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-last-supper/" },
     { storySlug: "gethsemane", code: "FB_LS_Jesus_Gethsemane", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-jesus-gethsemane/" },
     { storySlug: "trial-before-pilate", code: "FB_LS_Pontius_Pilate", count: 11, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-pontius-pilate/" },
@@ -1697,6 +1779,7 @@ async function main() {
     "parable-of-the-talents": 4, // guldmynten på bordet
     "ten-virgins": 8, // de fem brudtärnorna med sina oljelampor
     "peters-denial": 6, // den tredje anklagelsen, dramatisk gruppscen
+    "cleansing-of-the-temple": 3, // Jesus välter växlarnas bord med piskan i hand
   };
   for (const [slug, order] of Object.entries(matthewThumbnails)) {
     await prisma.story.updateMany({ where: { bookId: matthew.id, slug }, data: { thumbnailOrder: order } });
@@ -4884,6 +4967,12 @@ async function main() {
   // koppling blir automatiskt Tier 3 (default isWellKnown=false).
   const wellKnownSlugs: Array<{ bookSlug: string; storySlug: string }> = [
     { bookSlug: "genesis", storySlug: "jacob-in-egypt-and-death" },
+    // NY 2026-08-27: fyller ut Abraham- och Jakob-cyklerna med fyra till
+    // välkända berättelser (se README Fas 38).
+    { bookSlug: "genesis", storySlug: "hagar-and-ishmael" },
+    { bookSlug: "genesis", storySlug: "isaac-born-and-ishmael-sent-away" },
+    { bookSlug: "genesis", storySlug: "rebekah-at-the-well" },
+    { bookSlug: "genesis", storySlug: "jacob-and-esau-reconciled" },
     { bookSlug: "exodus", storySlug: "moses-in-the-basket" },
     { bookSlug: "exodus", storySlug: "burning-bush" },
     { bookSlug: "exodus", storySlug: "passover-and-exodus" },
@@ -4900,6 +4989,8 @@ async function main() {
     { bookSlug: "matthew", storySlug: "walking-on-water" },
     { bookSlug: "matthew", storySlug: "transfiguration" },
     { bookSlug: "matthew", storySlug: "triumphal-entry" },
+    { bookSlug: "matthew", storySlug: "cleansing-of-the-temple" },
+    { bookSlug: "matthew", storySlug: "sheep-and-the-goats" },
     { bookSlug: "matthew", storySlug: "last-supper" },
     { bookSlug: "matthew", storySlug: "gethsemane" },
     { bookSlug: "matthew", storySlug: "trial-before-pilate" },
