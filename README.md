@@ -70,6 +70,35 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 39 (2026-08-27): Daniel — tionde boken
+
+De sex klassiska, berättande kapitlen (1-6) i Daniels bok: Daniel
+vägrar kungens mat, Nebukadnessars dröm om bildstoden, den brinnande
+ugnen, Nebukadnessars vansinne, Belsassars gästabud (skriften på
+väggen) och Daniel i lejongropen. Kapitel 7-12 (apokalyptiska syner —
+fyra vilddjuren, väduren och bocken, de sjuttio årsveckorna) lämnas
+utanför, samma avgränsning som redan gäller för andra profet-/
+uppenbarelsetexter i appen.
+
+**Datakvalitetsstädning vid extraktion** (Daniels källtext visade sig
+ovanligt problematisk jämfört med alla tidigare böcker): 65 av bokens
+196 verser hade akademiska korsreferenser ("1 Mos. 10,10.", "Dan.
+6,28. 10,1." osv.) hopklistrade direkt i versslutet av
+extraherings-scriptet — städat bort med en flerstegs-regex (verifierat
+noll kvarvarande träffar, och noll träffar av samma mönster i redan
+seedad Genesis-text, som kontroll). Dessutom hade vers 1:1 helt
+tappat sin riktiga text till en XML-strukturkvirk (kapitelrubriken
+nästlad i FÖREGÅENDE vers-element, en känd men sällan utlöst kvirk i
+källformatet) och fick sin text återställd manuellt direkt från
+källkoden — samma kvirk, fast vid en SISTA vers, hittades även vid
+gränsen 3:30/4:1 och åtgärdades likadant.
+
+Fem bildset (Sweet Publishing, Bible Scenes/Jeremy Park och Lambsongs,
+alla CC BY eller CC BY-NC/BY-SA med AI-adaptioner tillåtna) täcker de
+sex berättelserna. Belsassars gästabud-setet (Bible Scenes,
+fotorealistiskt/arkitektoniskt) visade sig sakna mänskliga figurer i
+alla 16 bilder — Belsassar fick därför medvetet inget porträtt.
+
 ## Fas 38 (2026-08-27): Genesis och Matteus fyllda ut med fler kända berättelser
 
 Svar på "gör klart Genesis, Exodus och Matteus": Exodus bedömdes redan

@@ -14,6 +14,7 @@ import markCaptionsByCode from "./image-captions-mark.json";
 import jonahCaptionsByCode from "./image-captions-jonah.json";
 import ruthCaptionsByCode from "./image-captions-ruth.json";
 import estherCaptionsByCode from "./image-captions-esther.json";
+import danielCaptionsByCode from "./image-captions-daniel.json";
 
 const prisma = new PrismaClient();
 
@@ -2769,6 +2770,168 @@ async function main() {
   console.log(`Seedat Ester: ${estherStories.length} stories.`);
 
   // ======================================================================
+  // Daniel — tionde boken. De sex klassiska berättande kapitlen (1-6)
+  // seedas som sex berättelser; kapitel 7-12 är apokalyptiska syner
+  // (fyra vilddjuren, väduren och bocken, de sjuttio årsveckorna) snarare
+  // än berättelser i egentlig mening och lämnas utanför, samma avgränsning
+  // som redan gjorts för andra profetböcker/uppenbarelselitteratur i den
+  // här appen.
+  //
+  // OBS bildkvalitet vid extraktion: Daniel är ovanligt tungt
+  // korsreferens-annoterad i källkorpusen — 65 av bokens 196 verser hade
+  // en akademisk korsreferens ("1 Mos. 10,10.", "Dan. 6,28. 10,1." osv.)
+  // hopklistrad direkt i versslutet av extraherings-scriptet. Städat bort
+  // manuellt/med regex innan denna fas (se scratchpad-scriptet från
+  // sessionen där boken lades till). Dessutom hade 1:1 helt tappat sin
+  // riktiga text till en XML-strukturkvirk (kapitelrubriken nästlad i
+  // FÖREGÅENDE vers-element) och fick sin text återställd manuellt direkt
+  // från källkoden — samma kvirk (fast för en SISTA vers) hittades även
+  // vid gränsen 3:30/4:1.
+  // ======================================================================
+  const daniel = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "daniel" } },
+    update: {},
+    create: {
+      corpusId: bible.id,
+      slug: "daniel",
+      name: "Daniel",
+      order: 10,
+      testament: "old",
+    },
+  });
+
+  const danielCharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "daniel", name: "Daniel" },
+    { slug: "hananja", name: "Hananja (Sadrak)" },
+    { slug: "misael", name: "Misael (Mesak)" },
+    { slug: "asarja", name: "Asarja (Abed-Nego)" },
+    { slug: "nebukadnessar", name: "Nebukadnessar" },
+    { slug: "belsassar", name: "Belsassar" },
+    { slug: "darejaves", name: "Darejaves" },
+  ];
+  const danielCharacters: Record<string, { id: string }> = {};
+  for (const c of danielCharacterDefs) {
+    danielCharacters[c.slug] = await prisma.character.upsert({
+      where: { slug: c.slug },
+      update: {},
+      create: c,
+    });
+  }
+
+  type DanielStoryDef = {
+    slug: string; title: string; startRef: string; endRef: string; orderInBook: number;
+    characterSlugs: string[]; themeSlugs: string[];
+  };
+  const danielStories: DanielStoryDef[] = [
+    {
+      slug: "daniel-refuses-the-kings-food", title: "Daniel vägrar kungens mat",
+      startRef: "Daniel 1:1", endRef: "Daniel 1:21", orderInBook: 1,
+      characterSlugs: ["daniel", "hananja", "misael", "asarja", "nebukadnessar"], themeSlugs: ["testing-of-faith"],
+    },
+    {
+      slug: "nebuchadnezzars-statue-dream", title: "Nebukadnessars dröm om bildstoden",
+      startRef: "Daniel 2:1", endRef: "Daniel 2:49", orderInBook: 2,
+      characterSlugs: ["daniel", "nebukadnessar"], themeSlugs: ["chaos-order"],
+    },
+    {
+      slug: "the-fiery-furnace", title: "Den brinnande ugnen",
+      startRef: "Daniel 3:1", endRef: "Daniel 3:30", orderInBook: 3,
+      characterSlugs: ["hananja", "misael", "asarja", "nebukadnessar"], themeSlugs: ["testing-of-faith", "sacrifice"],
+    },
+    {
+      slug: "nebuchadnezzars-madness", title: "Nebukadnessars vansinne",
+      startRef: "Daniel 4:1", endRef: "Daniel 4:34", orderInBook: 4,
+      characterSlugs: ["nebukadnessar", "daniel"], themeSlugs: ["self-consciousness"],
+    },
+    {
+      slug: "belshazzars-feast", title: "Belsassars gästabud",
+      startRef: "Daniel 5:1", endRef: "Daniel 5:30", orderInBook: 5,
+      characterSlugs: ["belsassar", "daniel"], themeSlugs: ["hierarchy", "chaos-order"],
+    },
+    {
+      slug: "daniel-in-the-lions-den", title: "Daniel i lejongropen",
+      startRef: "Daniel 6:1", endRef: "Daniel 6:28", orderInBook: 6,
+      characterSlugs: ["daniel", "darejaves"], themeSlugs: ["testing-of-faith", "betrayal"],
+    },
+  ];
+  for (const s of danielStories) {
+    const danielStoryData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: daniel.id, slug: s.slug } },
+      update: danielStoryData,
+      create: { bookId: daniel.id, slug: s.slug, ...danielStoryData },
+    });
+    for (const charSlug of s.characterSlugs) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: danielCharacters[charSlug].id } },
+        update: {},
+        create: { storyId: story.id, characterId: danielCharacters[charSlug].id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      const theme = themes[themeSlug] ?? ntThemes[themeSlug];
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: theme.id } },
+        update: {},
+        create: { storyId: story.id, themeId: theme.id },
+      });
+    }
+  }
+
+  const danielCaptions = danielCaptionsByCode as Record<string, string[]>;
+  const danielImageSets: Array<{ storySlug: string; code: string; count: number; credit: string; creditUrl: string }> = [
+    { storySlug: "daniel-refuses-the-kings-food", code: "FB_Daniel_Food", count: 11, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/daniel-food/" },
+    { storySlug: "nebuchadnezzars-statue-dream", code: "FB_BS_Nebuchadnezzar_Statue", count: 15, credit: "Bible Scenes / Jeremy Park (freebibleimages.org), CC BY", creditUrl: "https://www.freebibleimages.org/illustrations/bs-nebuchadnezzar-statue/" },
+    { storySlug: "the-fiery-furnace", code: "FB_LS_ThreeMen_Fire", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-three-men-fire/" },
+    { storySlug: "nebuchadnezzars-madness", code: "FB_LS_Proud_King", count: 7, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-proud-king/" },
+    { storySlug: "belshazzars-feast", code: "FB_BS_Writing_Wall", count: 16, credit: "Bible Scenes / Jeremy Park (freebibleimages.org), CC BY", creditUrl: "https://www.freebibleimages.org/illustrations/bs-writing-wall/" },
+    { storySlug: "daniel-in-the-lions-den", code: "FB_LS_Daniel_Lions", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-daniel-lions/" },
+  ];
+  for (const set of danielImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: daniel.id, slug: set.storySlug } });
+    for (let fileNum = 1; fileNum <= set.count; fileNum++) {
+      const path = `/images/daniel/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const caption = danielCaptions[set.code]?.[fileNum - 1] ?? null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order: fileNum } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order: fileNum, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+
+  // OBS: "belsassar" saknar porträtt medvetet — hela Bible Scenes-setet
+  // för Belsassars gästabud (FB_BS_Writing_Wall) är atmosfäriska
+  // arkitektur-/skriften-på-väggen-bilder utan en enda mänsklig figur,
+  // kontrollerat genom att titta igenom alla 16 bilder.
+  const danielPortraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
+    { slug: "daniel", storySlug: "daniel-in-the-lions-den", imgOrder: 2 },
+    { slug: "nebukadnessar", storySlug: "nebuchadnezzars-madness", imgOrder: 1 },
+  ];
+  for (const p of danielPortraits) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: daniel.id, slug: p.storySlug } });
+    const img = await prisma.storyImage.findUniqueOrThrow({ where: { storyId_order: { storyId: story.id, order: p.imgOrder } } });
+    await prisma.character.update({
+      where: { slug: p.slug },
+      data: { portraitPath: img.path, portraitCredit: img.credit, portraitCreditUrl: img.creditUrl },
+    });
+  }
+
+  const danielThumbnails: Record<string, number> = {
+    "daniel-refuses-the-kings-food": 9, // Daniel förhandlar med vaktaren om tio dagars grönsaker
+    "nebuchadnezzars-statue-dream": 4, // bildstodens gyllene huvud
+    "the-fiery-furnace": 7, // de tre männen oskadda i elden
+    "nebuchadnezzars-madness": 3, // kungen lever som ett djur
+    "belshazzars-feast": 2, // handen som skriver på väggen
+    "daniel-in-the-lions-den": 7, // Daniel kastad i lejongropen, ber
+  };
+  for (const [slug, order] of Object.entries(danielThumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: daniel.id, slug }, data: { thumbnailOrder: order } });
+  }
+
+  console.log(`Seedat Daniel: ${danielStories.length} stories.`);
+
+  // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
   // Bygger ett riktigt story-index för Exodus-narrativet (tidigare fanns
@@ -4193,6 +4356,31 @@ async function main() {
         "förekommer inte namngivna i Koranen.",
     },
     {
+      id: daniel.id,
+      description:
+        "Sex kända berättelser om trohet under press i det babyloniska " +
+        "(och senare persiska) fångenskapet — vägran att äta oren mat, " +
+        "en tolkad kungadröm, den brinnande ugnen, en förnedrad kung, " +
+        "skriften på väggen och lejongropen — följt av (i bokens senare " +
+        "hälft, ej indexerad här) en serie apokalyptiska syner om " +
+        "kommande världsriken.",
+      authorship:
+        "Traditionellt tillskriven Daniel själv, en judisk exil vid det " +
+        "babyloniska och persiska hovet på 500-talet f.Kr. Modern " +
+        "forskning daterar berättelsedelen (kap. 1-6) ofta till 500- " +
+        "eller 400-talet f.Kr., men synerna i bokens senare hälft " +
+        "(kap. 7-12, med sin mycket precisa historieskrivning \"i " +
+        "efterhand\") dateras ofta till 160-talet f.Kr., under den " +
+        "grekisk-syriska förföljelsen av judarna (jfr. Antiochos IV).",
+      traditions:
+        "Judendom: ingår i \"Ketuvim\" (Skrifterna), inte bland " +
+        "profetböckerna. Kristendom: räknas som en av de stora " +
+        "profeterna, Jesus citerar \"styggelsen som förödelse\" från " +
+        "Daniel (Matt. 24:15). Islam: Daniel (Danyal) nämns inte i " +
+        "Koranen men förekommer i senare islamisk tradition/hadith-" +
+        "litteratur som en profetlik gestalt.",
+    },
+    {
       id: mark.id,
       description:
         "Det kortaste och (troligen) äldsta evangeliet — ett snabbt, " +
@@ -5036,6 +5224,14 @@ async function main() {
     { bookSlug: "esther", storySlug: "the-kings-sleepless-night" },
     { bookSlug: "esther", storySlug: "haman-falls" },
     { bookSlug: "esther", storySlug: "purim-established" },
+    // NY 2026-08-27: Daniels sex klassiska berättande kapitel — bland
+    // GT:s mest kända berättelser överhuvudtaget.
+    { bookSlug: "daniel", storySlug: "daniel-refuses-the-kings-food" },
+    { bookSlug: "daniel", storySlug: "nebuchadnezzars-statue-dream" },
+    { bookSlug: "daniel", storySlug: "the-fiery-furnace" },
+    { bookSlug: "daniel", storySlug: "nebuchadnezzars-madness" },
+    { bookSlug: "daniel", storySlug: "belshazzars-feast" },
+    { bookSlug: "daniel", storySlug: "daniel-in-the-lions-den" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
   ];
@@ -5061,6 +5257,7 @@ async function main() {
     { slug: "jonah", estimate: "Traditionellt ca 780-talet f.Kr. (Jona själv, under kung Jerobeam II) — moderna forskare ofta ca 400-talet f.Kr., en betydligt senare, efterhandskonstruerad berättelse." },
     { slug: "ruth", estimate: "Okänd författare. Handlingen utspelar sig under domartiden (ca 1100-talet f.Kr.) — men boken kan vara nedtecknad betydligt senare, ofta daterad till ca 500-talet f.Kr." },
     { slug: "esther", estimate: "Okänd författare. Handlingen utspelar sig under kung Xerxes I (486–465 f.Kr.), men boken dateras vanligen till 100-talet f.Kr." },
+    { slug: "daniel", estimate: "Traditionellt tillskriven Daniel själv (500-talet f.Kr.) — moderna forskare daterar ofta berättelsedelen (kap. 1-6) till 500/400-talet f.Kr. och synerna (kap. 7-12) till ca 160-talet f.Kr." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },
