@@ -2337,18 +2337,27 @@ async function main() {
   };
   const markStories: MarkStoryDef[] = [
     {
+      // NY 2026-08-27: unik för Markus (inget annat evangelium har den) —
+      // det enda undret Jesus utför i två steg, ofta lyft fram (av bl.a.
+      // Peterson-anhängare) som en bild för hur klarsyn/insikt ibland
+      // kommer gradvis, inte på en gång.
+      slug: "blind-man-at-bethsaida", title: "Den blinde mannen i Betsaida",
+      startRef: "Mark 8:22", endRef: "Mark 8:26", orderInBook: 1,
+      characterSlugs: ["jesus"], themeSlugs: ["testing-of-faith"],
+    },
+    {
       slug: "rich-young-ruler", title: "Den rike unge mannen",
-      startRef: "Mark 10:17", endRef: "Mark 10:31", orderInBook: 1,
+      startRef: "Mark 10:17", endRef: "Mark 10:31", orderInBook: 2,
       characterSlugs: ["jesus", "petrus"], themeSlugs: [],
     },
     {
       slug: "blind-bartimaeus", title: "Blinde Bartimaios",
-      startRef: "Mark 10:46", endRef: "Mark 10:52", orderInBook: 2,
+      startRef: "Mark 10:46", endRef: "Mark 10:52", orderInBook: 3,
       characterSlugs: ["jesus", "bartimaios"], themeSlugs: ["testing-of-faith"],
     },
     {
       slug: "widows-mite", title: "Änkans två skärvar",
-      startRef: "Mark 12:41", endRef: "Mark 12:44", orderInBook: 3,
+      startRef: "Mark 12:41", endRef: "Mark 12:44", orderInBook: 4,
       characterSlugs: ["jesus"], themeSlugs: ["sacrifice"],
     },
   ];
@@ -2378,6 +2387,13 @@ async function main() {
 
   const markCaptions = markCaptionsByCode as Record<string, string[]>;
   const markImageSets: Array<{ storySlug: string; code: string; count: number; credit: string; creditUrl: string }> = [
+    // NY 2026-08-27. OBS: sökte även efter Legion/den besatte mannen i
+    // Gerasa (Mark 5:1-20) och den döve/stumme mannen (Mark 7:31-37) —
+    // enda hittade bildseten för båda var Lumo Project Films, som
+    // uttryckligen förbjuder AI-adaptioner. Ingen Lambsongs/Sweet
+    // Publishing/Richard Gunther-motsvarighet hittades för någon av dem,
+    // så båda utelämnas (Legion redan noterat sedan Fas 33).
+    { storySlug: "blind-man-at-bethsaida", code: "FB_RG_Blind_Man", count: 7, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-blind-man/" },
     { storySlug: "rich-young-ruler", code: "FB_Jesus_Rich_Man", count: 11, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/jesus-rich-man/" },
     { storySlug: "blind-bartimaeus", code: "FB_LS_Blind_Bartimaeus", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-blind-bartimaeus/" },
     { storySlug: "widows-mite", code: "FB_LS_Widow_Coins", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-widow-coins/" },
@@ -2410,6 +2426,7 @@ async function main() {
   }
 
   const markThumbnails: Record<string, number> = {
+    "blind-man-at-bethsaida": 6, // mannen ser klart efter Jesu andra beröring.
     "rich-young-ruler": 2, // Rike mannen ansikte mot ansikte med Jesus.
     "blind-bartimaeus": 8, // Bartimaios botad, ser Jesus för första gången.
     "widows-mite": 5, // Änkan släpper sitt mynt i offerkistan.
@@ -5286,6 +5303,7 @@ async function main() {
     { bookSlug: "john", storySlug: "peter-restored" },
     // NY 2026-08-26: Markusevangeliets tre första berättelser — alla
     // välkända bibelberättelser som ofta citeras oberoende av evangelium.
+    { bookSlug: "mark", storySlug: "blind-man-at-bethsaida" },
     { bookSlug: "mark", storySlug: "rich-young-ruler" },
     { bookSlug: "mark", storySlug: "blind-bartimaeus" },
     { bookSlug: "mark", storySlug: "widows-mite" },

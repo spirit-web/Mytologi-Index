@@ -70,6 +70,23 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 41 (2026-08-27): Bok-sidans radlayout stramades upp + Markus fick en till berättelse
+
+**Layout:** Ordantal, karaktär-taggar och tema-taggar visades tidigare
+som ett enda ombrytande kluster till höger om varje berättelserad —
+rörigt för rader med många taggar (särskilt synligt i Johannes/Lukas
+efter Fas 40:s tillägg). Varje kategori ligger nu på egen rad,
+staplade under titel/referens istället.
+
+**Markus** (3 → 4 stories): Den blinde mannen i Betsaida (8:22-26) —
+unik för Markus, det enda undret Jesus utför i två steg (mannen ser
+först "gående träd" innan en andra beröring ger full syn). Sökte även
+efter Legion/den besatte mannen i Gerasa (5:1-20, redan avvisad sedan
+Fas 33) och den döve/stumme mannen (7:31-37) — enda hittade bildseten
+för båda var Lumo Project Films, som förbjuder AI-adaptioner; inga
+Lambsongs/Sweet Publishing/Richard Gunther-alternativ hittades för
+någon av dem, så båda förblir utanför appen.
+
 ## Fas 40 (2026-08-27): Lukas och Johannes fyllda ut med fler kända berättelser
 
 **Lukas** (6 → 10 stories): Herdarna och Jesu födelse (2:1-20, Lukas
