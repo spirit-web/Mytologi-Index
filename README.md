@@ -70,6 +70,27 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 42 (2026-08-27): Första Samuelsboken — elfte boken
+
+Den starkaste kandidaten i hela Gamla testamentet (se den publicerade
+Bibel-överblicken): nio berättelser genom hela boken — Hanna och
+Samuels födelse (1), Gud kallar Samuel (3), Saul smörjs till kung
+(9-10), Saul förkastas som kung (15), David smörjs till kung (16),
+David och Goljat (17), Davids och Jonatans vänskap (18-20), David
+skonar Sauls liv (24), Sauls död (31). Tolv kapitel extraherade totalt.
+
+Samma korsreferens-städning som Daniel krävdes igen (94 av 299 verser
+kontaminerade, samma flerstegs-regex), plus en vers (3:2) som helt
+tappat sin text till samma XML-kvirk som Dan 1:1 — återställd manuellt.
+
+Nio bildset (Lambsongs och Sweet Publishing, alla CC BY-NC/BY-SA med
+AI-adaptioner tillåtna) täcker boken — Sauls död använder bara fem
+bilder (10-14) ur ett större 16-bilders set om hans sista dagar.
+Upptäckte och fixade under verifiering: bildtexterna för just den
+delade bild-mängden hade fel array-index (förväntade bildtexter vid
+index 0-4 istället för 9-13, som matchar filnumren 10-14) — patchat
+med tomma platshållare för index 0-8.
+
 ## Fas 41 (2026-08-27): Bok-sidans radlayout stramades upp + Markus fick en till berättelse
 
 **Layout:** Ordantal, karaktär-taggar och tema-taggar visades tidigare

@@ -18,6 +18,7 @@ import jonahData from "@/data/bible-sv-1917/jonah.json";
 import ruthData from "@/data/bible-sv-1917/ruth.json";
 import estherData from "@/data/bible-sv-1917/esther.json";
 import danielData from "@/data/bible-sv-1917/daniel.json";
+import firstSamuelData from "@/data/bible-sv-1917/1samuel.json";
 
 export type BibleVerse = {
   chapter: number;
@@ -56,6 +57,7 @@ const BOOKS: Record<string, { data: Record<string, Record<string, string>>; sven
   Ruth: { data: ruthData as Record<string, Record<string, string>>, svenskt: "Rut" },
   Esther: { data: estherData as Record<string, Record<string, string>>, svenskt: "Ester" },
   Daniel: { data: danielData as Record<string, Record<string, string>>, svenskt: "Daniel" },
+  "1 Samuel": { data: firstSamuelData as Record<string, Record<string, string>>, svenskt: "Första Samuelsboken" },
 };
 
 // Extern länk till en fullständig, fri bibelläsare för samma översättning

@@ -15,6 +15,7 @@ import jonahCaptionsByCode from "./image-captions-jonah.json";
 import ruthCaptionsByCode from "./image-captions-ruth.json";
 import estherCaptionsByCode from "./image-captions-esther.json";
 import danielCaptionsByCode from "./image-captions-daniel.json";
+import samuelCaptionsByCode from "./image-captions-1samuel.json";
 
 const prisma = new PrismaClient();
 
@@ -3026,6 +3027,194 @@ async function main() {
   console.log(`Seedat Daniel: ${danielStories.length} stories.`);
 
   // ======================================================================
+  // Första Samuelsboken — elfte boken. Den enskilt starkaste obearbetade
+  // kandidaten i hela Gamla testamentet (se den publicerade Bibel-
+  // överblicken 2026-08-27): Hannas bön, Samuels kallelse, Saul och David
+  // smorda till kungar, David och Goljat, Jonatans vänskap, Sauls fall.
+  //
+  // OBS samma datakvalitetsmönster som Daniel: källtexten är tungt
+  // korsreferens-annoterad — 94 av bokens 299 verser (över de tolv
+  // extraherade kapitlen 1, 3, 9, 10, 15-20, 24, 31) hade akademiska
+  // korsreferenser hopklistrade i versslutet, städat med samma
+  // flerstegs-regex som för Daniel. Två verser (3:2, en av flera i den
+  // här boken) hade dessutom HELA sin text tappad till samma XML-
+  // strukturkvirk som Dan 1:1 — återställda manuellt direkt från
+  // källkoden.
+  // ======================================================================
+  const samuel = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "1-samuel" } },
+    update: {},
+    create: {
+      corpusId: bible.id,
+      slug: "1-samuel",
+      name: "Första Samuelsboken",
+      order: 11,
+      testament: "old",
+    },
+  });
+
+  const samuelCharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "hanna", name: "Hanna" },
+    { slug: "elkana", name: "Elkana" },
+    { slug: "eli", name: "Eli" },
+    { slug: "samuel", name: "Samuel" },
+    { slug: "saul", name: "Saul" },
+    { slug: "david", name: "David" },
+    { slug: "jonatan", name: "Jonatan" },
+    { slug: "isai", name: "Isai" },
+    { slug: "goljat", name: "Goljat" },
+  ];
+  const samuelCharacters: Record<string, { id: string }> = {};
+  for (const c of samuelCharacterDefs) {
+    samuelCharacters[c.slug] = await prisma.character.upsert({
+      where: { slug: c.slug },
+      update: {},
+      create: c,
+    });
+  }
+
+  type SamuelStoryDef = {
+    slug: string; title: string; startRef: string; endRef: string; orderInBook: number;
+    characterSlugs: string[]; themeSlugs: string[];
+  };
+  const samuelStories: SamuelStoryDef[] = [
+    {
+      slug: "hannah-and-the-birth-of-samuel", title: "Hanna och Samuels födelse",
+      startRef: "1 Samuel 1:1", endRef: "1 Samuel 1:28", orderInBook: 1,
+      characterSlugs: ["hanna", "elkana", "eli", "samuel"], themeSlugs: ["testing-of-faith", "sacrifice"],
+    },
+    {
+      slug: "god-calls-samuel", title: "Gud kallar Samuel",
+      startRef: "1 Samuel 3:1", endRef: "1 Samuel 3:21", orderInBook: 2,
+      characterSlugs: ["samuel", "eli"], themeSlugs: ["testing-of-faith"],
+    },
+    {
+      slug: "saul-anointed-king", title: "Saul smörjs till kung",
+      startRef: "1 Samuel 9:1", endRef: "1 Samuel 10:27", orderInBook: 3,
+      characterSlugs: ["saul", "samuel"], themeSlugs: ["hierarchy", "kingdom-of-god"],
+    },
+    {
+      slug: "saul-rejected-as-king", title: "Saul förkastas som kung",
+      startRef: "1 Samuel 15:1", endRef: "1 Samuel 15:35", orderInBook: 4,
+      characterSlugs: ["saul", "samuel"], themeSlugs: ["hierarchy"],
+    },
+    {
+      slug: "david-anointed-king", title: "David smörjs till kung",
+      startRef: "1 Samuel 16:1", endRef: "1 Samuel 16:13", orderInBook: 5,
+      characterSlugs: ["david", "samuel", "isai"], themeSlugs: ["hierarchy", "kingdom-of-god"],
+    },
+    {
+      slug: "david-and-goliath", title: "David och Goljat",
+      startRef: "1 Samuel 17:1", endRef: "1 Samuel 17:58", orderInBook: 6,
+      characterSlugs: ["david", "goljat", "saul"], themeSlugs: ["testing-of-faith", "chaos-order"],
+    },
+    {
+      slug: "david-and-jonathans-friendship", title: "Davids och Jonatans vänskap",
+      startRef: "1 Samuel 18:1", endRef: "1 Samuel 20:42", orderInBook: 7,
+      characterSlugs: ["david", "jonatan", "saul"], themeSlugs: ["covenant", "betrayal"],
+    },
+    {
+      slug: "david-spares-sauls-life", title: "David skonar Sauls liv",
+      startRef: "1 Samuel 24:1", endRef: "1 Samuel 24:22", orderInBook: 8,
+      characterSlugs: ["david", "saul"], themeSlugs: ["forgiveness", "hierarchy"],
+    },
+    {
+      slug: "death-of-saul", title: "Sauls död",
+      startRef: "1 Samuel 31:1", endRef: "1 Samuel 31:13", orderInBook: 9,
+      characterSlugs: ["saul", "jonatan"], themeSlugs: ["chaos-order"],
+    },
+  ];
+  for (const s of samuelStories) {
+    const samuelStoryData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: samuel.id, slug: s.slug } },
+      update: samuelStoryData,
+      create: { bookId: samuel.id, slug: s.slug, ...samuelStoryData },
+    });
+    for (const charSlug of s.characterSlugs) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: samuelCharacters[charSlug].id } },
+        update: {},
+        create: { storyId: story.id, characterId: samuelCharacters[charSlug].id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      const theme = themes[themeSlug] ?? ntThemes[themeSlug];
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: theme.id } },
+        update: {},
+        create: { storyId: story.id, themeId: theme.id },
+      });
+    }
+  }
+
+  const samuelCaptions = samuelCaptionsByCode as Record<string, string[]>;
+  const samuelImageSets: Array<{ storySlug: string; code: string; fileStart: number; fileEnd: number; orderStart: number; credit: string; creditUrl: string }> = [
+    { storySlug: "hannah-and-the-birth-of-samuel", code: "FB_LS_Hannah_Prayer", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-hannah-prayer/" },
+    { storySlug: "god-calls-samuel", code: "FB_LS_Samuel_Eli", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-samuel-eli/" },
+    { storySlug: "saul-anointed-king", code: "FB_Samuel_Saul", fileStart: 1, fileEnd: 18, orderStart: 1, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/samuel-saul/" },
+    { storySlug: "saul-rejected-as-king", code: "FB_Saul_Amalekites", fileStart: 1, fileEnd: 18, orderStart: 1, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/saul-amalekites/" },
+    { storySlug: "david-anointed-king", code: "FB_LS_David_Anointed", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-david-anointed/" },
+    { storySlug: "david-and-goliath", code: "FB_LS_David_Goliath", fileStart: 1, fileEnd: 7, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-david-goliath/" },
+    { storySlug: "david-and-jonathans-friendship", code: "FB_David_Jonathan", fileStart: 1, fileEnd: 24, orderStart: 1, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/david-jonathan/" },
+    { storySlug: "david-spares-sauls-life", code: "FB_LS_David_Cave", fileStart: 1, fileEnd: 8, orderStart: 1, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-david-cave/" },
+    // Delar av ett större set (16 bilder om Sauls sista dagar, 28-31 +
+    // 2 Sam 1-2) — bara bild 10-14 (själva slutstriden/döden/begravningen,
+    // 1 Sam 31) används här.
+    { storySlug: "death-of-saul", code: "FB_Saul_Last_Days", fileStart: 10, fileEnd: 14, orderStart: 1, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/saul-last-days/" },
+  ];
+  for (const set of samuelImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: samuel.id, slug: set.storySlug } });
+    for (let fileNum = set.fileStart; fileNum <= set.fileEnd; fileNum++) {
+      const order = set.orderStart + (fileNum - set.fileStart);
+      const fileLabel = set.storySlug === "death-of-saul" ? fileNum : fileNum; // filerna sparas under sitt ursprungliga filnummer
+      const path = `/images/1-samuel/${set.storySlug}/${String(fileLabel).padStart(2, "0")}.jpg`;
+      const caption = samuelCaptions[set.code]?.[fileNum - 1] ?? null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+
+  const samuelPortraits: Array<{ slug: string; storySlug: string; imgOrder: number }> = [
+    { slug: "hanna", storySlug: "hannah-and-the-birth-of-samuel", imgOrder: 7 },
+    { slug: "samuel", storySlug: "god-calls-samuel", imgOrder: 5 },
+    { slug: "saul", storySlug: "saul-anointed-king", imgOrder: 16 },
+    { slug: "david", storySlug: "david-and-goliath", imgOrder: 6 },
+    { slug: "jonatan", storySlug: "david-and-jonathans-friendship", imgOrder: 22 },
+    { slug: "isai", storySlug: "david-anointed-king", imgOrder: 6 },
+    { slug: "goljat", storySlug: "david-and-goliath", imgOrder: 5 },
+    { slug: "eli", storySlug: "god-calls-samuel", imgOrder: 4 },
+  ];
+  for (const p of samuelPortraits) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: samuel.id, slug: p.storySlug } });
+    const img = await prisma.storyImage.findUniqueOrThrow({ where: { storyId_order: { storyId: story.id, order: p.imgOrder } } });
+    await prisma.character.update({
+      where: { slug: p.slug },
+      data: { portraitPath: img.path, portraitCredit: img.credit, portraitCreditUrl: img.creditUrl },
+    });
+  }
+
+  const samuelThumbnails: Record<string, number> = {
+    "hannah-and-the-birth-of-samuel": 7, // Hanna får sina glada nyheter
+    "god-calls-samuel": 5, // Samuel springer till Eli i natten
+    "saul-anointed-king": 14, // Samuel smörjer Saul med olja
+    "saul-rejected-as-king": 16, // "Lydnad är bättre än offer"
+    "david-anointed-king": 8, // Samuel smörjer David inför sina bröder
+    "david-and-goliath": 6, // stenen träffar Goljat
+    "david-and-jonathans-friendship": 22, // David bugar sig tre gånger inför Jonatan
+    "david-spares-sauls-life": 7, // David visar manteflik för Saul
+    "death-of-saul": 2, // Sauls sista strid
+  };
+  for (const [slug, order] of Object.entries(samuelThumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: samuel.id, slug }, data: { thumbnailOrder: order } });
+  }
+
+  console.log(`Seedat Första Samuelsboken: ${samuelStories.length} stories.`);
+
+  // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
   // Bygger ett riktigt story-index för Exodus-narrativet (tidigare fanns
@@ -4475,6 +4664,30 @@ async function main() {
         "litteratur som en profetlik gestalt.",
     },
     {
+      id: samuel.id,
+      description:
+        "Övergången från domartid till kungadöme — Israels sista domare " +
+        "Samuel, dess första kung Saul (som stiger och sedan faller) och " +
+        "dess näste kung David (som stiger, från herdepojke till " +
+        "krigshjälte till jagad flykting). Innehåller några av GT:s mest " +
+        "kända enskilda scener: David och Goljat, Jonatans och Davids " +
+        "vänskap, David som skonar sin fiendes liv i en grotta.",
+      authorship:
+        "Okänd författare (den judiska traditionen nämner ibland Samuel " +
+        "själv för de tidiga kapitlen, trots att han dör i kapitel 25 — " +
+        "boken måste alltså ha flera källor/redaktörer). Modern " +
+        "forskning ser den som sammanställd av äldre muntliga och " +
+        "skriftliga källor, troligen under kungatiden eller efter, med " +
+        "en slutredaktion under eller efter den babyloniska fångenskapen.",
+      traditions:
+        "Judendom: en av \"de tidiga profeterna\" (tillsammans med Josua, " +
+        "Domarboken och Kungaböckerna). Kristendom: grundläggande för " +
+        "Davids-linjen i Jesu släkttavla (Matt. 1, Luk. 3). Islam: Dawud " +
+        "(David) är en central profet-kung i Koranen; Jalut (Goljat) " +
+        "nämns i sura 2 (al-Baqara) i en variant av samma berättelse, " +
+        "fast där kopplad till kung Talut (Saul).",
+    },
+    {
       id: mark.id,
       description:
         "Det kortaste och (troligen) äldsta evangeliet — ett snabbt, " +
@@ -5336,6 +5549,17 @@ async function main() {
     { bookSlug: "daniel", storySlug: "nebuchadnezzars-madness" },
     { bookSlug: "daniel", storySlug: "belshazzars-feast" },
     { bookSlug: "daniel", storySlug: "daniel-in-the-lions-den" },
+    // NY 2026-08-27: hela Första Samuelsboken — se README/Bibel-
+    // överblicken, den starkaste kandidaten i hela GT.
+    { bookSlug: "1-samuel", storySlug: "hannah-and-the-birth-of-samuel" },
+    { bookSlug: "1-samuel", storySlug: "god-calls-samuel" },
+    { bookSlug: "1-samuel", storySlug: "saul-anointed-king" },
+    { bookSlug: "1-samuel", storySlug: "saul-rejected-as-king" },
+    { bookSlug: "1-samuel", storySlug: "david-anointed-king" },
+    { bookSlug: "1-samuel", storySlug: "david-and-goliath" },
+    { bookSlug: "1-samuel", storySlug: "david-and-jonathans-friendship" },
+    { bookSlug: "1-samuel", storySlug: "david-spares-sauls-life" },
+    { bookSlug: "1-samuel", storySlug: "death-of-saul" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
   ];
@@ -5362,6 +5586,7 @@ async function main() {
     { slug: "ruth", estimate: "Okänd författare. Handlingen utspelar sig under domartiden (ca 1100-talet f.Kr.) — men boken kan vara nedtecknad betydligt senare, ofta daterad till ca 500-talet f.Kr." },
     { slug: "esther", estimate: "Okänd författare. Handlingen utspelar sig under kung Xerxes I (486–465 f.Kr.), men boken dateras vanligen till 100-talet f.Kr." },
     { slug: "daniel", estimate: "Traditionellt tillskriven Daniel själv (500-talet f.Kr.) — moderna forskare daterar ofta berättelsedelen (kap. 1-6) till 500/400-talet f.Kr. och synerna (kap. 7-12) till ca 160-talet f.Kr." },
+    { slug: "1-samuel", estimate: "Okänd författare — handlingen utspelar sig ca 1100–1000-talet f.Kr., men boken sammanställdes troligen under eller efter kungatiden, med slutredaktion under/efter den babyloniska fångenskapen (ca 500-talet f.Kr.)." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },
