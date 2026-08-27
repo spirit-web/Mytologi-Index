@@ -71,3 +71,14 @@ export async function moveQuoteRank(kind: QuoteKind, id: string, direction: "up"
   await Promise.all([setQuoteFields(a.kind, a.id, { quoteRank: b.rank }), setQuoteFields(b.kind, b.id, { quoteRank: a.rank })]);
   revalidatePath("/citat");
 }
+
+// Drag-och-släpp-omordning: tar emot HELA den nya ordningen (efter en
+// dragning kan ett citat hoppa många steg på en gång, till skillnad från
+// moveQuoteRank som bara byter plats med grannen) och skriver om
+// quoteRank sekventiellt för samtliga. Anropas från klienten med den
+// redan lokalt omordnade listan — optimistisk UI, ingen mellanläsning
+// av databasen behövs innan skrivningen.
+export async function reorderQuotes(order: Array<{ kind: QuoteKind; id: string }>) {
+  await Promise.all(order.map((q, i) => setQuoteFields(q.kind, q.id, { quoteRank: i + 1 })));
+  revalidatePath("/citat");
+}

@@ -25,7 +25,10 @@ export default async function PersonPage({ params }: { params: Promise<{ slug: s
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
-      <Link href="/personer" className="text-sm text-[var(--text-faint)] transition hover:text-[var(--text)]">
+      <Link
+        href="/personer"
+        className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--text-muted)] shadow-sm transition hover:border-[var(--accent-border)] hover:bg-[var(--accent-bg)] hover:text-[var(--accent)]"
+      >
         ← Personer
       </Link>
       <div className="mt-2 mb-8 flex items-center gap-4">

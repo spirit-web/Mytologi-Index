@@ -19,7 +19,10 @@ export default async function ThemePage({ params }: { params: Promise<{ slug: st
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
-      <Link href="/teman" className="text-sm text-[var(--text-faint)] transition hover:text-[var(--text)]">
+      <Link
+        href="/teman"
+        className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--text-muted)] shadow-sm transition hover:border-[var(--accent-border)] hover:bg-[var(--accent-bg)] hover:text-[var(--accent)]"
+      >
         ← Teman
       </Link>
       <h1 className="mt-2 mb-1 font-serif text-4xl font-semibold tracking-tight text-[var(--text)]">

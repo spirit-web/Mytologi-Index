@@ -108,7 +108,7 @@ export default async function StoryPage({
     <main className="mx-auto max-w-3xl px-6 py-16">
       <Link
         href={`/${corpusSlug}/${bookSlug}`}
-        className="text-sm text-[var(--text-faint)] transition hover:text-[var(--text)]"
+        className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--text-muted)] shadow-sm transition hover:border-[var(--accent-border)] hover:bg-[var(--accent-bg)] hover:text-[var(--accent)]"
       >
         ← {story.book.name}
       </Link>

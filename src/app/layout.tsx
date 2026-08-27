@@ -39,30 +39,42 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col font-sans">
         <header className="border-b border-[var(--border-soft)]">
-          <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
+          <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-6 py-3">
             <Link
               href="/"
-              className="font-serif text-lg font-semibold tracking-tight text-[var(--text)]"
+              className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-2 font-serif text-lg font-semibold tracking-tight text-[var(--text)] shadow-sm transition hover:border-[var(--accent-border)] hover:bg-[var(--accent-bg)] hover:text-[var(--accent)]"
             >
               Berättelseindex
             </Link>
-            <nav className="flex items-center gap-4 text-xs uppercase tracking-wide text-[var(--text-faint)]">
-              <Link href="/personer" className="transition hover:text-[var(--text)]">
+            <nav className="flex items-center gap-2 text-xs uppercase tracking-wide">
+              <Link
+                href="/personer"
+                className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3.5 py-2 text-[var(--text-muted)] shadow-sm transition hover:border-[var(--accent-border)] hover:bg-[var(--accent-bg)] hover:text-[var(--accent)]"
+              >
                 Personer
               </Link>
-              <Link href="/teman" className="transition hover:text-[var(--text)]">
+              <Link
+                href="/teman"
+                className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3.5 py-2 text-[var(--text-muted)] shadow-sm transition hover:border-[var(--accent-border)] hover:bg-[var(--accent-bg)] hover:text-[var(--accent)]"
+              >
                 Teman
               </Link>
-              <Link href="/citat" className="transition hover:text-[var(--text)]">
+              <Link
+                href="/citat"
+                className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3.5 py-2 text-[var(--text-muted)] shadow-sm transition hover:border-[var(--accent-border)] hover:bg-[var(--accent-bg)] hover:text-[var(--accent)]"
+              >
                 Citat
               </Link>
-              <Link href="/tidslinje" className="transition hover:text-[var(--text)]">
+              <Link
+                href="/tidslinje"
+                className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3.5 py-2 text-[var(--text-muted)] shadow-sm transition hover:border-[var(--accent-border)] hover:bg-[var(--accent-bg)] hover:text-[var(--accent)]"
+              >
                 Tidslinje
               </Link>
               <Link
                 href="/framsteg"
                 title="Ditt framsteg"
-                className="rounded-full transition hover:scale-110 hover:opacity-90"
+                className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] p-1 shadow-sm transition hover:scale-105 hover:border-[var(--accent-border)] hover:bg-[var(--accent-bg)]"
               >
                 <Image
                   src="/images/badges/jordan-peterson-badge.png"
