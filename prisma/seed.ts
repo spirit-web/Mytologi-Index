@@ -17,6 +17,7 @@ import estherCaptionsByCode from "./image-captions-esther.json";
 import danielCaptionsByCode from "./image-captions-daniel.json";
 import samuelCaptionsByCode from "./image-captions-1samuel.json";
 import deutCaptionsByCode from "./image-captions-deuteronomy.json";
+import jeremiahCaptionsByCode from "./image-captions-jeremiah.json";
 
 const prisma = new PrismaClient();
 
@@ -205,12 +206,16 @@ async function main() {
     "adam", "eve", "cain", "abel", "noah", "abraham", "sarah", "lot",
     "isaac", "jacob", "esau", "joseph", "rebekah", "laban", "rachel", "leah",
     "hagar",
+    // NY 2026-08-27: Dina (kap. 34) och Juda & Tamar (kap. 38) — direkt
+    // efterfrågade av användaren, se README Fas 44.
+    "dinah", "judah", "tamar",
   ] as const;
   const displayName: Record<string, string> = {
     adam: "Adam", eve: "Eva", cain: "Kain", abel: "Abel", noah: "Noa",
     abraham: "Abraham", sarah: "Sara", lot: "Lot", isaac: "Isak",
     jacob: "Jakob", esau: "Esau", joseph: "Josef", rebekah: "Rebecka",
     laban: "Laban", rachel: "Rakel", leah: "Lea", hagar: "Hagar",
+    dinah: "Dina", judah: "Juda", tamar: "Tamar",
   };
   const characters: Record<string, { id: string }> = {};
   for (const slug of characterNames) {
@@ -445,12 +450,37 @@ async function main() {
       themeSlugs: ["sibling-rivalry"],
     },
     {
+      // NY 2026-08-27: direkt efterfrågad av användaren ("känsligt
+      // innehåll" men relevant, se README Fas 44). Avslutar Jakob-cykeln —
+      // sker kronologiskt direkt efter försoningen med Esau (kap. 33) och
+      // innan Josef-berättelsen inleds (kap. 37).
+      slug: "dinah",
+      title: "Dina och Sikem",
+      startRef: "Genesis 34:1", endRef: "Genesis 34:31",
+      orderInBook: 21,
+      seriesSlug: "jacob", seriesTitle: "Jakob-cykeln", seriesOrder: 8,
+      characterSlugs: ["jacob", "dinah"],
+      themeSlugs: ["chaos-order", "deception"],
+    },
+    {
       slug: "joseph-and-his-brothers",
       title: "Josef och hans bröder",
       startRef: "Genesis 37:1", endRef: "Genesis 45:28",
-      orderInBook: 21,
-      characterSlugs: ["joseph", "jacob"],
+      orderInBook: 22,
+      characterSlugs: ["joseph", "jacob", "judah"],
       themeSlugs: ["sibling-rivalry", "sacrifice"],
+    },
+    {
+      // NY 2026-08-27: direkt efterfrågad av användaren, se README Fas 44.
+      // Kronologiskt ett sidospår mitt i Josef-berättelsen (avbryter kap.
+      // 37 och 39) — indexerad som egen story eftersom den har en egen,
+      // avslutad handling (och för att kunna sätta egna karaktärer/teman).
+      slug: "judah-and-tamar",
+      title: "Juda och Tamar",
+      startRef: "Genesis 38:1", endRef: "Genesis 38:30",
+      orderInBook: 23,
+      characterSlugs: ["judah", "tamar"],
+      themeSlugs: ["deception"],
     },
     {
       // Avslutar Första Moseboken: familjen flyttar till Egypten, Jakob
@@ -461,7 +491,7 @@ async function main() {
       slug: "jacob-in-egypt-and-death",
       title: "Jakob i Egypten — välsignelsen och döden",
       startRef: "Genesis 46:1", endRef: "Genesis 50:26",
-      orderInBook: 22,
+      orderInBook: 24,
       characterSlugs: ["jacob", "joseph"],
       themeSlugs: ["covenant"],
     },
@@ -3386,6 +3416,61 @@ async function main() {
   });
   console.log("Seedat Höga Visan: 1 story (hela boken, ingen bilddelning).");
 
+  // --- Jeremia — Jeremia i brunnen, Jerusalems fall ----------------------
+  // NY 2026-08-27, se README Fas 44: användaren blev nyfiken på Jeremia
+  // efter Fas 43. Bokens berättande höjdpunkt är den sammanhängande
+  // episoden kap. 37-39 — Jeremia fängslas, kastas i en tom cistern och
+  // räddas av den etiopiske hovmannen Ebed-Melek, och slutligen bevittnar
+  // han själv Jerusalems fall. Resten av boken (majoriteten) är profetisk
+  // poesi/orakel, inte handling, och lämnas därför utanför.
+  const jeremiahBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "jeremiah" } },
+    update: {},
+    create: { corpusId: bible.id, slug: "jeremiah", name: "Jeremia", order: 16, testament: "old" },
+  });
+  const jeremiahChar = await prisma.character.upsert({ where: { slug: "jeremiah" }, update: {}, create: { slug: "jeremiah", name: "Jeremia" } });
+  const cisternStory = await prisma.story.upsert({
+    where: { bookId_slug: { bookId: jeremiahBook.id, slug: "jeremiah-in-the-cistern" } },
+    update: { title: "Jeremia i brunnen — Jerusalems fall", startRef: "Jeremiah 37:1", endRef: "Jeremiah 39:18", orderInBook: 1 },
+    create: { bookId: jeremiahBook.id, slug: "jeremiah-in-the-cistern", title: "Jeremia i brunnen — Jerusalems fall", startRef: "Jeremiah 37:1", endRef: "Jeremiah 39:18", orderInBook: 1 },
+  });
+  await prisma.storyCharacter.upsert({
+    where: { storyId_characterId: { storyId: cisternStory.id, characterId: jeremiahChar.id } },
+    update: {},
+    create: { storyId: cisternStory.id, characterId: jeremiahChar.id },
+  });
+  await prisma.storyTheme.upsert({
+    where: { storyId_themeId: { storyId: cisternStory.id, themeId: chaosOrderTheme.id } },
+    update: {},
+    create: { storyId: cisternStory.id, themeId: chaosOrderTheme.id },
+  });
+  const jeremiahCaptions = jeremiahCaptionsByCode as Record<string, string[]>;
+  for (let fileNum = 1; fileNum <= 19; fileNum++) {
+    const path = `/images/jeremiah/jeremiah-in-the-cistern/${String(fileNum).padStart(2, "0")}.jpg`;
+    const caption = jeremiahCaptions["FB_Jeremiah_Cistern"]?.[fileNum - 1] || null;
+    await prisma.storyImage.upsert({
+      where: { storyId_order: { storyId: cisternStory.id, order: fileNum } },
+      update: { path, caption, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/jeremiah-cistern/" },
+      create: { storyId: cisternStory.id, order: fileNum, path, caption, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/jeremiah-cistern/" },
+    });
+  }
+  await prisma.story.update({ where: { id: cisternStory.id }, data: { thumbnailOrder: 9 } }); // Jeremia ser upp mot Ebed-Melek vid brunnens mynning
+  await prisma.book.update({
+    where: { id: jeremiahBook.id },
+    data: {
+      description:
+        "Blandning av profetiska orakel och en dramatisk, självupplevd " +
+        "berättelse — Jeremia varnar, fängslas, kastas i en tom cistern " +
+        "och räddas, och bevittnar till sist själv Jerusalems fall " +
+        "(kap. 37-39). Denna sammanhängande episod är det enda som " +
+        "indexeras här; resten av boken är poetisk profetia, inte " +
+        "handling.",
+      authorship: "Traditionellt Jeremia själv, med hjälp av sin skrivare Baruk (som nämns skriva ner hans ord, Jer. 36). Modern forskning ser boken som redigerad/utvidgad i flera steg efter Jeremias livstid.",
+      traditions: "Judendom: en av de \"senare profeterna\" (Nevi'im), traditionellt även tillskriven författarskapet till Klagovisorna. Kristendom: Jeremias lidande och orättvisa fängslande läses ofta som en förebild till Kristi lidande. Islam: ingen entydig motsvarighet, men vissa muslimska traditioner kopplar honom till en obenämnd profet i Koranen (sura 2:259).",
+    },
+  });
+  console.log("Seedat Jeremia: 1 story.");
+
   // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
@@ -5640,6 +5725,10 @@ async function main() {
     { bookSlug: "genesis", storySlug: "isaac-born-and-ishmael-sent-away" },
     { bookSlug: "genesis", storySlug: "rebekah-at-the-well" },
     { bookSlug: "genesis", storySlug: "jacob-and-esau-reconciled" },
+    // NY 2026-08-27, se README Fas 44 — båda välkända (bl.a. egna
+    // Torah-parashor), trots att Peterson inte täckt dem.
+    { bookSlug: "genesis", storySlug: "dinah" },
+    { bookSlug: "genesis", storySlug: "judah-and-tamar" },
     { bookSlug: "exodus", storySlug: "moses-in-the-basket" },
     { bookSlug: "exodus", storySlug: "burning-bush" },
     { bookSlug: "exodus", storySlug: "passover-and-exodus" },
@@ -5737,6 +5826,7 @@ async function main() {
     { bookSlug: "deuteronomy", storySlug: "death-of-moses" },
     { bookSlug: "job", storySlug: "jobs-trial" },
     { bookSlug: "song-of-songs", storySlug: "song-of-songs" },
+    { bookSlug: "jeremiah", storySlug: "jeremiah-in-the-cistern" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
   ];
@@ -5768,6 +5858,7 @@ async function main() {
     { slug: "deuteronomy", estimate: "Traditionellt Mose (ca 1200-talet f.Kr.) — moderna forskare kopplar den ofta till Josias reform (ca 620 f.Kr.)." },
     { slug: "job", estimate: "Okänd författare och en av GT:s mest omdebatterade dateringar — förslag spänner från patriark-tid till efter den babyloniska fångenskapen." },
     { slug: "song-of-songs", estimate: "Traditionellt Salomo (ca 900-talet f.Kr.) — moderna forskare daterar den ofta senare, ibland till efterexilisk tid." },
+    { slug: "jeremiah", estimate: "Traditionellt Jeremia/Baruk (sent 600-talet–tidigt 500-talet f.Kr., under och efter Jerusalems fall 587 f.Kr.) — moderna forskare ser boken som redigerad/utvidgad i flera steg efteråt." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },

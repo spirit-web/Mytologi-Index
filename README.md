@@ -70,6 +70,32 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 44 (2026-08-27): Dina, Juda & Tamar, samt Jeremia i brunnen
+
+Direkt uppföljning av frågorna i Fas 43 (svaren gavs, sen genomfördes
+tilläggen):
+
+- **Dina och Sikem** (Första Moseboken 34): ny story i slutet av
+  Jakob-cykeln (seriesOrder 8, direkt efter försoningen med Esau).
+  Ren text — inget AI-tillåtet bildset hittades för denna berättelse
+  (rimligt givet ämnet). Ny karaktär: Dina.
+- **Juda och Tamar** (Första Moseboken 38): ny fristående story,
+  indexerad separat från "Josef och hans bröder" trots att den ligger
+  inom samma kapitelspann (ett känt sidospår mitt i Josef-berättelsen).
+  Ren text, samma skäl som Dina. Nya karaktärer: Juda (även kopplad
+  till Josef-berättelsen, där han faktiskt har en roll) och Tamar.
+- **Jeremia** (tionde boken, ny bok): "Jeremia i brunnen — Jerusalems
+  fall" (kap. 37–39) — den enda sammanhängande berättande episoden i en
+  bok som annars mestadels är profetisk poesi. 19 bilder (Sweet
+  Publishing, CC BY-SA, AI-adaptationer tillåtna). Under extraktionen
+  hittades och lagades samma typ av käll-XML-fel som i Daniel/Samuel
+  (citat-kontaminering + ett kapitelrubrik-läckage in i vers 38:28/39:1,
+  återskapat direkt ur rå XML).
+
+Båda nya Genesis-stories tillagda i Tier 2 (handplockat kända) — Dina
+och Juda/Tamar har egna Torah-parashor och är väletablerade berättelser
+trots att Peterson inte täckt dem.
+
 ## Fas 43 (2026-08-27): Fyra korta boktillägg på direkt användarförfrågan
 
 Uppföljning av Bibel-överblicken (Fas 42): fyra nya, korta böcker,

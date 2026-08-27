@@ -23,6 +23,7 @@ import leviticusData from "@/data/bible-sv-1917/leviticus.json";
 import deuteronomyData from "@/data/bible-sv-1917/deuteronomy.json";
 import jobData from "@/data/bible-sv-1917/job.json";
 import songOfSongsData from "@/data/bible-sv-1917/songofsongs.json";
+import jeremiahData from "@/data/bible-sv-1917/jeremiah.json";
 
 export type BibleVerse = {
   chapter: number;
@@ -66,6 +67,7 @@ const BOOKS: Record<string, { data: Record<string, Record<string, string>>; sven
   Deuteronomy: { data: deuteronomyData as Record<string, Record<string, string>>, svenskt: "Femte Moseboken" },
   Job: { data: jobData as Record<string, Record<string, string>>, svenskt: "Job" },
   "Song of Songs": { data: songOfSongsData as Record<string, Record<string, string>>, svenskt: "Höga Visan" },
+  Jeremiah: { data: jeremiahData as Record<string, Record<string, string>>, svenskt: "Jeremia" },
 };
 
 // Extern länk till en fullständig, fri bibelläsare för samma översättning
