@@ -263,10 +263,10 @@ function StoryRow({
   // Tier 3 = default, inget märke. Se README "Prioritetsnivåer".
   const tier = story.petersonSegments.length > 0 || !!story.quote ? 1 : story.isWellKnown ? 2 : 3;
   return (
-    <div className="flex items-center gap-3 px-5 py-4 transition hover:bg-[var(--accent-bg)]">
+    <div className="flex flex-col gap-2 px-5 py-4 transition hover:bg-[var(--accent-bg)]">
       <Link
         href={`/${book.corpus.slug}/${book.slug}/${story.slug}`}
-        className="flex min-w-0 flex-1 items-center gap-3"
+        className="flex min-w-0 items-center gap-3"
       >
         {thumb && (
           <Image
@@ -277,7 +277,7 @@ function StoryRow({
             className="h-[42px] w-14 shrink-0 rounded-md border border-[var(--border)] object-cover"
           />
         )}
-        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div className="flex items-center justify-between gap-2">
             <span className="flex min-w-0 items-center gap-1.5 font-medium text-[var(--text)]">
               {completed && (
@@ -304,18 +304,25 @@ function StoryRow({
               <TierBadge tier={tier} />
               <span className="truncate">{story.title}</span>
             </span>
-            <span className="shrink-0 text-right text-xs text-[var(--text-faint)]">
-              <span className="block">
-                {story.startRef}
-                {story.endRef !== story.startRef ? `–${story.endRef.replace(/^.*?(\d)/, "$1")}` : ""}
-              </span>
-              {wordCount > 0 && <span className="block">{wordCount} ord · {lengthLabel(wordCount)}</span>}
+            <span className="shrink-0 text-xs text-[var(--text-faint)]">
+              {story.startRef}
+              {story.endRef !== story.startRef ? `–${story.endRef.replace(/^.*?(\d)/, "$1")}` : ""}
             </span>
           </div>
+          {wordCount > 0 && (
+            <span className="text-xs text-[var(--text-faint)]">
+              {wordCount} ord · {lengthLabel(wordCount)}
+            </span>
+          )}
         </div>
       </Link>
-      {(story.characters.length > 0 || story.themes.length > 0) && (
-        <div className="hidden shrink-0 flex-wrap justify-end gap-1.5 sm:flex sm:max-w-[45%]">
+      {/* Karaktärer och teman på varsin rad under själva raden (i stället
+          för att flyta som ett enda ombrytande kluster till höger) — ser
+          mindre rörigt ut, särskilt för stories med många taggar. Ligger
+          utanför ovanstående Link (kan inte nästla <a> i <a>), men
+          fortfarande innanför den hover-bakgrundsfärgade ytterbehållaren. */}
+      {story.characters.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 pl-[68px]">
           {story.characters.map((c) => (
             <Link
               key={c.character.slug}
@@ -325,6 +332,10 @@ function StoryRow({
               {c.character.name}
             </Link>
           ))}
+        </div>
+      )}
+      {story.themes.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 pl-[68px]">
           {story.themes.map((t) => (
             <Link
               key={t.theme.slug}
