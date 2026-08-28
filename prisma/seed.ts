@@ -21,6 +21,7 @@ import jeremiahCaptionsByCode from "./image-captions-jeremiah.json";
 import joshuaCaptionsByCode from "./image-captions-joshua.json";
 import samuel2CaptionsByCode from "./image-captions-2samuel.json";
 import kings1CaptionsByCode from "./image-captions-1kings.json";
+import numbersCaptionsByCode from "./image-captions-numbers.json";
 
 const prisma = new PrismaClient();
 
@@ -3798,6 +3799,139 @@ async function main() {
   });
   console.log(`Seedat Första Konungaboken: ${kings1Stories.length} stories.`);
 
+  // --- Fjärde Moseboken (Numeri) — ökenvandringens uppror och under ---
+  // NY 2026-08-27, se README Fas 48: Fas 1 av 7 i den överenskomna
+  // planen. Fyra berättelser om ökenvandringens 40 år: spejarna som
+  // förlorar folkets tro, Koras uppror (ren text — inget AI-tillåtet
+  // bildset hittat), kopparormen, och Bileam och hans åsna.
+  const numbersBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "numbers" } },
+    update: {},
+    create: { corpusId: bible.id, slug: "numbers", name: "Fjärde Moseboken", order: 20, testament: "old" },
+  });
+  const numbersCharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "caleb", name: "Kaleb" },
+    { slug: "korah", name: "Kora" },
+    { slug: "balaam", name: "Bileam" },
+    // Mose, Aron och Josua finns redan (Exodus/Leviticus/Josua-avsnitten)
+    // — samma slug här återanvänder och länkar ihop dem, upsert no-opar
+    // på redan satta fält.
+    { slug: "mose", name: "Mose" },
+    { slug: "aron", name: "Aron" },
+    { slug: "joshua", name: "Josua" },
+  ];
+  const numbersCharacters: Record<string, { id: string }> = {};
+  for (const c of numbersCharacterDefs) {
+    numbersCharacters[c.slug] = await prisma.character.upsert({ where: { slug: c.slug }, update: {}, create: c });
+  }
+
+  type NumbersStoryDef = {
+    slug: string; title: string; startRef: string; endRef: string; orderInBook: number;
+    characterSlugs: string[]; themeSlugs: string[];
+  };
+  const numbersStories: NumbersStoryDef[] = [
+    {
+      slug: "twelve-spies",
+      title: "Spejarna i Kanaan",
+      startRef: "Numbers 13:1", endRef: "Numbers 14:45",
+      orderInBook: 1,
+      characterSlugs: ["mose", "aron", "caleb", "joshua"],
+      themeSlugs: ["testing-of-faith", "chaos-order"],
+    },
+    {
+      slug: "korahs-rebellion",
+      title: "Koras uppror",
+      startRef: "Numbers 16:1", endRef: "Numbers 16:35",
+      orderInBook: 2,
+      characterSlugs: ["mose", "aron", "korah"],
+      themeSlugs: ["hierarchy", "chaos-order"],
+    },
+    {
+      slug: "bronze-serpent",
+      title: "Kopparormen",
+      startRef: "Numbers 21:4", endRef: "Numbers 21:9",
+      orderInBook: 3,
+      characterSlugs: ["mose"],
+      themeSlugs: ["testing-of-faith"],
+    },
+    {
+      slug: "balaams-donkey",
+      title: "Bileam och åsnan",
+      startRef: "Numbers 22:1", endRef: "Numbers 24:25",
+      orderInBook: 4,
+      characterSlugs: ["balaam"],
+      themeSlugs: ["testing-of-faith"],
+    },
+  ];
+
+  for (const s of numbersStories) {
+    const storyData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: numbersBook.id, slug: s.slug } },
+      update: storyData,
+      create: { bookId: numbersBook.id, slug: s.slug, ...storyData },
+    });
+    for (const charSlug of s.characterSlugs) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: numbersCharacters[charSlug].id } },
+        update: {},
+        create: { storyId: story.id, characterId: numbersCharacters[charSlug].id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: themes[themeSlug].id } },
+        update: {},
+        create: { storyId: story.id, themeId: themes[themeSlug].id },
+      });
+    }
+  }
+
+  const numbersCaptions = numbersCaptionsByCode as Record<string, string[]>;
+  const numbersImageSets: Array<{ storySlug: string; code: string; count: number; credit: string; creditUrl: string }> = [
+    { storySlug: "twelve-spies", code: "FB_Moses_Spies", count: 22, credit: "FreeBibleimages.org, CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/moses-spies/" },
+    { storySlug: "bronze-serpent", code: "FB_RG_Moses_Snake", count: 9, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-moses-snake/" },
+    { storySlug: "balaams-donkey", code: "FB_RG_Balaam", count: 11, credit: "Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/rg-balaam/" },
+  ];
+  for (const set of numbersImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: numbersBook.id, slug: set.storySlug } });
+    for (let fileNum = 1; fileNum <= set.count; fileNum++) {
+      const path = `/images/numbers/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const caption = numbersCaptions[set.code]?.[fileNum - 1] || null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order: fileNum } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order: fileNum, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+  // korahs-rebellion: ren text — inget AI-tillåtet bildset hittat.
+  const numbersThumbnails: Record<string, number> = {
+    "twelve-spies": 12, // Kaleb tystar folket: "Vi klarar det"
+    "bronze-serpent": 6, // Mose reser kopparormen på stången
+    "balaams-donkey": 7, // åsnan talar
+  };
+  for (const [slug, order] of Object.entries(numbersThumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: numbersBook.id, slug }, data: { thumbnailOrder: order } });
+  }
+
+  await prisma.book.update({
+    where: { id: numbersBook.id },
+    data: {
+      description:
+        "De fyrtio årens ökenvandring mellan Sinai och det utlovade " +
+        "landet — en lång kedja av uppror, prövningar och under. Fyra " +
+        "höjdpunkter indexeras här: spejarnas svek mot folkets tro, " +
+        "Koras uppror mot Mose och Arons ledarskap, kopparormen som " +
+        "botar ormbett (och som Jesus själv senare jämför sig med, Joh. " +
+        "3:14), och den hedniske siaren Bileam som mot sin vilja bara " +
+        "kan välsigna Israel.",
+      authorship: "Traditionellt tillskriven Mose (ca 1200-talet f.Kr.) — moderna forskare ser den som en sammanvävning av flera äldre källor, slutredigerad betydligt senare tillsammans med de övriga Moseböckerna.",
+      traditions: "Judendom: fjärde boken i Toran (hebreiska: \"Bemidbar\", \"I öknen\"). Kristendom: kopparormen (21:4-9) läses som en förebild till korsfästelsen (Joh. 3:14-15); Bileams profetia om \"en stjärna som träder fram ur Jakob\" (24:17) tolkas ofta messianskt. Islam: Balaam (Bileam) omnämns indirekt i Koranen (sura 7:175-176) som varnande exempel på en man som fick kunskap men vände sig bort från den.",
+    },
+  });
+  console.log(`Seedat Fjärde Moseboken: ${numbersStories.length} stories.`);
+
   // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
@@ -6163,6 +6297,10 @@ async function main() {
     { bookSlug: "1-kings", storySlug: "temple-built-and-dedicated" },
     { bookSlug: "1-kings", storySlug: "elijah-and-the-prophets-of-baal" },
     { bookSlug: "1-kings", storySlug: "elijah-at-horeb" },
+    { bookSlug: "numbers", storySlug: "twelve-spies" },
+    { bookSlug: "numbers", storySlug: "korahs-rebellion" },
+    { bookSlug: "numbers", storySlug: "bronze-serpent" },
+    { bookSlug: "numbers", storySlug: "balaams-donkey" },
     { bookSlug: "joshua", storySlug: "battle-of-jericho" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
@@ -6199,6 +6337,7 @@ async function main() {
     { slug: "joshua", estimate: "Traditionellt Josua själv (ca 1200-talet f.Kr.) — moderna forskare daterar slutredigeringen ofta till ca 600-talet f.Kr. eller senare, som del av det deuteronomistiska historieverket." },
     { slug: "2-samuel", estimate: "Okänd författare — handlingen utspelar sig ca 1000-talet f.Kr., men boken sammanställdes troligen under eller efter kungatiden, med slutredaktion under/efter den babyloniska fångenskapen (ca 500-talet f.Kr.)." },
     { slug: "1-kings", estimate: "Okänd författare — handlingen utspelar sig ca 970-850-talet f.Kr., men boken sammanställdes troligen under eller efter kungatiden, med slutredaktion under/efter den babyloniska fångenskapen (ca 500-talet f.Kr.)." },
+    { slug: "numbers", estimate: "Traditionellt Mose (ca 1200-talet f.Kr.) — moderna forskare ser den som en sammanvävning av flera äldre källor, slutredigerad betydligt senare." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },

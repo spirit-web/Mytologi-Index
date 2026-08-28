@@ -70,6 +70,17 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 48 (2026-08-27): Fjärde Moseboken (Numeri) — ökenvandringens uppror och under
+
+Fas 1 av 7 i den plan användaren gav för att arbeta igenom resten av
+"starka kandidater"-listan, en bok/punkt i taget. Fyra berättelser:
+Spejarna i Kanaan (kap. 13-14, folkets otro dömer dem till fyrtio års
+ökenvandring), Koras uppror (kap. 16, ren text — inget AI-tillåtet
+bildset hittat), Kopparormen (kap. 21:4-9, korsfästelse-förebilden i
+Joh. 3:14), och Bileam och åsnan (kap. 22-24). Extraktionen var
+ovanligt ren — noll citat-kontamineringar att fixa, första gången
+det hänt en hel bok på en gång denna session.
+
 ## Fas 47 (2026-08-27): Första Konungaboken — Salomos vishet, templet, Elia
 
 Fortsätter listan över "starka kandidater". Fyra berättelser: Salomos
