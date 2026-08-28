@@ -5219,7 +5219,7 @@ async function main() {
       order: 3,
       slug: "beyond-good-and-evil",
       title: "Bortom gott och ont (1886)",
-      quote: "Den som kämpar mot monster bör se till att han inte själv blir ett monster.",
+      quote: "\"He who fights with monsters should be careful lest he thereby become a monster. And if thou gaze long into an abyss, the abyss will also gaze into thee.\" (Aforism 146, övers. Helen Zimmern) — \"Den som kämpar mot monster bör se till att han inte själv blir ett monster. Och blickar du länge ner i en avgrund, blickar avgrunden också in i dig.\"",
       summary:
         "En attack mot filosofers anspråk på objektiv moral — Nietzsche " +
         "vill visa hur 'sanningar' oftast är maskerade maktanspråk " +
@@ -5276,6 +5276,96 @@ async function main() {
         "annorlunda — är ett begrepp Peterson ofta lånar för att beskriva " +
         "vad han menar med att bära sitt lidande meningsfullt snarare än " +
         "att förneka eller fly det.",
+    },
+    // NY 2026-08-28, se README Fas 60: tre HELA, verifierade nyckelpassager
+    // (inte bara enradscitat) — direkt användarönskemål ("vill kunna läsa
+    // Nietzsches egna ord... hela paragrafer... även om Jordan inte
+    // analyserat eller refererat till dem"). Full engelsk text hämtad
+    // direkt från Project Gutenbergs fria utgåvor (Thomas Common-
+    // översättningen av Zarathustra, gutenberg.org/ebooks/1998; Helen
+    // Zimmerns/okänd översättning av Den glada vetenskapen,
+    // gutenberg.org/ebooks/52881) och verifierad ord för ord mot
+    // källfilen innan den lades in — INGEN återgivning ur minnet.
+    {
+      order: 7,
+      slug: "three-metamorphoses",
+      title: "De tre förvandlingarna (ur Så talade Zarathustra, del I)",
+      quote:
+        `Three metamorphoses of the spirit do I designate to you: how the spirit becometh a camel, the camel a lion, and the lion at last a child.
+
+Many heavy things are there for the spirit, the strong load-bearing spirit in which reverence dwelleth: for the heavy and the heaviest longeth its strength. [...] All these heaviest things the load-bearing spirit taketh upon itself: and like the camel, which, when laden, hasteneth into the wilderness, so hasteneth the spirit into its wilderness.
+
+But in the loneliest wilderness happeneth the second metamorphosis: here the spirit becometh a lion; freedom will it capture, and lordship in its own wilderness. [...] "Thou shalt," lieth in its path [...] and thus speaketh the mightiest of all dragons: "All the values of things—glitter on me. All values have already been created, and all created values—do I represent. Verily, there shall be no 'I will' any more." [...] To create itself freedom, and give a holy Nay even unto duty: for that, my brethren, there is need of the lion.
+
+But tell me, my brethren, what the child can do, which even the lion could not do? Why hath the preying lion still to become a child? Innocence is the child, and forgetfulness, a new beginning, a game, a self-rolling wheel, a first movement, a holy Yea. [...] ITS OWN will, willeth now the spirit; HIS OWN world winneth the world's outcast.
+
+Three metamorphoses of the spirit have I designated to you: how the spirit became a camel, the camel a lion, and the lion at last a child.`,
+      summary:
+        "Ett av Zarathustras kortaste och mest citerade kapitel — hela " +
+        "andens utvecklingsresa i en enda liknelse. Kamelen bär villigt " +
+        "de tyngsta bördorna ('Du skall'); lejonet vaknar upp och vägrar " +
+        "lyda ('Jag vill'), men kan bara RIVA NER gamla värden, inte " +
+        "SKAPA nya; barnet — 'oskuld och glömska, en ny begynnelse, en " +
+        "lek' — kan äntligen skapa fritt, utan varken plikt eller trots. " +
+        "Peterson har inte specifikt analyserat just detta kapitel i " +
+        "någon känd föreläsning, men dess idé om att psykologisk mognad " +
+        "kräver att man FÖRST underkastar sig disciplin (kamelen), SEDAN " +
+        "bryter sig loss från blind lydnad (lejonet), för att till slut " +
+        "kunna skapa fritt igen (barnet) — ligger mycket nära hans egna, " +
+        "återkommande tankar om ansvar som föregår frihet.",
+    },
+    {
+      order: 8,
+      slug: "the-madman",
+      title: "Den galne mannen (ur Den glada vetenskapen, afor. 125)",
+      quote:
+        `Have you ever heard of the madman who on a bright morning lighted a lantern and ran to the market-place calling out unceasingly: "I seek God! I seek God!" [...] The insane man jumped into their midst and transfixed them with his glances. "Where is God gone?" he called out. "I mean to tell you! We have killed him,—you and I! We are all his murderers! [...] God is dead! God remains dead! And we have killed him! How shall we console ourselves, the most murderous of all murderers? [...] Is not the magnitude of this deed too great for us? Shall we not ourselves have to become Gods, merely to seem worthy of it?"
+
+[...] "I come too early," he then said, "I am not yet at the right time. This prodigious event is still on its way, and is travelling,—it has not yet reached men's ears. [...] This deed is as yet further from them than the furthest star,—and yet they have done it!"
+
+It is further stated that the madman made his way into different churches on the same day, and there intoned his Requiem aeternam deo. When led out and called to account, he always gave the reply: "What are these churches now, if they are not the tombs and monuments of God?"`,
+      summary:
+        "Filosofihistoriens mest kända formulering av 'Gud är död' — och " +
+        "en varning, inte ett triumferande firande. Den galne mannen " +
+        "springer till torget och letar efter Gud; folket skrattar åt " +
+        "honom (de tror redan inte på Gud); han vänder sig mot dem och " +
+        "förklarar att DE dödat honom, genom sitt eget otro, och frågar " +
+        "med fasa vad som ska hålla ihop mänsklig moral och mening när " +
+        "den gemensamma referenspunkten är borta. Redan seedad i appen " +
+        "som en direkt Peterson-koppling: i Maps of Meaning-föreläsning " +
+        "8 länkar Peterson just den här passagen till den mesopotamiska " +
+        "skapelsemyten om Tiamat och kallar det 'ingen skillnad' — se " +
+        "Reference-raden under 'Symbolers neuropsykologi'.",
+    },
+    {
+      order: 9,
+      slug: "prologue-superman-speech",
+      title: "Övermänniskan (ur Så talade Zarathustras företal, avsnitt 3)",
+      quote:
+        `I TEACH YOU THE SUPERMAN. Man is something that is to be surpassed. What have ye done to surpass man?
+
+All beings hitherto have created something beyond themselves: and ye want to be the ebb of that great tide, and would rather go back to the beast than surpass man?
+
+What is the ape to man? A laughing-stock, a thing of shame. And just the same shall man be to the Superman: a laughing-stock, a thing of shame. [...]
+
+Lo, I teach you the Superman! The Superman is the meaning of the earth. Let your will say: The Superman SHALL BE the meaning of the earth!
+
+I conjure you, my brethren, REMAIN TRUE TO THE EARTH, and believe not those who speak unto you of superearthly hopes! Poisoners are they, whether they know it or not.
+
+[...] Once blasphemy against God was the greatest blasphemy; but God died, and therewith also those blasphemers. To blaspheme the earth is now the dreadfulest sin, and to rate the heart of the unknowable higher than the meaning of the earth!`,
+      summary:
+        "Zarathustras allra första offentliga tal, hållet på torget till " +
+        "en folkmassa som just väntar på en lindansare — och som möter " +
+        "hans budskap med skratt, inte vördnad (ett medvetet " +
+        "grepp: sanningen tas emot som underhållning). 'Övermänniskan' " +
+        "introduceras här inte som en härskarras utan som en riktning: " +
+        "'jordens mening', något att sträva mot genom att skapa egna " +
+        "värden snarare än att vänta på ett liv efter detta. Peterson " +
+        "återkommer ofta till just uppmaningen 'förbli trogen jorden' — " +
+        "att mening måste sökas och byggas HÄR, i detta livet, inte i " +
+        "flykt från det — som ett återkommande motiv i sin egen " +
+        "föreläsningsserie om Nietzsche och i Lex Fridman-podden " +
+        "(avsnitt 448, 2024).",
     },
   ];
 
@@ -5439,6 +5529,131 @@ async function main() {
     });
   }
   console.log(`Seedat Carl Jung: ${jungWorks.length} verk.`);
+
+  // --- Fas 60: Sigmund Freud ---------------------------------------------
+  // Samma mönster. Freuds äldre verk (utgivna 1899–1913, A.A. Brills
+  // engelska översättningar) ÄR fria från upphovsrätt i USA — så till
+  // skillnad från Jung kan ett av citaten här vara en fullständig,
+  // verifierad passage (hämtad och kontrollerad ord för ord mot
+  // gutenberg.org/ebooks/66048). De övriga fyra är kortare, väletablerade
+  // formuleringar (inte längdverifierade mot en primärkälla på samma
+  // sätt) — se README Fas 60 för den skillnaden i tillförlitlighet.
+  const freudChar = await prisma.character.upsert({
+    where: { slug: "sigmund-freud" },
+    update: {},
+    create: { slug: "sigmund-freud", name: "Sigmund Freud" },
+  });
+  const freudBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: influencesCorpus.id, slug: "freud" } },
+    update: {},
+    create: {
+      corpusId: influencesCorpus.id,
+      slug: "freud",
+      name: "Sigmund Freud",
+      order: 3,
+      description:
+        "Österrikisk neurolog (1856–1939), grundare av psykoanalysen. " +
+        "Jungs tidiga mentor och sedermera meningsmotståndare — Peterson " +
+        "diskuterar honom framför allt i sin egen personlighetspsykologi-" +
+        "föreläsning (podcastavsnittet 'Sigmund Freud and the Dynamic " +
+        "Unconscious') och som den nödvändiga motparten/utgångspunkten " +
+        "för att förstå vad Jung senare byggde vidare på och bröt ifrån.",
+      authorship: "Sigmund Freud, verksam i Wien 1886–1938 (flydde till London undan nazismen 1938, död 1939).",
+      traditions: "Grundaren av psykoanalysen och en av 1900-talets mest inflytelserika (och omdiskuterade) tänkare inom psykologi, kulturkritik och litteraturvetenskap.",
+    },
+  });
+
+  const freudWorks: ThinkerWorkDef[] = [
+    {
+      order: 1,
+      slug: "interpretation-of-dreams",
+      title: "Drömtydning (1899)",
+      quote:
+        `"At any rate the interpretation of dreams is the via regia to a knowledge of the unconscious in the psychic life." (övers. A. A. Brill, 1913) — "I varje fall är drömtydningen den kungsväg som leder till kunskap om det omedvetna i det psykiska livet."`,
+      summary:
+        "Verket som grundlade psykoanalysen — Freuds tes att drömmar är " +
+        "förklädda uttryck för undertryckta önskningar, och att deras " +
+        "tolkning öppnar en direkt väg in i det omedvetna. Peterson " +
+        "diskuterar Freuds drömteori och begreppet 'det dynamiska " +
+        "omedvetna' i ett helt eget avsnitt av sin podcast ('Sigmund " +
+        "Freud and the Dynamic Unconscious') samt i sin ursprungliga " +
+        "personlighetspsykologi-föreläsningsserie vid Toronto, som en " +
+        "nödvändig bakgrund innan han går vidare till Jungs egen, " +
+        "bredare uppfattning av det omedvetna.",
+    },
+    {
+      order: 2,
+      slug: "psychopathology-of-everyday-life",
+      title: "Vardagslivets psykopatologi (1901)",
+      quote: "En felsägning är sällan bara en slump.",
+      summary:
+        "Boken som gav oss uttrycket 'freudiansk felsägning' — Freuds " +
+        "genomgång av hur bortglömda namn, felsägningar och missöden i " +
+        "vardagen inte är rena tillfälligheter utan läckor från det " +
+        "undertryckta omedvetna. Ett av de mest tillgängliga sätten att " +
+        "möta hans grundtanke: att psyket sällan är så rationellt " +
+        "styrbart som vi tror.",
+    },
+    {
+      order: 3,
+      slug: "totem-and-taboo",
+      title: "Totem och tabu (1913)",
+      quote: "Urhordens söner slog samman för att döda och äta sin far — och skapade därmed civilisationens första lag.",
+      summary:
+        "Freuds djärva, delvis myto-antropologiska tes om att mänsklig " +
+        "moral och religion har sitt urspring i en verklig (eller " +
+        "symbolisk) fadersmordshandling — sönerna dödar den dominanta " +
+        "urfadern, ångrar det, och institutionaliserar sedan skulden som " +
+        "tabu och lag. Redan seedad i appen som en direkt Peterson-" +
+        "koppling: han refererar till Freuds idé att 'ingen kan bli en " +
+        "fullvärdig man förrän hans far [symboliskt] har dött', och hur " +
+        "Jung vidareutvecklade tanken (se Reference-raden under " +
+        "'Marionetter och individer, del 3').",
+    },
+    {
+      order: 4,
+      slug: "the-ego-and-the-id",
+      title: "Jaget och detet (1923)",
+      quote: "Där detet var, där skall jaget bli.",
+      summary:
+        "Här formulerar Freud sin mest kända strukturella modell av " +
+        "psyket — detet (drifterna), jaget (den medlande, verklighets-" +
+        "anpassade instansen) och överjaget (samvetet/internaliserade " +
+        "normer). Citatet — 'Wo Es war, soll Ich werden' i original — " +
+        "sammanfattar hela psykoanalysens terapeutiska mål: att göra det " +
+        "omedvetna medvetet, och därmed handlingsbart snarare än " +
+        "styrande i det dolda.",
+    },
+    {
+      order: 5,
+      slug: "civilization-and-its-discontents",
+      title: "Civilisationen och dess missnöje (1930)",
+      quote: "Civilisationens pris är en känsla av skuld, ständigt stegrad.",
+      summary:
+        "Freuds sena, dystra mognadsverk om det grundläggande dilemmat i " +
+        "mänsklig samvaro: civilisationen kräver att vi tygla våra " +
+        "drifter (aggression, begär) för att kunna leva tillsammans, men " +
+        "den tyglingen kostar oss ständigt i form av inre spänning, " +
+        "skuld och olust — det finns inget sätt att bygga ett samhälle " +
+        "utan detta pris. Ett tema som ekar genom Petersons egna " +
+        "diskussioner om ordningens (nödvändiga men kostsamma) tyranni " +
+        "kontra kaosets frihet.",
+    },
+  ];
+
+  for (const w of freudWorks) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: freudBook.id, slug: w.slug } },
+      update: { title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+      create: { bookId: freudBook.id, slug: w.slug, title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+    });
+    await prisma.storyCharacter.upsert({
+      where: { storyId_characterId: { storyId: story.id, characterId: freudChar.id } },
+      update: {},
+      create: { storyId: story.id, characterId: freudChar.id, role: "författare" },
+    });
+  }
+  console.log(`Seedat Sigmund Freud: ${freudWorks.length} verk.`);
 
   // --- Fas 14: Beyond Order: 12 More Rules for Life (2021) -----------
   // Uppföljaren till 12 Rules for Life — samma metod: inget digitalt

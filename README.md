@@ -70,6 +70,41 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 60 (2026-08-28): Nietzsches egna ord i fulltext + Sigmund Freud
+
+Direkt användarönskemål: "lägg in [Nietzsches] viktigaste [citat] även om
+Jordan inte analyserat eller refererat till dem... hela paragrafer...
+även hela kapitel". Eftersom Nietzsche dog 1900 är hans verk fria från
+upphovsrätt — tre HELA, ordagrant verifierade nyckelpassager lades till
+som egna stories (utöver de sex kortare per-verk-sammanfattningarna
+från Fas 58): De tre förvandlingarna (helt kapitel, kamel→lejon→barn),
+Den galne mannen (hela "Gud är död"-liknelsen, afor. 125), och
+Övermänniskan (Zarathustras torg-tal ur företalet). All text hämtad
+direkt från Project Gutenbergs fria utgåvor (Thomas Common-
+översättningen av Zarathustra, ebooks/1998; Den glada vetenskapen,
+ebooks/52881) och kontrollerad ord för ord mot källfilen — ingen
+återgivning ur minnet. Uppdaterade även "Bortom gott och ont"-citatet
+till den fullständiga, verifierade avgrunds-aforismen (146).
+
+**Sigmund Freud** lades också till (samma "person = bok"-mönster,
+samma önskemål utökat till honom). Fem verk: Drömtydning (med en
+fullständigt verifierad passage, "via regia till det omedvetna" —
+hans äldre verk från 1899–1923 är fria från upphovsrätt i USA),
+Vardagslivets psykopatologi, Totem och tabu (redan kopplad till
+Peterson via en befintlig Reference-rad om fadersmordet), Jaget och
+detet, och Civilisationen och dess missnöje. Petersons koppling
+grundad i hans egen podcast-episod "Sigmund Freud and the Dynamic
+Unconscious" samt hans ursprungliga personlighetspsykologi-
+föreläsningsserie.
+
+**Viktig skillnad att hålla koll på framöver:** Nietzsche (död 1900)
+och Freuds äldsta verk (1899–1913) är fria — generösa, fullständiga
+citat är juridiskt okej. Jung (död 1961) är fortfarande copyright-
+skyddad — hans citat MÅSTE förbli korta, oavsett hur mycket
+sammanhang som vore önskvärt. Samma gräns gäller framtida tänkare:
+Dostojevskij (död 1881, fri) och Solzjenitsyn (död 2008, Gulag-
+arkipelagen utgiven 1973, INTE fri) hamnar på var sin sida.
+
 ## Fas 59 (2026-08-28): Carl Jung i "Källor & influenser"
 
 Samma mönster som Nietzsche (Fas 58). Sex verk: Människan och hennes
