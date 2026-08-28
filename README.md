@@ -70,6 +70,22 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 51 (2026-08-27): Andra Konungaboken — Elia/Elisa, Naaman, Hiskia och Sanherib
+
+Fas 4 av 7 i planen. Tre berättelser: Elias himmelsfärd (kap. 2,
+vagnen av eld, manteln till Elisa), Naaman botas (kap. 5, den
+arameiske härförarens spetälska och Gehasis girighet), och Hiskia och
+Sanherib (kap. 18-19) — den Jesaja-tråd som medvetet sparades hit
+redan i Fas 47, för att slippa dubbelteckna Hiskia/Sanherib-
+berättelsen om Jesaja någonsin indexeras separat. Jerusalems
+SLUTGILTIGA fall (kap. 24-25, kung Sidkia) täcks redan via Jeremia
+(Fas 44) och indexeras medvetet INTE igen här. 54 automatfixade +
+5 manuellt fixade citat-kontamineringar, två fullständigt återskapade
+förlorade verser (19:1, samma "verse wraps text"-mönster som setts
+tidigare) samt en manuell smyckning av en genuin källtext-lucka
+(2:11, "en vagn eld" saknade "av" jämfört med den parallella "hästar
+av eld" i samma vers).
+
 ## Fas 50 (2026-08-27): Första Konungaboken färdigställd — Saba och rikets splittring
 
 Fas 3 av 7 i planen — färdigställer Första Konungaboken (Fas 47
