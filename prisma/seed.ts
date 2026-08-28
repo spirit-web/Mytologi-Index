@@ -5688,6 +5688,24 @@ I conjure you, my brethren, REMAIN TRUE TO THE EARTH, and believe not those who 
       notes: "Petersons framträdanden som GÄST på Lex Fridmans podcast — fritt på YouTube.",
     },
   });
+  // OBS: separat från lexFridmanSeries ovan — de tre Dostojevskij-
+  // videorna nedan är INTE Lex Fridman-poddavsnitt, utan fristående
+  // YouTube-klipp (Petersons egna kanaler/tredjepartskanaler som klippt
+  // ur längre föreläsningar). Felaktigt sammanslagna med Lex Fridman-
+  // serien i ett tidigare utkast — upptäckt och fixat samma fas
+  // (README Fas 62), innan det hann committas/pushas.
+  const standaloneClipsSeries = await prisma.petersonSeries.upsert({
+    where: { slug: "standalone-clips" },
+    update: {},
+    create: {
+      slug: "standalone-clips",
+      title: "Fristående YouTube-klipp",
+      requiresPaidAccess: false,
+      isPanelDiscussion: false,
+      enabledByDefault: true,
+      notes: "Fristående videor/klipp (inte del av en namngiven serie) — fritt på YouTube.",
+    },
+  });
   const freudPersonalityVideo = await prisma.petersonVideo.upsert({
     where: { youtubeId: "YFWLwYyrMRE" },
     update: {},
@@ -5747,6 +5765,192 @@ I conjure you, my brethren, REMAIN TRUE TO THE EARTH, and believe not those who 
     });
   }
   console.log(`Seedat verifierade verk-kopplingar: ${verifiedWorkReferences.length}.`);
+
+  // --- Fas 62: Fjodor Dostojevskij --------------------------------------
+  // Samma mönster som Nietzsche. Dostojevskij dog 1881 — hans verk är
+  // fria från upphovsrätt, så tre av citaten är HELA, verifierade
+  // passager (hämtade och kontrollerade ord för ord mot Project
+  // Gutenberg: Notes from the Underground, ebooks/600; The Brothers
+  // Karamazov, ebooks/28054; Crime and Punishment, ebooks/2554).
+  const dostoevskyChar = await prisma.character.upsert({
+    where: { slug: "dostojevskij" },
+    update: {},
+    create: { slug: "dostojevskij", name: "Fjodor Dostojevskij" },
+  });
+  const dostoevskyBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: influencesCorpus.id, slug: "dostoevsky" } },
+    update: {},
+    create: {
+      corpusId: influencesCorpus.id,
+      slug: "dostoevsky",
+      name: "Fjodor Dostojevskij",
+      order: 4,
+      description:
+        "Rysk författare (1821–1881) vars psykologiska romaner Peterson " +
+        "räknar bland sina största personliga influenser — han " +
+        "rekommenderar uttryckligen alla fem av Dostojevskijs stora " +
+        "romaner och har hållit egna, fristående videoföreläsningar om " +
+        "flera av dem. Till skillnad från Nietzsche och Jung är " +
+        "Dostojevskijs verk faktiska ROMANER — historier med handling " +
+        "och karaktärer, inte filosofiska/psykologiska avhandlingar.",
+      authorship: "Fjodor Michajlovitj Dostojevskij, verksam i S:t Petersburg 1846–1881 (inkl. fyra år i sibirisk straffarbetslägerfångenskap 1849–1853, efter en skendom för politisk brottslighet — en erfarenhet som genomsyrar hela hans senare författarskap).",
+      traditions: "En av världslitteraturens mest inflytelserika författare, central för både den ryska litterära traditionen och 1900-talets existentialistiska filosofi (Nietzsche, Camus, Sartre läste och citerade honom alla).",
+    },
+  });
+
+  const dostoevskyWorks: ThinkerWorkDef[] = [
+    {
+      order: 1,
+      slug: "notes-from-underground",
+      title: "Anteckningar från källarhålet (1864)",
+      quote:
+        `I am a sick man.... I am a spiteful man. I am an unattractive man. I believe my liver is diseased. However, I know nothing at all about my disease, and do not know for certain what ails me. [...] No, I refuse to consult a doctor from spite. [...] I know better than anyone that by all this I am only injuring myself and no one else. But still, if I don't consult a doctor it is from spite. My liver is bad, well—let it get worse!
+
+I have been going on like that for a long time—twenty years. Now I am forty. [...] But do you know, gentlemen, what was the chief point about my spite? Why, the whole point, the real sting of it lay in the fact that continually, even in the moment of the acutest spleen, I was inwardly conscious with shame that I was not only not a spiteful but not even an embittered man, that I was simply scaring sparrows at random and amusing myself by it.`,
+      summary:
+        "Den bittra, självmedvetna monolog som inleder den moderna " +
+        "antihjälten i litteraturen — en man vars intelligens och " +
+        "självinsikt gör honom handlingsförlamad, elak av ren " +
+        "självmotsägelse snarare än övertygelse. Peterson har en egen, " +
+        "fristående videoföreläsning specifikt om just den här boken " +
+        "('Jordan Peterson's Brilliant Breakdown on Dostoyevsky: Notes " +
+        "From Underground') och kopplar figurens självdestruktiva " +
+        "'räddar-komplex' (att vilja rädda andra av fåfänga snarare än " +
+        "genuin omsorg) till ett återkommande tema i sina egna " +
+        "föreläsningar om narcissism.",
+    },
+    {
+      order: 2,
+      slug: "crime-and-punishment",
+      title: "Brott och straff (1866)",
+      quote:
+        `Ordinary men have to live in submission, have no right to transgress the law, because, don't you see, they are ordinary. But extraordinary men have a right to commit any crime and to transgress the law in any way, just because they are extraordinary. [...] I simply hinted that an 'extraordinary' man has the right... that is not an official right, but an inner right to decide in his own conscience to overstep... certain obstacles, and only in case it is essential for the practical fulfilment of his idea (sometimes, perhaps, of benefit to the whole of humanity). [...] I maintain that if the discoveries of Kepler and Newton could not have been made known except by sacrificing the lives of one, a dozen, a hundred, or more men, Newton would have had the right, would indeed have been in duty-bound... to eliminate the dozen or the hundred men for the sake of making his discoveries known to the whole of humanity.`,
+      summary:
+        "Raskolnikovs teori om 'den extraordinäre människan' — att " +
+        "vissa individer, i kraft av sin idés värde för mänskligheten, " +
+        "har en inre RÄTT att överskrida vanlig moral — testas i " +
+        "praktiken när han mördar en pantlånerska för att bevisa tesen " +
+        "för sig själv, och sedan sönderfaller psykologiskt av skulden. " +
+        "Peterson har en egen, fristående videoföreläsning om just den " +
+        "här romanen och använder den ofta som sitt tydligaste exempel " +
+        "på vad som händer när en abstrakt idé (hur intellektuellt " +
+        "sammanhängande den än verkar) kolliderar med det mänskliga " +
+        "samvetets konkreta verklighet.",
+    },
+    {
+      order: 3,
+      slug: "brothers-karamazov-grand-inquisitor",
+      title: "Storinkvisitorn (ur Bröderna Karamazov, 1880)",
+      quote:
+        `...art going with empty hands, with some promise of freedom which men in their simplicity and their natural unruliness cannot even understand, which they fear and dread—for nothing has ever been more insupportable for a man and a human society than freedom. But seest Thou these stones in this parched and barren wilderness? Turn them into bread, and mankind will run after Thee like a flock of sheep, grateful and obedient, though for ever trembling, lest Thou withdraw Thy hand and deny them Thy bread. [...] But Thou wouldst not deprive man of freedom and didst reject the offer, thinking, what is that freedom worth, if obedience is bought with bread?
+
+Dost Thou know that the ages will pass, and humanity will proclaim by the lips of their sages that there is no crime, and therefore no sin; there is only hunger? "Feed men, and then ask of them virtue!" that's what they'll write on the banner, which they will raise against Thee, and with which they will destroy Thy temple.`,
+      summary:
+        "Ivan Karamazovs 'poem' — en berättelse i berättelsen — om en " +
+        "återvänd Kristus som grips och förhörs av inkvisitionens " +
+        "kardinal i 1500-talets Sevilla. Inkvisitorn anklagar Kristus " +
+        "för att ha gett människan en frihet hon varken vill ha eller " +
+        "klarar av att bära, och förklarar att kyrkan (som han leder) " +
+        "istället gett folket det de egentligen längtar efter: bröd, " +
+        "mirakel, auktoritet och trygg underkastelse. En av " +
+        "världslitteraturens mest citerade utforskningar av frihetens " +
+        "psykologiska pris. Peterson har en egen, fristående " +
+        "videoföreläsning specifikt om det här kapitlet ('The brilliance " +
+        "of Dostoevsky's The Grand Inquisitor') och återkommer ofta till " +
+        "hur institutioner (religiösa och andra) tenderar att förstelna " +
+        "till just den sortens totalitära trygghetsstrukturer.",
+    },
+    {
+      order: 4,
+      slug: "demons",
+      title: "Onda andar (1872)",
+      quote: "Om Gud inte finns, är jag Gud.",
+      summary:
+        "En profetisk (skriven decennier före den ryska revolutionen) " +
+        "roman om en grupp unga revolutionära nihilister i en " +
+        "landsortsstad — hur abstrakta politiska idéer, lösgjorda från " +
+        "religiös eller moralisk förankring, glider över i verklig " +
+        "terrorism och mord. Kirillovs monolog om att bli 'Gud' genom " +
+        "att fritt välja sin egen död sammanfattar romanens undersökning " +
+        "av vad som händer med mänsklig frihet när den yttersta " +
+        "auktoriteten försvinner. Ett tema som direkt föregriper " +
+        "Petersons egna, återkommande varningar om ideologisk besatthet " +
+        "som ersättning för genuin mening.",
+    },
+    {
+      order: 5,
+      slug: "the-idiot",
+      title: "Idioten (1869)",
+      quote: "Skönheten ska frälsa världen.",
+      summary:
+        "Furst Mysjkin — en genuint god, oskyldig man ('den positivt " +
+        "goda människan', som Dostojevskij själv beskrev sin avsikt) — " +
+        "kastas in i det cyniska S:t Petersburg-samhället, där hans " +
+        "renhjärtade godhet ständigt misstolkas som naivitet eller " +
+        "galenskap. Romanens mest kända rad, ofta återgiven som " +
+        "'skönheten ska frälsa världen', lyfts fram av andra karaktärer " +
+        "som ett halvt ironiskt, halvt allvarligt sammandrag av " +
+        "Mysjkins hela väsen — en genuint god människas nästan " +
+        "outhärdliga sårbarhet i en värld som inte vet vad den ska göra " +
+        "med genuin godhet.",
+    },
+  ];
+
+  for (const w of dostoevskyWorks) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: dostoevskyBook.id, slug: w.slug } },
+      update: { title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+      create: { bookId: dostoevskyBook.id, slug: w.slug, title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+    });
+    await prisma.storyCharacter.upsert({
+      where: { storyId_characterId: { storyId: story.id, characterId: dostoevskyChar.id } },
+      update: {},
+      create: { storyId: story.id, characterId: dostoevskyChar.id, role: "författare" },
+    });
+  }
+
+  // Verifierade verk-kopplingar (samma mönster som Fas 61) — tre riktiga
+  // fristående Peterson-videor, ett YouTube-ID var.
+  const notesUndergroundVideo = await prisma.petersonVideo.upsert({
+    where: { youtubeId: "yo1MBH6j4bs" },
+    update: { seriesId: standaloneClipsSeries.id },
+    create: { youtubeId: "yo1MBH6j4bs", title: "Jordan Peterson's Brilliant Breakdown on Dostoyevsky: Notes From Underground", seriesId: standaloneClipsSeries.id },
+  });
+  const crimePunishmentVideo = await prisma.petersonVideo.upsert({
+    where: { youtubeId: "A2QtF0kidps" },
+    update: { seriesId: standaloneClipsSeries.id },
+    create: { youtubeId: "A2QtF0kidps", title: "Jordan Peterson | Crime and Punishment", seriesId: standaloneClipsSeries.id },
+  });
+  const grandInquisitorVideo = await prisma.petersonVideo.upsert({
+    where: { youtubeId: "Xv3xYw7fYzA" },
+    update: { seriesId: standaloneClipsSeries.id },
+    create: { youtubeId: "Xv3xYw7fYzA", title: "The brilliance of Dostoevsky's The Grand Inquisitor", seriesId: standaloneClipsSeries.id },
+  });
+  const dostoevskyReferences: Array<{ storySlug: string; videoId: string; note: string }> = [
+    {
+      storySlug: "notes-from-underground", videoId: notesUndergroundVideo.id,
+      note: "En hel, fristående föreläsning om just den här boken — kopplar källarhålsmannens självdestruktiva bitterhet till ett återkommande tema om narcissistiskt 'räddande' av andra.",
+    },
+    {
+      storySlug: "crime-and-punishment", videoId: crimePunishmentVideo.id,
+      note: "En hel, fristående föreläsning om just den här romanen — använder Raskolnikovs teori om 'den extraordinäre människan' som sitt tydligaste exempel på en abstrakt idé som krockar med samvetets konkreta verklighet.",
+    },
+    {
+      storySlug: "brothers-karamazov-grand-inquisitor", videoId: grandInquisitorVideo.id,
+      note: "En hel, fristående föreläsning om just det här kapitlet — kopplar Storinkvisitorns argument (att människor egentligen vill ha bröd och trygg underkastelse hellre än frihet) till hur institutioner tenderar att förstelna till totalitära strukturer.",
+    },
+  ];
+  for (const r of dostoevskyReferences) {
+    const target = await prisma.story.findFirstOrThrow({
+      where: { slug: r.storySlug, book: { slug: "dostoevsky", corpus: { slug: "influences" } } },
+    });
+    await prisma.reference.upsert({
+      where: { id: `seed-workref-${r.storySlug}` },
+      update: { storyId: target.id, videoId: r.videoId, note: r.note },
+      create: { id: `seed-workref-${r.storySlug}`, storyId: target.id, videoId: r.videoId, note: r.note },
+    });
+  }
+  console.log(`Seedat Fjodor Dostojevskij: ${dostoevskyWorks.length} verk, ${dostoevskyReferences.length} verifierade kopplingar.`);
 
   // --- Fas 14: Beyond Order: 12 More Rules for Life (2021) -----------
   // Uppföljaren till 12 Rules for Life — samma metod: inget digitalt

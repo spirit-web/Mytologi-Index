@@ -70,6 +70,37 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 62 (2026-08-28): Fjodor Dostojevskij i "Källor & influenser"
+
+Fortsätter listan (Nietzsche → Jung → Freud → nu Dostojevskij), med
+FÖRSTA gången forskning på specifika verk-kopplingar gjordes UPPFRONT
+istället för i efterhand — tre riktiga, fristående Petersonvideor
+hittades och lades in direkt: en "Brilliant Breakdown"-genomgång av
+Anteckningar från källarhålet, en hel föreläsning om Brott och straff,
+och en om Storinkvisitorn (Bröderna Karamazov). Fem verk totalt, tre
+med HELA verifierade passager (Dostojevskij dog 1881, fri text) —
+källarhålsmannens berömda öppningsmonolog, Raskolnikovs teori om "den
+extraordinäre människan", och Storinkvisitorns tal om frihetens
+olidliga tyngd. Onda andar och Idioten fick kortare, väletablerade
+citat utan lika djup verifiering.
+
+Sidoeffekt: personsidan visade två REDAN BEFINTLIGA Peterson-
+kopplingar till Dostojevskij (Kain & Abel- och Jakob-föreläsningarna i
+Biblical Series, båda om just Brott och straff) som fanns i databasen
+sedan tidigare men aldrig synts ihop med hans egna verk förrän nu.
+
+**Två självrättade buggar innan commit**: (1) de tre nya videorna lades
+först felaktigt under "Lex Fridman Podcast"-serien (kopierat från Fas
+61:s mönster utan eftertanke — de är inte Lex Fridman-avsnitt).
+Upptäckt vid granskning, flyttade till en ny, ärligare serie
+"Fristående YouTube-klipp". (2) Fixen syntes ändå inte live efter
+första om-seedningen — orsaken var att `petersonVideo.upsert()`
+använde `update: {}` (tomt objekt) för dessa rader, så när `seed`
+kördes om uppdaterades bara NYA rader korrekt, medan de redan
+existerande (felmärkta) videoraderna aldrig fick sitt `seriesId`
+skrivet om. Fixat genom att sätta `update: { seriesId:
+standaloneClipsSeries.id }` explicit, verifierat live efteråt.
+
 ## Fas 61 (2026-08-28): Fixa Jordan-emblem-buggen + citat-attribution + verifierade verk-kopplingar
 
 Direkt användarfeedback (skärmdump): Jordans emblem visades på ALLA
