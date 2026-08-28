@@ -28,6 +28,7 @@ import joshuaData from "@/data/bible-sv-1917/joshua.json";
 import secondSamuelData from "@/data/bible-sv-1917/2samuel.json";
 import firstKingsData from "@/data/bible-sv-1917/1kings.json";
 import numbersData from "@/data/bible-sv-1917/numbers.json";
+import judgesData from "@/data/bible-sv-1917/judges.json";
 
 export type BibleVerse = {
   chapter: number;
@@ -76,6 +77,7 @@ const BOOKS: Record<string, { data: Record<string, Record<string, string>>; sven
   "2 Samuel": { data: secondSamuelData as Record<string, Record<string, string>>, svenskt: "Andra Samuelsboken" },
   "1 Kings": { data: firstKingsData as Record<string, Record<string, string>>, svenskt: "Första Konungaboken" },
   Numbers: { data: numbersData as Record<string, Record<string, string>>, svenskt: "Fjärde Moseboken" },
+  Judges: { data: judgesData as Record<string, Record<string, string>>, svenskt: "Domarboken" },
 };
 
 // Extern länk till en fullständig, fri bibelläsare för samma översättning

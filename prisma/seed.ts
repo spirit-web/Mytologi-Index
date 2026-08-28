@@ -22,6 +22,7 @@ import joshuaCaptionsByCode from "./image-captions-joshua.json";
 import samuel2CaptionsByCode from "./image-captions-2samuel.json";
 import kings1CaptionsByCode from "./image-captions-1kings.json";
 import numbersCaptionsByCode from "./image-captions-numbers.json";
+import judgesCaptionsByCode from "./image-captions-judges.json";
 
 const prisma = new PrismaClient();
 
@@ -3932,6 +3933,143 @@ async function main() {
   });
   console.log(`Seedat Fjärde Moseboken: ${numbersStories.length} stories.`);
 
+  // --- Domarboken — Debora, Gideon, Simson -----------------------------
+  // NY 2026-08-27, se README Fas 49: Fas 2 av 7 i planen. De tre mest
+  // kända domarna: Debora och Barak (med Jael), Gideon (fläcken, de 300
+  // männen), och Simson (från födsel till Delila och tempelfallet).
+  const judgesBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "judges" } },
+    update: {},
+    create: { corpusId: bible.id, slug: "judges", name: "Domarboken", order: 21, testament: "old" },
+  });
+  const judgesCharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "deborah", name: "Debora" },
+    { slug: "barak", name: "Barak" },
+    { slug: "jael", name: "Jael" },
+    { slug: "gideon", name: "Gideon" },
+    { slug: "samson", name: "Simson" },
+  ];
+  const judgesCharacters: Record<string, { id: string }> = {};
+  for (const c of judgesCharacterDefs) {
+    judgesCharacters[c.slug] = await prisma.character.upsert({ where: { slug: c.slug }, update: {}, create: c });
+  }
+
+  type JudgesStoryDef = {
+    slug: string; title: string; startRef: string; endRef: string; orderInBook: number;
+    characterSlugs: string[]; themeSlugs: string[];
+  };
+  const judgesStories: JudgesStoryDef[] = [
+    {
+      slug: "deborah-and-barak",
+      title: "Debora, Barak och Jael",
+      startRef: "Judges 4:1", endRef: "Judges 4:24",
+      orderInBook: 1,
+      characterSlugs: ["deborah", "barak", "jael"],
+      themeSlugs: ["testing-of-faith", "hierarchy"],
+    },
+    {
+      slug: "gideon",
+      title: "Gideon och de 300 männen",
+      startRef: "Judges 6:1", endRef: "Judges 8:28",
+      orderInBook: 2,
+      characterSlugs: ["gideon"],
+      themeSlugs: ["testing-of-faith", "chaos-order"],
+    },
+    {
+      slug: "samson",
+      title: "Simson",
+      startRef: "Judges 13:1", endRef: "Judges 16:31",
+      orderInBook: 3,
+      characterSlugs: ["samson"],
+      themeSlugs: ["self-consciousness", "testing-of-faith"],
+    },
+  ];
+
+  for (const s of judgesStories) {
+    const storyData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: judgesBook.id, slug: s.slug } },
+      update: storyData,
+      create: { bookId: judgesBook.id, slug: s.slug, ...storyData },
+    });
+    for (const charSlug of s.characterSlugs) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: judgesCharacters[charSlug].id } },
+        update: {},
+        create: { storyId: story.id, characterId: judgesCharacters[charSlug].id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: themes[themeSlug].id } },
+        update: {},
+        create: { storyId: story.id, themeId: themes[themeSlug].id },
+      });
+    }
+  }
+
+  const judgesCaptions = judgesCaptionsByCode as Record<string, string[]>;
+  // "gideon" delar EN story-mapp mellan två käll-set (fläcken + striden),
+  // filerna döptes om till löpande order vid nedladdning (samma mönster
+  // som Josefs tre bildset i Genesis) — path bygger alltså på `order`.
+  const judgesImageSets: Array<{
+    storySlug: string; code: string; fileStart: number; fileEnd: number; orderStart: number;
+    renamedToOrder?: boolean; credit: string; creditUrl: string;
+  }> = [
+    { storySlug: "deborah-and-barak", code: "FB_Deborah_Barak", fileStart: 1, fileEnd: 20, orderStart: 1, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/deborah-barak/" },
+    { storySlug: "gideon", code: "FB_Gideon_Fleece", fileStart: 1, fileEnd: 19, orderStart: 1, renamedToOrder: true, credit: "FreeBibleimages.org, CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/gideon-fleece/" },
+    { storySlug: "gideon", code: "FB_Gideon_Midianites", fileStart: 1, fileEnd: 12, orderStart: 20, renamedToOrder: true, credit: "FreeBibleimages.org, CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/gideon-midianites/" },
+    { storySlug: "samson", code: "FB_LS_Samson", fileStart: 1, fileEnd: 9, orderStart: 1, credit: "Lambsongs / Jill Kemp & Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/ls-samson/" },
+  ];
+  for (const set of judgesImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: judgesBook.id, slug: set.storySlug } });
+    for (let fileNum = set.fileStart; fileNum <= set.fileEnd; fileNum++) {
+      const order = set.orderStart + (fileNum - set.fileStart);
+      const fileLabel = set.renamedToOrder ? order : fileNum;
+      const path = `/images/judges/${set.storySlug}/${String(fileLabel).padStart(2, "0")}.jpg`;
+      const caption = judgesCaptions[set.code]?.[fileNum - 1] || null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+  const judgesThumbnails: Record<string, number> = {
+    "deborah-and-barak": 13, // Sisera rusar mot striden i sin vagn
+    gideon: 8, // elden flammar upp ur klippan
+    samson: 3, // Simson dräper lejonet
+  };
+  for (const [slug, order] of Object.entries(judgesThumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: judgesBook.id, slug }, data: { thumbnailOrder: order } });
+  }
+
+  const portraitDeborah = await prisma.storyImage.findUniqueOrThrow({
+    where: { storyId_order: { storyId: (await prisma.story.findFirstOrThrow({ where: { bookId: judgesBook.id, slug: "deborah-and-barak" } })).id, order: 8 } },
+  });
+  await prisma.character.update({
+    where: { slug: "deborah" },
+    data: { portraitPath: portraitDeborah.path, portraitCredit: portraitDeborah.credit, portraitCreditUrl: portraitDeborah.creditUrl },
+  });
+
+  await prisma.book.update({
+    where: { id: judgesBook.id },
+    data: {
+      description:
+        "Cykeln som upprepas om och om igen mellan Josuas död och " +
+        "kungatidens början: folket avfaller från Gud, förtrycks av " +
+        "grannfolk, ropar om hjälp, och Gud reser upp en domare som " +
+        "räddar dem — tills domaren dör och cykeln börjar om. Tre av de " +
+        "mest kända domarna indexeras här: Debora och Barak (med Jaels " +
+        "dramatiska tältplugg), Gideon (fläcken, de 300 männen mot en " +
+        "övermäktig här), och Simson (den starke mannen med den enda " +
+        "svagheten).",
+      authorship: "Okänd författare, del av det deuteronomistiska historieverket — sammanställt/redigerat betydligt senare (troligen under kungatiden eller efter), byggt på äldre muntliga hjältesägner och lokala traditioner.",
+      traditions: "Judendom: del av \"Nevi'im\" (de tidigare profeterna). Kristendom: Debora, Barak, Gideon och Simson nämns alla i \"trons hjältegalleri\" (Hebr. 11:32) trots sina brister. Islam: ingen direkt motsvarighet till någon av de tre, men perioden mellan Moses och kungarna omnämns i allmänna termer i islamisk tradition.",
+    },
+  });
+  console.log(`Seedat Domarboken: ${judgesStories.length} stories.`);
+
   // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
@@ -6301,6 +6439,9 @@ async function main() {
     { bookSlug: "numbers", storySlug: "korahs-rebellion" },
     { bookSlug: "numbers", storySlug: "bronze-serpent" },
     { bookSlug: "numbers", storySlug: "balaams-donkey" },
+    { bookSlug: "judges", storySlug: "deborah-and-barak" },
+    { bookSlug: "judges", storySlug: "gideon" },
+    { bookSlug: "judges", storySlug: "samson" },
     { bookSlug: "joshua", storySlug: "battle-of-jericho" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
@@ -6338,6 +6479,7 @@ async function main() {
     { slug: "2-samuel", estimate: "Okänd författare — handlingen utspelar sig ca 1000-talet f.Kr., men boken sammanställdes troligen under eller efter kungatiden, med slutredaktion under/efter den babyloniska fångenskapen (ca 500-talet f.Kr.)." },
     { slug: "1-kings", estimate: "Okänd författare — handlingen utspelar sig ca 970-850-talet f.Kr., men boken sammanställdes troligen under eller efter kungatiden, med slutredaktion under/efter den babyloniska fångenskapen (ca 500-talet f.Kr.)." },
     { slug: "numbers", estimate: "Traditionellt Mose (ca 1200-talet f.Kr.) — moderna forskare ser den som en sammanvävning av flera äldre källor, slutredigerad betydligt senare." },
+    { slug: "judges", estimate: "Okänd författare — handlingen utspelar sig ca 1200-1050-talet f.Kr., men boken sammanställdes troligen under kungatiden eller senare." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },

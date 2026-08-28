@@ -70,6 +70,22 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 49 (2026-08-27): Domarboken — Debora, Gideon, Simson
+
+Fas 2 av 7 i planen. Tre berättelser: Debora, Barak och Jael (kap. 4,
+delar Sweet Publishings 20-bildsset), Gideon och de 300 männen (kap.
+6-8, ETT sammanhängande avsnitt byggt av TVÅ källset — fläcken
+(FB_Gideon_Fleece, 19 bilder) och striden (FB_Gideon_Midianites, 12
+bilder) — delar en story-mapp med filerna omdöpta till löpande
+visningsordning, samma mönster som Josefs tre bildset i Genesis), och
+Simson (kap. 13-16, Lambsongs). 52 automatfixade citat-kontamineringar
+plus tre manuellt fixade stragglare, inklusive en genuin DUBBLETT av
+`<verse name="28">` i källkorpusen (Dom. 16:28) där en tom
+fotnotsversion råkade skriva över den riktiga Simson-bönen vid
+extraktion — upptäckt via omvänd sökning efter versens verkliga
+position, första gången den bugvarianten setts denna session (skiljer
+sig från de tidigare "text-taggen nästlad fel"-buggarna).
+
 ## Fas 48 (2026-08-27): Fjärde Moseboken (Numeri) — ökenvandringens uppror och under
 
 Fas 1 av 7 i den plan användaren gav för att arbeta igenom resten av
