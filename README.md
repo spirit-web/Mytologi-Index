@@ -70,6 +70,17 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 52 (2026-08-27): Nehemja — murbygget
+
+Fas 5 av 7 i planen. En enda story (kap. 1-6, hela den sammanhängande
+berättelsen): Nehemja hör om Jerusalems ruiner, ber, får kung
+Artasastas tillstånd, reser dit och leder murbygget till ett slut på
+52 dagar trots Sanballats och Tobias hån, hot och mordkomplotter.
+Extraktionen var återigen helt ren — noll citat-kontamineringar,
+tredje gången det händer denna session (efter Numeri och delar av
+tidigare böcker). Två källset (16+23 bilder) delar en story-mapp,
+omnumrerade till löpande visningsordning.
+
 ## Fas 51 (2026-08-27): Andra Konungaboken — Elia/Elisa, Naaman, Hiskia och Sanherib
 
 Fas 4 av 7 i planen. Tre berättelser: Elias himmelsfärd (kap. 2,

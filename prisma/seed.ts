@@ -25,6 +25,7 @@ import numbersCaptionsByCode from "./image-captions-numbers.json";
 import judgesCaptionsByCode from "./image-captions-judges.json";
 import kings1Captions2ByCode from "./image-captions-1kings-2.json";
 import kings2CaptionsByCode from "./image-captions-2kings.json";
+import nehemiahCaptionsByCode from "./image-captions-nehemiah.json";
 
 const prisma = new PrismaClient();
 
@@ -4277,6 +4278,77 @@ async function main() {
   });
   console.log(`Seedat Andra Konungaboken: ${kings2Stories.length} stories.`);
 
+  // --- Nehemja — murbygget ------------------------------------------
+  // NY 2026-08-27, se README Fas 52: Fas 5 av 7 i planen. En enda,
+  // sammanhängande story (kap. 1-6): Nehemja hör nyheten, ber, får
+  // kungens tillstånd, reser till Jerusalem och bygger upp muren trots
+  // Sanballats och Tobias motstånd — färdig på 52 dagar.
+  const nehemiahBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "nehemiah" } },
+    update: {},
+    create: { corpusId: bible.id, slug: "nehemiah", name: "Nehemja", order: 23, testament: "old" },
+  });
+  const nehemiahChar = await prisma.character.upsert({ where: { slug: "nehemiah" }, update: {}, create: { slug: "nehemiah", name: "Nehemja" } });
+  const wallStory = await prisma.story.upsert({
+    where: { bookId_slug: { bookId: nehemiahBook.id, slug: "nehemiah-rebuilds-the-wall" } },
+    update: { title: "Nehemja bygger upp muren", startRef: "Nehemiah 1:1", endRef: "Nehemiah 6:19", orderInBook: 1 },
+    create: { bookId: nehemiahBook.id, slug: "nehemiah-rebuilds-the-wall", title: "Nehemja bygger upp muren", startRef: "Nehemiah 1:1", endRef: "Nehemiah 6:19", orderInBook: 1 },
+  });
+  await prisma.storyCharacter.upsert({
+    where: { storyId_characterId: { storyId: wallStory.id, characterId: nehemiahChar.id } },
+    update: {},
+    create: { storyId: wallStory.id, characterId: nehemiahChar.id },
+  });
+  await prisma.storyTheme.upsert({
+    where: { storyId_themeId: { storyId: wallStory.id, themeId: themes["testing-of-faith"].id } },
+    update: {},
+    create: { storyId: wallStory.id, themeId: themes["testing-of-faith"].id },
+  });
+  await prisma.storyTheme.upsert({
+    where: { storyId_themeId: { storyId: wallStory.id, themeId: chaosOrderTheme.id } },
+    update: {},
+    create: { storyId: wallStory.id, themeId: chaosOrderTheme.id },
+  });
+  const nehemiahCaptions = nehemiahCaptionsByCode as Record<string, string[]>;
+  const nehemiahImageSets: Array<{ code: string; count: number; orderStart: number }> = [
+    { code: "FB_Nehemiah_Part_1", count: 16, orderStart: 1 },
+    { code: "FB_Nehemiah_Part_2", count: 23, orderStart: 17 },
+  ];
+  for (const set of nehemiahImageSets) {
+    for (let fileNum = 1; fileNum <= set.count; fileNum++) {
+      const order = set.orderStart + (fileNum - 1);
+      const path = `/images/nehemiah/nehemiah-rebuilds-the-wall/${String(order).padStart(2, "0")}.jpg`;
+      const caption = nehemiahCaptions[set.code]?.[fileNum - 1] || null;
+      const creditUrl = set.code === "FB_Nehemiah_Part_1"
+        ? "https://www.freebibleimages.org/illustrations/nehemiah-1/"
+        : "https://www.freebibleimages.org/illustrations/nehemiah-2/";
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: wallStory.id, order } },
+        update: { path, caption, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl },
+        create: { storyId: wallStory.id, order, path, caption, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl },
+      });
+    }
+  }
+  await prisma.story.update({ where: { id: wallStory.id }, data: { thumbnailOrder: 27 } }); // halva bygger, halva bevakar med vapen
+
+  await prisma.book.update({
+    where: { id: nehemiahBook.id },
+    data: {
+      description:
+        "En enda, sammanhängande berättelse (kap. 1-6): Nehemja, judisk " +
+        "munskänk åt den persiske kungen, hör att Jerusalems murar " +
+        "fortfarande ligger i ruiner generationer efter den babyloniska " +
+        "fångenskapen. Han ber, får kungens tillstånd och medel, reser " +
+        "till Jerusalem och leder återuppbyggnaden av muren — färdig på " +
+        "bara 52 dagar, trots ständigt motstånd, hån och mordkomplotter " +
+        "från grannfolkens ledare Sanballat och Tobia. Bokens senare " +
+        "kapitel (bl.a. Esras lagläsning, kap. 8) indexeras inte här.",
+      authorship: "Traditionellt Nehemja själv (stora delar är skrivna i jag-form, en \"Nehemja-memoar\") — moderna forskare ser boken som sammanställd tillsammans med Esra, av en redaktör som använt Nehemjas egna uppteckningar som källa, ca 400-talet f.Kr.",
+      traditions: "Judendom: en av \"Ketuvim\" (Skrifterna), ofta räknad som en enda bok tillsammans med Esra i den judiska traditionen. Kristendom: Nehemja läses ofta som ett föredöme i praktiskt, uthålligt ledarskap under motstånd. Islam: ingen direkt motsvarighet, men återuppbyggnaden av Jerusalem efter fångenskapen omnämns i allmänna termer i viss islamisk historieskrivning.",
+    },
+  });
+  console.log("Seedat Nehemja: 1 story.");
+
   // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
@@ -6654,6 +6726,7 @@ async function main() {
     { bookSlug: "2-kings", storySlug: "elijahs-ascension" },
     { bookSlug: "2-kings", storySlug: "naaman-healed" },
     { bookSlug: "2-kings", storySlug: "hezekiah-and-sennacherib" },
+    { bookSlug: "nehemiah", storySlug: "nehemiah-rebuilds-the-wall" },
     { bookSlug: "joshua", storySlug: "battle-of-jericho" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
@@ -6693,6 +6766,7 @@ async function main() {
     { slug: "numbers", estimate: "Traditionellt Mose (ca 1200-talet f.Kr.) — moderna forskare ser den som en sammanvävning av flera äldre källor, slutredigerad betydligt senare." },
     { slug: "judges", estimate: "Okänd författare — handlingen utspelar sig ca 1200-1050-talet f.Kr., men boken sammanställdes troligen under kungatiden eller senare." },
     { slug: "2-kings", estimate: "Okänd författare — handlingen utspelar sig ca 850-560-talet f.Kr., men boken fick sin slutredaktion under/efter den babyloniska fångenskapen (ca 500-talet f.Kr.)." },
+    { slug: "nehemiah", estimate: "Traditionellt Nehemja själv (ca 440-talet f.Kr., baserat på \"Nehemja-memoaren\") — moderna forskare daterar slutredigeringen ofta till ca 400-talet f.Kr." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },
