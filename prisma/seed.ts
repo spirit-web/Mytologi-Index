@@ -5293,6 +5293,153 @@ async function main() {
   }
   console.log(`Seedat Friedrich Nietzsche: ${nietzscheWorks.length} verk.`);
 
+  // --- Fas 59: Carl Jung ------------------------------------------------
+  // Samma mönster som Nietzsche ovan. Jungs verk är fortfarande copyright-
+  // skyddade (död 1961) — citaten är därför medvetet INTE en specifik
+  // publicerad översättares exakta ordalydelse, utan egna korta, fria
+  // svenska återgivningar av kända, ofta citerade tankar (samma princip
+  // som redan används för bibelcitat/andra korta återgivningar i appen).
+  // Petersons kopplingar grundade i: hans akademiska specialisering inom
+  // personlighetspsykologi (Jungs typologi ligger till grund för Big
+  // Five/Myers-Briggs-traditionen han själv forskat inom), återkommande
+  // "skuggan"-referenser (redan en Reference-rad, Pinocchio-exemplet),
+  // hans Bibelföreläsningars upprepade tolkning av Kristus som ett
+  // arketypiskt uttryck för Jungs "Självet" (Aion), samt "Maps of
+  // Meaning"-föreläsningarnas försvar av det kollektiva omedvetna.
+  const jungChar = await prisma.character.upsert({
+    where: { slug: "carl-jung" },
+    update: {},
+    create: { slug: "carl-jung", name: "Carl Jung" },
+  });
+  const jungBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: influencesCorpus.id, slug: "jung" } },
+    update: {},
+    create: {
+      corpusId: influencesCorpus.id,
+      slug: "jung",
+      name: "Carl Jung",
+      order: 2,
+      description:
+        "Schweizisk psykiater (1875–1961) vars idéer om arketyper, det " +
+        "kollektiva omedvetna och individuation utgör grundstommen i " +
+        "Petersons sätt att läsa myter och religiösa berättelser " +
+        "psykologiskt. Peterson disputerade inom och har själv forskat i " +
+        "personlighetspsykologi, ett fält som i hög grad växte fram ur " +
+        "Jungs typologi.",
+      authorship: "Carl Gustav Jung, schweizisk psykiater, grundare av analytisk psykologi. Ursprungligen Sigmund Freuds närmaste medarbetare, bröt med honom 1913 efter oenighet om libidons natur och det omedvetnas innehåll.",
+      traditions: "Central i djuppsykologin/analytisk psykologi, med stort inflytande på jämförande religionsvetenskap (bl.a. via Mircea Eliade, redan tungt refererad i appen), mytforskning och personlighetspsykologi (Myers-Briggs/Big Five).",
+    },
+  });
+
+  const jungWorks: ThinkerWorkDef[] = [
+    {
+      order: 1,
+      slug: "man-and-his-symbols",
+      title: "Människan och hennes symboler (1964)",
+      quote: "Arketypernas innehåll kan anta groteska och skräckinjagande former i drömmar och fantasier.",
+      summary:
+        "Jungs sista verk, färdigställt strax innan hans död och medvetet " +
+        "skrivet för en bred, icke-specialiserad publik — den naturliga " +
+        "ingången till hans tänkande. Går igenom arketyper, drömtydning " +
+        "och det kollektiva omedvetna i tillgänglig form. Petersons egna " +
+        "föreläsningar om symboltolkning (bl.a. i Maps of Meaning-serien, " +
+        "där han uttryckligen försvarar Jungs kollektiva omedvetna mot " +
+        "kritiker) bygger direkt vidare på just den här typen av " +
+        "populärvetenskapliga sammanfattning.",
+    },
+    {
+      order: 2,
+      slug: "the-red-book",
+      title: "Den röda boken (skriven 1914–1930, publ. 2009)",
+      quote: "Den som blickar utåt drömmer; den som blickar inåt vaknar.",
+      summary:
+        "Jungs mest personliga och länge outgivna verk — ett rikt " +
+        "illustrerat, handskrivet dokument över hans egen \"konfrontation " +
+        "med det omedvetna\" efter brottet med Freud 1913, där han genom " +
+        "aktiv fantasi utvecklade grunderna för arketyp-teorin och " +
+        "individuationsprocessen. Peterson återkommer ofta till just idén " +
+        "om att medvetet möta och integrera sitt eget omedvetna " +
+        "(\"skuggan\") snarare än att förneka det — samma tanke han " +
+        "använder för att förklara varför Räven, Katten och Kusken i " +
+        "Pinocchio till slut avslöjas som något demoniskt (se hans " +
+        "Maps of Meaning-föreläsning om just detta, redan länkad i appen).",
+    },
+    {
+      order: 3,
+      slug: "psychological-types",
+      title: "Psykologiska typer (1921)",
+      quote: "Varje individ är ett undantag från regeln.",
+      summary:
+        "Jungs introduktion av introvert och extrovert som grundläggande " +
+        "psykologiska attityder — arbetet som, via senare vidareutveckling " +
+        "(Myers-Briggs, och därefter Big Five-modellen), lade grunden för " +
+        "hela det moderna fältet personlighetspsykologi. Peterson har " +
+        "själv forskat och undervisat inom personlighetspsykologi (bl.a. " +
+        "Big Five) under sin akademiska karriär vid Harvard och Toronto — " +
+        "en direkt vetenskaplig arvslinje tillbaka till just det här " +
+        "verket.",
+    },
+    {
+      order: 4,
+      slug: "aion",
+      title: "Aion (1951)",
+      quote: "Kristus framstår som en symbol för Självet.",
+      summary:
+        "Jungs djupaste utforskning av Kristus-gestalten som en psykologisk " +
+        "arketyp för \"Självet\" — den fullt integrerade, hela människan " +
+        "som individuationsprocessen strävar mot. Det här är den mest " +
+        "direkta bryggan mellan Jung och Petersons egna " +
+        "Bibelföreläsningar, där han upprepade gånger tolkar Kristus-" +
+        "gestalten psykologiskt snarare än enbart teologiskt — som ett " +
+        "mönster för mänsklig moralisk fullkomning, inte bara en historisk " +
+        "person.",
+    },
+    {
+      order: 5,
+      slug: "symbols-of-transformation",
+      title: "Symboler och transformation (1912)",
+      quote: "Myten är det omedvetnas offentliga dröm.",
+      summary:
+        "Boken (ursprungligen \"Wandlungen und Symbole der Libido\") vars " +
+        "tolkning av en ung kvinnas fantasier via jämförande mytologi " +
+        "orsakade den slutgiltiga brytningen med Freud — Jung vägrade " +
+        "reducera libido till enbart sexualitet och insisterade istället " +
+        "på en bredare, symbolisk livskraft uttryckt genom myter över hela " +
+        "världen. Grundstenen för hela Petersons metod att läsa myter och " +
+        "bibelberättelser som kartor över psykologisk erfarenhet, inte " +
+        "bokstavlig historia.",
+    },
+    {
+      order: 6,
+      slug: "memories-dreams-reflections",
+      title: "Minnen, drömmar, tankar (1962)",
+      quote: "Mitt liv är historien om ett omedvetet som förverkligade sig själv.",
+      summary:
+        "Jungs egen, av Aniela Jaffé nedtecknade självbiografi, utgiven " +
+        "postumt — hans sista ord om det egna livet, sammanfattat inte som " +
+        "en kronologi av yttre händelser utan som en inre resa. Sätter " +
+        "resten av hans författarskap i sammanhang: att individuation " +
+        "(att bli den man verkligen är) var för Jung själv inte bara en " +
+        "teori utan ett livslångt personligt projekt — samma ram Peterson " +
+        "själv lånar när han beskriver psykologisk mognad som en aktiv, " +
+        "ansvarsfull process snarare än något som bara \"händer\".",
+    },
+  ];
+
+  for (const w of jungWorks) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: jungBook.id, slug: w.slug } },
+      update: { title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+      create: { bookId: jungBook.id, slug: w.slug, title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+    });
+    await prisma.storyCharacter.upsert({
+      where: { storyId_characterId: { storyId: story.id, characterId: jungChar.id } },
+      update: {},
+      create: { storyId: story.id, characterId: jungChar.id, role: "författare" },
+    });
+  }
+  console.log(`Seedat Carl Jung: ${jungWorks.length} verk.`);
+
   // --- Fas 14: Beyond Order: 12 More Rules for Life (2021) -----------
   // Uppföljaren till 12 Rules for Life — samma metod: inget digitalt
   // exemplar/transkript tillgängligt, så varje regels citat är

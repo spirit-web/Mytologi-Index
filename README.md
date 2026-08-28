@@ -70,6 +70,23 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 59 (2026-08-28): Carl Jung i "Källor & influenser"
+
+Samma mönster som Nietzsche (Fas 58). Sex verk: Människan och hennes
+symboler (Jungs sista, mest tillgängliga bok), Den röda boken (hans
+mest personliga, länge outgivna huvudverk), Psykologiska typer
+(grunden till Big Five/Myers-Briggs), Aion (Kristus som arketyp för
+Självet — den mest direkta bryggan till Petersons Bibelföreläsningar),
+Symboler och transformation (boken som orsakade brottet med Freud),
+och Minnen, drömmar, tankar (självbiografin). Citaten är MEDVETET
+egna, korta svenska återgivningar snarare än en specifik publicerad
+översättares exakta ordalydelse, eftersom Jungs verk (död 1961)
+fortfarande är copyrightskyddade — till skillnad från Nietzsche (död
+1900, fri text). Personsidan `/personer/carl-jung` visar nu både hans
+egna verk OCH de två redan existerande Reference-kopplingarna
+(Pinocchio-skuggan, arketyp-begreppet) på samma sida, helt utan ny
+kod.
+
 ## Fas 58 (2026-08-28): Ny korpus "Källor & influenser" — Friedrich Nietzsche
 
 Första fasen i den nya "utanför Bibeln"-satsningen, direkt efter
