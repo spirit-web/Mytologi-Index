@@ -27,6 +27,7 @@ import kings1Captions2ByCode from "./image-captions-1kings-2.json";
 import kings2CaptionsByCode from "./image-captions-2kings.json";
 import nehemiahCaptionsByCode from "./image-captions-nehemiah.json";
 import actsCaptionsByCode from "./image-captions-acts.json";
+import annunciationCaptionsByCode from "./image-captions-luke-annunciation.json";
 
 const prisma = new PrismaClient();
 
@@ -1520,6 +1521,9 @@ async function main() {
     // NY 2026-08-27: en av de två lärjungarna på vägen till Emmaus,
     // uttryckligen namngiven i Luk. 24:18 (den andre förblir onämnd).
     { slug: "kleopas", name: "Kleopas" },
+    // NY 2026-08-27, se README Fas 54: ärkeängeln som bebådar Jesu
+    // födelse för Maria.
+    { slug: "gabriel", name: "Gabriel" },
   ];
   const ntCharacters: Record<string, { id: string }> = {};
   for (const c of ntCharacterDefs) {
@@ -1979,69 +1983,79 @@ async function main() {
   };
   const lukeStories: LukeStoryDef[] = [
     {
+      // NY 2026-08-27, se README Fas 54: Fas 7 av 7 i planen (den enda
+      // med "Ev."-förbehåll i din lista — men du bad mig fortsätta med
+      // hela listan, så den räknas som bekräftad). Kronologiskt Lukas
+      // allra första scen — måste därför in FÖRE julberättelsen, vilket
+      // knuffar allt annat +1 i orderInBook.
+      slug: "annunciation", title: "Gabriels bebådelse",
+      startRef: "Luke 1:26", endRef: "Luke 1:38", orderInBook: 1,
+      characterSlugs: ["jesus", "maria", "gabriel"], themeSlugs: ["covenant", "testing-of-faith"],
+    },
+    {
       // NY 2026-08-27: Lukas egen, mest ikoniska julberättelse (herdarna,
       // ängla­skaran, krubban) — skiljer sig helt från Matteus vinkel
       // (de vise männen) och läggs till som en egen berättelse trots att
       // Matteus redan har "Jesu födelse", eftersom det är en annan scen
       // med annan bildkälla och annat fokus.
       slug: "shepherds-and-the-birth-of-jesus", title: "Herdarna och Jesu födelse",
-      startRef: "Luke 2:1", endRef: "Luke 2:20", orderInBook: 1,
+      startRef: "Luke 2:1", endRef: "Luke 2:20", orderInBook: 2,
       characterSlugs: ["jesus", "maria", "josef-ny"], themeSlugs: [],
     },
     {
       // NY 2026-08-27: den enda bevarade episoden ur Jesu barndom/
       // ungdom i något evangelium.
       slug: "jesus-in-the-temple-at-twelve", title: "Tolvårige Jesus i templet",
-      startRef: "Luke 2:41", endRef: "Luke 2:52", orderInBook: 2,
+      startRef: "Luke 2:41", endRef: "Luke 2:52", orderInBook: 3,
       characterSlugs: ["jesus", "maria", "josef-ny"], themeSlugs: [],
     },
     {
       slug: "good-samaritan", title: "Den barmhärtige samariten",
-      startRef: "Luke 10:25", endRef: "Luke 10:37", orderInBook: 3,
+      startRef: "Luke 10:25", endRef: "Luke 10:37", orderInBook: 4,
       characterSlugs: ["jesus"], themeSlugs: ["compassion"],
     },
     {
       // NY 2026-08-25: direkt efterföljande scen i samma kapitel.
       slug: "mary-and-martha", title: "Maria och Marta",
-      startRef: "Luke 10:38", endRef: "Luke 10:42", orderInBook: 4,
+      startRef: "Luke 10:38", endRef: "Luke 10:42", orderInBook: 5,
       characterSlugs: ["jesus", "maria-av-betania", "marta"], themeSlugs: [],
     },
     {
       // NY 2026-08-25: samma "förlorat och återfunnet"-trilogi (15:1-32)
       // som förlorade sonen, de två kortare liknelserna direkt före den.
       slug: "lost-sheep-and-coin", title: "Det förlorade fåret och det förlorade myntet",
-      startRef: "Luke 15:1", endRef: "Luke 15:10", orderInBook: 5,
+      startRef: "Luke 15:1", endRef: "Luke 15:10", orderInBook: 6,
       characterSlugs: ["jesus"], themeSlugs: ["forgiveness"],
     },
     {
       slug: "prodigal-son", title: "Liknelsen om den förlorade sonen",
-      startRef: "Luke 15:11", endRef: "Luke 15:32", orderInBook: 6,
+      startRef: "Luke 15:11", endRef: "Luke 15:32", orderInBook: 7,
       characterSlugs: ["jesus"], themeSlugs: ["forgiveness"],
     },
     {
       // NY 2026-08-25: Abraham återknyter till samma Character-rad som
       // i Genesis.
       slug: "rich-man-and-lazarus", title: "Den rike mannen och Lasarus",
-      startRef: "Luke 16:19", endRef: "Luke 16:31", orderInBook: 7,
+      startRef: "Luke 16:19", endRef: "Luke 16:31", orderInBook: 8,
       characterSlugs: ["jesus", "abraham"], themeSlugs: ["compassion"],
     },
     {
       // NY 2026-08-27: en av Petersons favoritteman — självbedrägeri och
       // falsk rättfärdighet kontra ärlig ödmjukhet.
       slug: "pharisee-and-tax-collector", title: "Liknelsen om fariséen och publikanen",
-      startRef: "Luke 18:9", endRef: "Luke 18:14", orderInBook: 8,
+      startRef: "Luke 18:9", endRef: "Luke 18:14", orderInBook: 9,
       characterSlugs: ["jesus"], themeSlugs: ["self-consciousness"],
     },
     {
       slug: "zacchaeus", title: "Sackeus i trädet",
-      startRef: "Luke 19:1", endRef: "Luke 19:10", orderInBook: 9,
+      startRef: "Luke 19:1", endRef: "Luke 19:10", orderInBook: 10,
       characterSlugs: ["jesus", "sackeus"], themeSlugs: ["forgiveness"],
     },
     {
       // NY 2026-08-27: en av Lukas mest älskade berättelser, unik för
       // detta evangelium — den uppståndne Jesus okänd tills brödet bryts.
       slug: "road-to-emmaus", title: "Vandringen till Emmaus",
-      startRef: "Luke 24:13", endRef: "Luke 24:35", orderInBook: 10,
+      startRef: "Luke 24:13", endRef: "Luke 24:35", orderInBook: 11,
       characterSlugs: ["jesus", "kleopas"], themeSlugs: ["testing-of-faith"],
     },
   ];
@@ -2069,7 +2083,7 @@ async function main() {
     }
   }
 
-  const lukeCaptions = lukeCaptionsByCode as Record<string, string[]>;
+  const lukeCaptions = { ...lukeCaptionsByCode, ...annunciationCaptionsByCode } as Record<string, string[]>;
   const lukeImageSets: Array<{ storySlug: string; code: string; count: number; offset?: number; credit: string; creditUrl: string }> = [
     { storySlug: "good-samaritan", code: "FB_LS_Good_Samaritan", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-good-samaritan/" },
     { storySlug: "prodigal-son", code: "FB_LS_Lost_Son", count: 9, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-lost-son/" },
@@ -2085,6 +2099,8 @@ async function main() {
     { storySlug: "jesus-in-the-temple-at-twelve", code: "FB_LS_Lost_Temple", count: 8, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-lost-temple/" },
     { storySlug: "pharisee-and-tax-collector", code: "FB_Pharisee_TaxCollector", count: 6, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://freebibleimages.org/illustrations/pharisee-tax-collector/" },
     { storySlug: "road-to-emmaus", code: "FB_LS_Emmaus", count: 8, ...lambsongsCredit, creditUrl: "https://www.freebibleimages.org/illustrations/ls-emmaus/" },
+    // NY 2026-08-27, se README Fas 54.
+    { storySlug: "annunciation", code: "FB_LS_Mary_Angel", count: 9, ...lambsongsCredit, creditUrl: "https://freebibleimages.org/illustrations/ls-mary-angel/" },
   ];
   for (const set of lukeImageSets) {
     const story = await prisma.story.findFirstOrThrow({ where: { bookId: luke.id, slug: set.storySlug } });
@@ -2126,6 +2142,7 @@ async function main() {
     "jesus-in-the-temple-at-twelve": 3, // pojken Jesus omgiven av de lärde i templet
     "pharisee-and-tax-collector": 5, // publikanen ber med sänkt blick
     "road-to-emmaus": 7, // brödet bryts — ögonblicket de känner igen Jesus
+    annunciation: 4, // Gabriel talar till en förskräckt Maria
   };
   for (const [slug, order] of Object.entries(lukeThumbnails)) {
     await prisma.story.updateMany({ where: { bookId: luke.id, slug }, data: { thumbnailOrder: order } });
@@ -6865,6 +6882,7 @@ async function main() {
     { bookSlug: "acts", storySlug: "stephen-martyred" },
     { bookSlug: "acts", storySlug: "pauls-conversion" },
     { bookSlug: "acts", storySlug: "paul-and-silas-in-prison" },
+    { bookSlug: "luke", storySlug: "annunciation" },
     { bookSlug: "joshua", storySlug: "battle-of-jericho" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
