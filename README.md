@@ -70,6 +70,17 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 50 (2026-08-27): Första Konungaboken färdigställd — Saba och rikets splittring
+
+Fas 3 av 7 i planen — färdigställer Första Konungaboken (Fas 47
+lämnade dessa två medvetet därhän). Drottningen av Saba (kap. 10) —
+ren text, inget AI-tillåtet bildset hittat trots förnyad sökning.
+Rikets splittring (kap. 11-12) — Salomos avfall, Jerobeams profetia
+och uppror, Rehabeams dårskap, de tio stammarnas utbrytning och
+guldkalvarna i Betel/Dan. 25 bilder (Sweet Publishing, CC BY-SA).
+31 automatfixade + 3 manuellt fixade citat-kontamineringar, en
+fullständigt återskapad förlorad vers (11:36).
+
 ## Fas 49 (2026-08-27): Domarboken — Debora, Gideon, Simson
 
 Fas 2 av 7 i planen. Tre berättelser: Debora, Barak och Jael (kap. 4,

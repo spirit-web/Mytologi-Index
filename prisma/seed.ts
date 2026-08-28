@@ -23,6 +23,7 @@ import samuel2CaptionsByCode from "./image-captions-2samuel.json";
 import kings1CaptionsByCode from "./image-captions-1kings.json";
 import numbersCaptionsByCode from "./image-captions-numbers.json";
 import judgesCaptionsByCode from "./image-captions-judges.json";
+import kings1Captions2ByCode from "./image-captions-1kings-2.json";
 
 const prisma = new PrismaClient();
 
@@ -4070,6 +4071,87 @@ async function main() {
   });
   console.log(`Seedat Domarboken: ${judgesStories.length} stories.`);
 
+  // --- Första Konungaboken, forts. — Saba och rikets splittring --------
+  // NY 2026-08-27, se README Fas 50: Fas 3 av 7 i planen — färdigställer
+  // Första Konungaboken (Fas 47 lämnade dessa två medvetet därhän).
+  const jeroboamChar = await prisma.character.upsert({ where: { slug: "jeroboam" }, update: {}, create: { slug: "jeroboam", name: "Jerobeam" } });
+  const rehoboamChar = await prisma.character.upsert({ where: { slug: "rehoboam" }, update: {}, create: { slug: "rehoboam", name: "Rehabeam" } });
+
+  const shebaStory = await prisma.story.upsert({
+    where: { bookId_slug: { bookId: kings1Book.id, slug: "queen-of-sheba" } },
+    update: { title: "Drottningen av Saba besöker Salomo", startRef: "1 Kings 10:1", endRef: "1 Kings 10:13", orderInBook: 5 },
+    create: { bookId: kings1Book.id, slug: "queen-of-sheba", title: "Drottningen av Saba besöker Salomo", startRef: "1 Kings 10:1", endRef: "1 Kings 10:13", orderInBook: 5 },
+  });
+  await prisma.storyCharacter.upsert({
+    where: { storyId_characterId: { storyId: shebaStory.id, characterId: kings1Characters["solomon"].id } },
+    update: {},
+    create: { storyId: shebaStory.id, characterId: kings1Characters["solomon"].id },
+  });
+  await prisma.storyTheme.upsert({
+    where: { storyId_themeId: { storyId: shebaStory.id, themeId: themes["hierarchy"].id } },
+    update: {},
+    create: { storyId: shebaStory.id, themeId: themes["hierarchy"].id },
+  });
+  // Ren text — inget AI-tillåtet bildset hittat (närmaste träff, "Solomon
+  // the Temple builder", har AI-adaptationer förbjudna, se Fas 47).
+
+  const kingdomSplitStory = await prisma.story.upsert({
+    where: { bookId_slug: { bookId: kings1Book.id, slug: "kingdom-divided" } },
+    update: { title: "Rikets splittring", startRef: "1 Kings 11:1", endRef: "1 Kings 12:33", orderInBook: 6 },
+    create: { bookId: kings1Book.id, slug: "kingdom-divided", title: "Rikets splittring", startRef: "1 Kings 11:1", endRef: "1 Kings 12:33", orderInBook: 6 },
+  });
+  for (const charSlug of ["solomon"] as const) {
+    await prisma.storyCharacter.upsert({
+      where: { storyId_characterId: { storyId: kingdomSplitStory.id, characterId: kings1Characters[charSlug].id } },
+      update: {},
+      create: { storyId: kingdomSplitStory.id, characterId: kings1Characters[charSlug].id },
+    });
+  }
+  for (const char of [jeroboamChar, rehoboamChar]) {
+    await prisma.storyCharacter.upsert({
+      where: { storyId_characterId: { storyId: kingdomSplitStory.id, characterId: char.id } },
+      update: {},
+      create: { storyId: kingdomSplitStory.id, characterId: char.id },
+    });
+  }
+  await prisma.storyTheme.upsert({
+    where: { storyId_themeId: { storyId: kingdomSplitStory.id, themeId: chaosOrderTheme.id } },
+    update: {},
+    create: { storyId: kingdomSplitStory.id, themeId: chaosOrderTheme.id },
+  });
+  await prisma.storyTheme.upsert({
+    where: { storyId_themeId: { storyId: kingdomSplitStory.id, themeId: themes["hierarchy"].id } },
+    update: {},
+    create: { storyId: kingdomSplitStory.id, themeId: themes["hierarchy"].id },
+  });
+
+  const kings1Captions2 = kings1Captions2ByCode as Record<string, string[]>;
+  for (let fileNum = 1; fileNum <= 25; fileNum++) {
+    const path = `/images/1-kings/kingdom-divided/${String(fileNum).padStart(2, "0")}.jpg`;
+    const caption = kings1Captions2["FB_Rehoboam_Jeroboam"]?.[fileNum - 1] || null;
+    await prisma.storyImage.upsert({
+      where: { storyId_order: { storyId: kingdomSplitStory.id, order: fileNum } },
+      update: { path, caption, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/rehoboam-jeroboam/" },
+      create: { storyId: kingdomSplitStory.id, order: fileNum, path, caption, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/rehoboam-jeroboam/" },
+    });
+  }
+  await prisma.story.update({ where: { id: kingdomSplitStory.id }, data: { thumbnailOrder: 8 } }); // Ahia river sin mantel i tolv delar
+
+  await prisma.book.update({
+    where: { id: kings1Book.id },
+    data: {
+      description:
+        "Salomos glansfulla start — visheten, templet, Drottningen av " +
+        "Sabas besök — vänder mot slutet: hans utländska hustrur leder " +
+        "honom bort från Gud, riket rivs itu efter hans död, och Elia-" +
+        "cykelns två mest kända episoder (Karmel, Horeb) utspelar sig " +
+        "mot den splittringens bakgrund.",
+      authorship: "Okänd författare, del av det deuteronomistiska historieverket — sammanställt/redigerat under eller efter den babyloniska fångenskapen (ca 500-talet f.Kr.), byggt på äldre kungliga krönikor och profetberättelser.",
+      traditions: "Judendom: del av \"Nevi'im\" (de tidigare profeterna). Kristendom: Elia förknippas med Johannes Döparen (Matt. 11:14) och uppträder tillsammans med Mose vid Jesu förklaring på berget (Matt. 17:3); Jesus nämner Drottningen av Saba som ett föredöme (Matt. 12:42). Islam: Sulayman (Salomo) och Ilyas (Elia) är båda erkända profeter i Koranen — mötet med drottningen av Saba (Bilqis) återges utförligt i sura 27 (an-Naml).",
+    },
+  });
+  console.log("Seedat Första Konungaboken, del 2: 2 stories till (Saba + rikets splittring).");
+
   // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
@@ -6442,6 +6524,8 @@ async function main() {
     { bookSlug: "judges", storySlug: "deborah-and-barak" },
     { bookSlug: "judges", storySlug: "gideon" },
     { bookSlug: "judges", storySlug: "samson" },
+    { bookSlug: "1-kings", storySlug: "queen-of-sheba" },
+    { bookSlug: "1-kings", storySlug: "kingdom-divided" },
     { bookSlug: "joshua", storySlug: "battle-of-jericho" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
