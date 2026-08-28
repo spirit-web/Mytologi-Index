@@ -70,6 +70,43 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 46 (2026-08-27): Andra Samuelsboken — Davids kungadöme
+
+Fortsätter listan över "starka kandidater", naturlig fortsättning på
+Första Samuelsboken (Fas 42). Fem berättelser, arton bibelkapitel
+extraherade (1, 5-7, 11-13, 15-18), 88 automatfixade + 9 manuellt
+fixade citat-kontamineringar, en manuellt insatt saknad kolon (13:1,
+källfelet fanns redan i XML-korpusen) och en missad `HERRES`-variant
+(6:11) som normaliseringsscriptets vanliga mönster inte fångade:
+
+- **David sörjer Saul och Jonatan** (kap. 1) — ren text, inget
+  AI-tillåtet bildset hittat för klagosången.
+- **David blir kung — arken förs till Jerusalem** (kap. 5-6) — Ussas
+  död, David dansar inför arken, Mikals förakt. 19 bilder (Sweet
+  Publishing, CC BY-SA).
+- **Guds förbund med David** (kap. 7) — Natans profetia om en evig
+  kungaätt (den messianska källtexten). Ren text.
+- **David och Batseba** (kap. 11-12) — inkl. Natans lammparabel och
+  Salomos födelse. 20 bilder (Sweet Publishing, CC BY-SA), tas upp
+  tydligt men ej explicit.
+- **Absaloms uppror** (kap. 13-18) — EN sammanhängande story från
+  Amnon & Tamar till Absaloms död, samma mönster som "Josef och hans
+  bröder". 25 bilder (Sweet Publishing, CC BY-SA).
+
+Nya karaktärer: Batseba, Natan, Uria, Absalom, Amnon, Joab, Mikal,
+samt "Tamar (Davids dotter)" — egen slug eftersom "tamar" redan
+pekar på Judas sonhustru från Första Moseboken 38 (Fas 44), som är
+en annan person med samma namn.
+
+**Bugfix (samma fas):** bok-sidans radlayout klippte fel bort
+bokprefixet ur slutreferensen — regexen letade efter "första siffran
+i strängen" för att strippa bort bokens namn, vilket fungerade för
+"Genesis 34:31" men inte för boknamn som redan BÖRJAR med en siffra
+("2 Samuel 1:27" visade hela "2 Samuel 1:1–2 Samuel 1:27" istället
+för "2 Samuel 1:1–1:27"). Påverkade även Första Samuelsboken. Fixat
+i `src/app/[corpus]/[book]/page.tsx` genom att matcha
+kapitel:vers-mönstret från slutet av strängen istället.
+
 ## Fas 45 (2026-08-27): Josua — Jerikos murar faller
 
 Fortsätter listan över "starka kandidater" bland de otäckta böckerna

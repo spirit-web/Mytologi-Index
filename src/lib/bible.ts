@@ -25,6 +25,7 @@ import jobData from "@/data/bible-sv-1917/job.json";
 import songOfSongsData from "@/data/bible-sv-1917/songofsongs.json";
 import jeremiahData from "@/data/bible-sv-1917/jeremiah.json";
 import joshuaData from "@/data/bible-sv-1917/joshua.json";
+import secondSamuelData from "@/data/bible-sv-1917/2samuel.json";
 
 export type BibleVerse = {
   chapter: number;
@@ -70,6 +71,7 @@ const BOOKS: Record<string, { data: Record<string, Record<string, string>>; sven
   "Song of Songs": { data: songOfSongsData as Record<string, Record<string, string>>, svenskt: "Höga Visan" },
   Jeremiah: { data: jeremiahData as Record<string, Record<string, string>>, svenskt: "Jeremia" },
   Joshua: { data: joshuaData as Record<string, Record<string, string>>, svenskt: "Josua" },
+  "2 Samuel": { data: secondSamuelData as Record<string, Record<string, string>>, svenskt: "Andra Samuelsboken" },
 };
 
 // Extern länk till en fullständig, fri bibelläsare för samma översättning

@@ -19,6 +19,7 @@ import samuelCaptionsByCode from "./image-captions-1samuel.json";
 import deutCaptionsByCode from "./image-captions-deuteronomy.json";
 import jeremiahCaptionsByCode from "./image-captions-jeremiah.json";
 import joshuaCaptionsByCode from "./image-captions-joshua.json";
+import samuel2CaptionsByCode from "./image-captions-2samuel.json";
 
 const prisma = new PrismaClient();
 
@@ -3523,6 +3524,152 @@ async function main() {
   });
   console.log("Seedat Josua: 1 story.");
 
+  // --- Andra Samuelsboken — Davids kungadöme --------------------------
+  // NY 2026-08-27, se README Fas 46: fortsätter "starka kandidater".
+  // Naturlig fortsättning på Första Samuelsboken — Davids uppgång till
+  // kung, arkens hemkomst, förbundslöftet, hans stora synd (Batseba) och
+  // familjekaoset som följer (Amnon, Tamar, Absaloms uppror och död).
+  const samuel2Book = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "2-samuel" } },
+    update: {},
+    create: { corpusId: bible.id, slug: "2-samuel", name: "Andra Samuelsboken", order: 18, testament: "old" },
+  });
+  const samuel2CharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "batseba", name: "Batseba" },
+    { slug: "natan", name: "Natan" },
+    { slug: "uria", name: "Uria" },
+    { slug: "absalom", name: "Absalom" },
+    { slug: "amnon", name: "Amnon" },
+    // Egen slug eftersom "tamar" redan pekar på Judas sonhustru i Genesis
+    // 38 — samma namn, olika person.
+    { slug: "tamar-davids-dotter", name: "Tamar (Davids dotter)" },
+    { slug: "mikal", name: "Mikal" },
+    { slug: "joab", name: "Joab" },
+  ];
+  const samuel2Characters: Record<string, { id: string }> = {};
+  for (const c of samuel2CharacterDefs) {
+    samuel2Characters[c.slug] = await prisma.character.upsert({ where: { slug: c.slug }, update: {}, create: c });
+  }
+  // David, Jonatan och Saul återanvänds från Första Samuelsboken-avsnittet.
+
+  type Samuel2StoryDef = {
+    slug: string; title: string; startRef: string; endRef: string; orderInBook: number;
+    characterSlugs: string[]; themeSlugs: string[];
+  };
+  const samuel2Stories: Samuel2StoryDef[] = [
+    {
+      slug: "davids-lament",
+      title: "David sörjer Saul och Jonatan",
+      startRef: "2 Samuel 1:1", endRef: "2 Samuel 1:27",
+      orderInBook: 1,
+      characterSlugs: ["david", "saul", "jonatan"],
+      themeSlugs: ["hierarchy"],
+    },
+    {
+      slug: "ark-to-jerusalem-david-king",
+      title: "David blir kung — arken förs till Jerusalem",
+      startRef: "2 Samuel 5:1", endRef: "2 Samuel 6:23",
+      orderInBook: 2,
+      characterSlugs: ["david", "mikal"],
+      themeSlugs: ["hierarchy", "covenant"],
+    },
+    {
+      slug: "davidic-covenant",
+      title: "Guds förbund med David",
+      startRef: "2 Samuel 7:1", endRef: "2 Samuel 7:29",
+      orderInBook: 3,
+      characterSlugs: ["david", "natan"],
+      themeSlugs: ["covenant"],
+    },
+    {
+      slug: "david-and-bathsheba",
+      title: "David och Batseba",
+      startRef: "2 Samuel 11:1", endRef: "2 Samuel 12:25",
+      orderInBook: 4,
+      characterSlugs: ["david", "batseba", "uria", "natan", "joab"],
+      themeSlugs: ["deception"],
+    },
+    {
+      // Sträcker sig över Amnon & Tamar (13) fram till Absaloms död (18) —
+      // samma mönster som "Josef och hans bröder": EN sammanhängande
+      // familjetragedi/uppror, inte uppdelad efter kapitelgräns.
+      slug: "absaloms-rebellion",
+      title: "Absaloms uppror",
+      startRef: "2 Samuel 13:1", endRef: "2 Samuel 18:33",
+      orderInBook: 5,
+      characterSlugs: ["david", "absalom", "amnon", "tamar-davids-dotter", "joab"],
+      themeSlugs: ["sibling-rivalry", "chaos-order"],
+    },
+  ];
+
+  for (const s of samuel2Stories) {
+    const storyData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: samuel2Book.id, slug: s.slug } },
+      update: storyData,
+      create: { bookId: samuel2Book.id, slug: s.slug, ...storyData },
+    });
+    for (const charSlug of s.characterSlugs) {
+      const character = samuel2Characters[charSlug] ?? samuelCharacters[charSlug];
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: character.id } },
+        update: {},
+        create: { storyId: story.id, characterId: character.id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: themes[themeSlug].id } },
+        update: {},
+        create: { storyId: story.id, themeId: themes[themeSlug].id },
+      });
+    }
+  }
+
+  const samuel2Captions = samuel2CaptionsByCode as Record<string, string[]>;
+  const samuel2ImageSets: Array<{ storySlug: string; code: string; count: number; credit: string; creditUrl: string }> = [
+    { storySlug: "ark-to-jerusalem-david-king", code: "FB_David_Ark", count: 19, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/david-ark/" },
+    { storySlug: "david-and-bathsheba", code: "FB_David_Bathsheba", count: 20, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/david-bathsheba/" },
+    { storySlug: "absaloms-rebellion", code: "FB_David_Absalom", count: 25, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://freebibleimages.org/illustrations/david-absalom/" },
+  ];
+  for (const set of samuel2ImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: samuel2Book.id, slug: set.storySlug } });
+    for (let fileNum = 1; fileNum <= set.count; fileNum++) {
+      const path = `/images/2-samuel/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const caption = samuel2Captions[set.code]?.[fileNum - 1] || null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order: fileNum } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order: fileNum, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+  // davids-lament och davidic-covenant: inget passande AI-tillåtet bildset
+  // hittat — förblir ren text (samma mönster som Höga Visan/Nadab-Abihu).
+  const samuel2Thumbnails: Record<string, number> = {
+    "ark-to-jerusalem-david-king": 8, // David dansar inför arken
+    "david-and-bathsheba": 15, // Natan: "Du är den mannen"
+    "absaloms-rebellion": 19, // Absaloms hår fastnar i trädet
+  };
+  for (const [slug, order] of Object.entries(samuel2Thumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: samuel2Book.id, slug }, data: { thumbnailOrder: order } });
+  }
+
+  await prisma.book.update({
+    where: { id: samuel2Book.id },
+    data: {
+      description:
+        "Davids regeringstid — från triumf till familjekatastrof. Boken " +
+        "följer honom från kröningen och arkens hemkomst till Jerusalem, " +
+        "via Guds stora löfte om en evig kungaätt, till hans värsta " +
+        "svaghet (Batseba och Uria) och det kaos som sedan sväljer hans " +
+        "egen familj (Amnon, Tamar, Absaloms uppror och död).",
+      authorship: "Okänd författare — troligen samma deuteronomistiska historieverk som Första Samuelsboken, sammanställt/redigerat under eller efter den babyloniska fångenskapen, men byggt på äldre källor (bl.a. en trolig \"tronföljdsberättelse\", kap. 9-20).",
+      traditions: "Judendom: del av \"Nevi'im\" (de tidigare profeterna). Kristendom: Guds löfte till David (kap. 7) om en evig tron läses som en messiansk profetia uppfylld i Jesus (jfr Luk. 1:32-33). Islam: Dawud (David) är en erkänd profet och kung i Koranen, känd för sin visdom och sin psalmbok (Zabur).",
+    },
+  });
+  console.log(`Seedat Andra Samuelsboken: ${samuel2Stories.length} stories.`);
+
   // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
@@ -5879,6 +6026,11 @@ async function main() {
     { bookSlug: "job", storySlug: "jobs-trial" },
     { bookSlug: "song-of-songs", storySlug: "song-of-songs" },
     { bookSlug: "jeremiah", storySlug: "jeremiah-in-the-cistern" },
+    { bookSlug: "2-samuel", storySlug: "davids-lament" },
+    { bookSlug: "2-samuel", storySlug: "ark-to-jerusalem-david-king" },
+    { bookSlug: "2-samuel", storySlug: "davidic-covenant" },
+    { bookSlug: "2-samuel", storySlug: "david-and-bathsheba" },
+    { bookSlug: "2-samuel", storySlug: "absaloms-rebellion" },
     { bookSlug: "joshua", storySlug: "battle-of-jericho" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
@@ -5913,6 +6065,7 @@ async function main() {
     { slug: "song-of-songs", estimate: "Traditionellt Salomo (ca 900-talet f.Kr.) — moderna forskare daterar den ofta senare, ibland till efterexilisk tid." },
     { slug: "jeremiah", estimate: "Traditionellt Jeremia/Baruk (sent 600-talet–tidigt 500-talet f.Kr., under och efter Jerusalems fall 587 f.Kr.) — moderna forskare ser boken som redigerad/utvidgad i flera steg efteråt." },
     { slug: "joshua", estimate: "Traditionellt Josua själv (ca 1200-talet f.Kr.) — moderna forskare daterar slutredigeringen ofta till ca 600-talet f.Kr. eller senare, som del av det deuteronomistiska historieverket." },
+    { slug: "2-samuel", estimate: "Okänd författare — handlingen utspelar sig ca 1000-talet f.Kr., men boken sammanställdes troligen under eller efter kungatiden, med slutredaktion under/efter den babyloniska fångenskapen (ca 500-talet f.Kr.)." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },

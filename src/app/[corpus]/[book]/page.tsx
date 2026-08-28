@@ -306,7 +306,15 @@ function StoryRow({
             </span>
             <span className="shrink-0 text-xs text-[var(--text-faint)]">
               {story.startRef}
-              {story.endRef !== story.startRef ? `–${story.endRef.replace(/^.*?(\d)/, "$1")}` : ""}
+              {story.endRef !== story.startRef
+                ? // Slice av bara "kapitel:vers"-delen (t.ex. "34:31") från
+                  // slutreferensen. OBS: kan INTE strippa bokprefixet genom
+                  // att hitta "första siffran" i strängen — böcker med
+                  // nummer i namnet ("2 Samuel 1:27") har sin egen siffra
+                  // FÖRST, vilket gjorde att den gamla regexen inte klippte
+                  // bort något alls (upptäckt 2026-08-27, se README Fas 46).
+                  `–${story.endRef.match(/(\d+:\d+)$/)?.[1] ?? story.endRef}`
+                : ""}
             </span>
           </div>
           {wordCount > 0 && (
