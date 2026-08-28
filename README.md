@@ -70,6 +70,30 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 55 (2026-08-27): Peterson-korslänkar färdigställda + stor citat-städning i Andra Moseboken
+
+Föranledd av frågan "finns det något med högre prioritet kvar, eller
+Jordans analyser?" — två separata fynd:
+
+1. **"We Who Wrestle with God" kap. 8 (Elia) och 9 (Jona)** stod sedan
+   Fas 12 medvetet olänkade eftersom varken Första Konungaboken eller
+   Jona fanns i Bibel-korpusen då. Båda finns nu (Elia sedan Fas 47,
+   Jona sedan tidigare i sessionen) — korslänkarna färdigställda mot
+   `elijah-at-horeb` respektive `jonah-in-the-fish`.
+2. **Andra Moseboken (Exodus) hade ~145 ostädade citat-kontamineringar**
+   kvar från Fas 6 — långt innan citat-kontaminerings-buggen ens
+   upptäcktes (första gången i Daniel, betydligt senare i sessionen).
+   Detta var alltså en verklig kvalitetsbrist i redan publicerat
+   innehåll, inte ny text. Städat med samma metod som resten av
+   sessionen: 134 automatfixade + 11 manuellt fixade. En bredare
+   regex användes den här gången (fångar citat utan punkt efter
+   bokförkortningen, t.ex. "1 Kon 18,40" utan punkt) — samma bredare
+   sökning hittade och fixade även enstaka missade instanser i Första
+   Konungaboken, Andra Samuelsboken, Daniel och Första Samuelsboken
+   från tidigare i sessionen. En fullständig sökning över ALLA
+   bibelböcker bekräftar nu: inga kvarvarande citat-kontamineringar
+   någonstans i appen.
+
 ## Fas 54 (2026-08-27): Gabriels bebådelse — Lukasevangeliet kompletterat
 
 Fas 7 av 7, sista punkten i planen (den enda med "Ev."-förbehåll —

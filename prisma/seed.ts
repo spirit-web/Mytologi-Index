@@ -4828,10 +4828,10 @@ async function main() {
   // flera oberoende sekundärkällor 2026-08-23 (Gospel Coalition-recension,
   // SuperSummary studieguide, TEDS-reflektion, Prodigal Catholic-
   // sammanfattning m.fl.) — samma metod som för 12 Rules for Life.
-  // Kapitel 8 (Elia) och 9 (Jona) refererar till bibelböcker (1 Kungaboken,
-  // Jona) som INTE finns i vår Bibel-korpus än, så de saknar cross-link
-  // till en indexerad Story — de första sju kapitlen länkar däremot direkt
-  // till redan indexerade Genesis/Exodus-berättelser.
+  // Alla nio kapitlen länkar till en redan indexerad Story i Bibel-
+  // korpusen. Kapitel 8 (Elia) och 9 (Jona) fick sina cross-link först
+  // 2026-08-27 (Fas 55) — 1 Kungaboken och Jona fanns inte i korpusen
+  // när kapitlen ursprungligen skrevs.
   const wrestleBook = await prisma.book.upsert({
     where: { corpusId_slug: { corpusId: mapsOfMeaningCorpus.id, slug: "we-who-wrestle-with-god" } },
     update: {
@@ -5019,7 +5019,9 @@ async function main() {
         "— ett tema som binder direkt till hans återkommande råd om att " +
         "tala sanning och lyssna på sig själv (jfr 12 Rules for Life, " +
         "regel 8–9).",
-      // Elia finns i 1 Kungaboken, ej indexerad ännu — inget cross-link.
+      // NY 2026-08-27: Första Konungaboken indexerades i Fas 47 (samma
+      // session) — cross-link nu möjlig, se README Fas 55.
+      genesisStorySlug: "elijah-at-horeb",
     },
     {
       order: 9, slug: "jonah-belly-of-the-whale", title: "Jona: Att möta helvetet i valens buk",
@@ -5037,7 +5039,9 @@ async function main() {
         "det goda mitt i det värsta — direkt applicerbart på moderna kriser " +
         "(sjukdom, förlust, misslyckande) där själva förmågan att fortsätta " +
         "sikta mot något gott, mitt i lidandet, är vad Peterson kallar tro.",
-      // Jona är en egen bibelbok, ej indexerad ännu — inget cross-link.
+      // NY 2026-08-27: Jona indexerades tidigare i sessionen — cross-link
+      // nu möjlig, se README Fas 55.
+      genesisStorySlug: "jonah-in-the-fish",
     },
   ];
 
