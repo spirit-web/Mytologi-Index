@@ -70,6 +70,31 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 58 (2026-08-28): Ny korpus "Källor & influenser" — Friedrich Nietzsche
+
+Första fasen i den nya "utanför Bibeln"-satsningen, direkt efter
+användarens idé: varje tänkare Peterson ofta bygger vidare på blir en
+egen "bok" (`kind: "framework"`, ny korpus `influences`), med hans
+viktigaste VERK som egna Story-poster — `quote` är ett kort, fritt
+citat av TÄNKAREN själv (omvänt av hur `quote` används i Petersons
+egna böcker), `summary` bär Petersons konkreta koppling. Varje
+verk-story länkas dessutom till personens befintliga `Character`-rad
+via `StoryCharacter`, så personsidan (`/personer/nietzsche`)
+automatiskt listar hans egna verk under "Förekommer i" — ingen ny
+kod behövdes, bara återanvändning av befintlig UI.
+
+Sex verk: Den glada vetenskapen (Gud är död), Så talade Zarathustra
+(Övermänniskan), Bortom gott och ont (viljan till makt), Till
+moralens genealogi (ressentiment), Avgudaskymning, Ecce Homo (amor
+fati). Petersons kopplingar grundade i verifierbara källor: Lex
+Fridman-podden avsnitt 448 (2024-10-11, "Nietzsche, Hitler, God,
+Psychopathy, Suffering & Meaning"), hans publicerade förord/
+föreläsningsserie till en nyutgåva av "Beyond Good and Evil", och den
+redan seedade Maps of Meaning-kopplingen (föreläsning 8, "Gud är
+död"/Tiamat). Citaten är korta och hämtade ur fria, äldre
+översättningar (Nietzsche dog 1900) — samma upphovsrättsprincip som
+resten av appen.
+
 ## Fas 57 (2026-08-28): Research — Petersons spridda bibelkommentarer utanför de tre kända serierna
 
 Gedigen sökning (via subagent) efter om Peterson kommenterat någon av

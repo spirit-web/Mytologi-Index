@@ -5109,6 +5109,190 @@ async function main() {
   }
   console.log(`Seedat We Who Wrestle with God: ${wrestleChapters.length} kapitel.`);
 
+  // ======================================================================
+  // FAS 58: Källor & influenser — tänkare Peterson ofta refererar till
+  // ======================================================================
+  // NY 2026-08-28, se README Fas 58. Egen korpus (kind: "framework") för
+  // tänkare/författare som INTE är Peterson själv men som han ständigt
+  // bygger vidare på — hittills bara löst spårade via Reference/
+  // externalLabel. Varje tänkare blir en egen Book; varje betydande VERK
+  // blir en Story (`quote` = ett kort, verifierat citat av TÄNKAREN
+  // SJÄLV — omvänt av hur `quote` används i Petersons egna böcker ovan,
+  // där citatet är Petersons eget; `summary` bär istället Petersons
+  // koppling/tolkning). Varje verk-Story länkas dessutom till personens
+  // redan existerande Character-rad via StoryCharacter, så personsidan
+  // (/personer/<slug>) automatiskt listar hens egna verk som
+  // "förekommer i" — samma UI, ingen ny kod behövdes.
+  //
+  // Citaten är medvetet korta (samma upphovsrättsprincip som för
+  // bibelcitat/Petersons egna citat) och hämtade ur allmän egendom
+  // (Nietzsche dog 1900; äldre engelska/svenska översättningar av hans
+  // verk är fria) snarare än en specifik modern copyright-skyddad
+  // översättning. Petersons kopplingar är grundade i verifierbara
+  // källor: Lex Fridman-podden avsnitt 448 ("Nietzsche, Hitler, God,
+  // Psychopathy, Suffering & Meaning", 2024-10-11), hans publicerade
+  // förord/föreläsningsserie till en nyutgåva av "Beyond Good and Evil",
+  // samt den redan seedade Maps of Meaning-föreläsning 8-kopplingen
+  // (Reference-rad, "Gud är död") — se README för fullständig logg,
+  // samma "korskontrollerad mot sekundärkällor"-metod som 12 Rules/
+  // Beyond Order/We Who Wrestle.
+  const influencesCorpus = await prisma.corpus.upsert({
+    where: { slug: "influences" },
+    update: {},
+    create: {
+      slug: "influences",
+      name: "Källor & influenser",
+      kind: "framework",
+      description:
+        "Tänkare och författare Peterson ständigt bygger vidare på i " +
+        "sina egna böcker och föreläsningar — inte hans eget ramverk, " +
+        "utan de röster han själv står på axlarna av. Varje person blir " +
+        "en egen 'bok' av sina viktigaste verk, med korta citat och " +
+        "Petersons konkreta koppling till varje.",
+    },
+  });
+
+  const nietzscheChar = await prisma.character.upsert({
+    where: { slug: "nietzsche" },
+    update: {},
+    create: { slug: "nietzsche", name: "Friedrich Nietzsche" },
+  });
+  const nietzscheBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: influencesCorpus.id, slug: "nietzsche" } },
+    update: {},
+    create: {
+      corpusId: influencesCorpus.id,
+      slug: "nietzsche",
+      name: "Friedrich Nietzsche",
+      order: 1,
+      description:
+        "Tysk filosof (1844–1900) vars kritik av moral, religion och " +
+        "sanning genomsyrar stora delar av Petersons eget tänkande — " +
+        "både som inspiration och som varnande exempel (Nietzsches idéer " +
+        "grovt förvrängda av bl.a. nazismen efter hans död). Peterson " +
+        "har hållit en egen föreläsningsserie om Nietzsche och Förintelsen " +
+        "och skrivit förord till en nyutgåva av 'Bortom gott och ont'.",
+      authorship: "Friedrich Wilhelm Nietzsche, tysk filolog och filosof, verksam huvudsakligen 1872–1888 (sammanbrott 1889, död 1900).",
+      traditions: "Central i den kontinentala filosofin och existentialismen; djupt inflytelserik på 1900-talets psykologi (bl.a. Jung), litteratur och — genom missbruk av hans syster Elisabeth efter hans död — tragiskt kopplad till nazismens självbild.",
+    },
+  });
+
+  type ThinkerWorkDef = {
+    slug: string; title: string; quote: string; summary: string; order: number;
+  };
+  const nietzscheWorks: ThinkerWorkDef[] = [
+    {
+      order: 1,
+      slug: "the-gay-science",
+      title: "Den glada vetenskapen (1882)",
+      quote: "Gud är död. Gud förblir död. Och vi har dödat honom.",
+      summary:
+        "Den berömda 'Gud är död'-passagen (afor. 125, \"Den galne mannen\") " +
+        "är inte ett triumferande firande utan en varning: utan en delad " +
+        "gudsföreställning som håller ihop det västerländska värdesystemet " +
+        "riskerar civilisationen ett moraliskt fritt fall. Peterson bygger " +
+        "hela sitt författarskap kring att ta den varningen på allvar — " +
+        "i sin egen Maps of Meaning-föreläsning 8 kopplar han direkt " +
+        "samman Nietzsches deklaration med den mesopotamiska skapelsemyten " +
+        "om Tiamat och kallar det 'ingen skillnad': båda beskriver vad som " +
+        "händer när den ordnande princip som håller kaos i schack faller " +
+        "bort.",
+    },
+    {
+      order: 2,
+      slug: "thus-spoke-zarathustra",
+      title: "Så talade Zarathustra (1883–1885)",
+      quote: "Människan är ett rep, utspänt mellan djuret och Övermänniskan — ett rep över en avgrund.",
+      summary:
+        "Nietzsches mest poetiska verk, där han lanserar Övermänniskan " +
+        "(Übermensch) — inte en biologisk härskarras (den tolkning " +
+        "nazismen senare tvingade fram, delvis genom att hans syster " +
+        "Elisabeth redigerade om hans efterlämnade anteckningar), utan en " +
+        "bild för människan som frivilligt tar på sig ansvaret att skapa " +
+        "sina egna värden i en värld utan given mening. Peterson " +
+        "återkommer ofta till just den distinktionen — att Nietzsches " +
+        "idéer förvrängdes till sin motsats efter hans död — som ett " +
+        "huvudspår i sin föreläsningsserie 'Nietzsche, Hitler and the " +
+        "Holocaust' och i Lex Fridman-podden avsnitt 448 (2024).",
+    },
+    {
+      order: 3,
+      slug: "beyond-good-and-evil",
+      title: "Bortom gott och ont (1886)",
+      quote: "Den som kämpar mot monster bör se till att han inte själv blir ett monster.",
+      summary:
+        "En attack mot filosofers anspråk på objektiv moral — Nietzsche " +
+        "vill visa hur 'sanningar' oftast är maskerade maktanspråk " +
+        "('viljan till makt'). Peterson har skrivit förord till och hållit " +
+        "en egen föreläsningsserie om bokens första hälft, och beskriver " +
+        "den som ett av de tätaste, mest krävande verk han läst. I Lex " +
+        "Fridman-podden (avsnitt 448) diskuterar han hur 'viljan till " +
+        "makt' misstolkades av fascister som en hyllning av ren dominans, " +
+        "medan Nietzsches egen poäng var bredare — en organisms " +
+        "grundläggande drift att expandera och förverkliga sig själv, " +
+        "inte bara att erövra andra.",
+    },
+    {
+      order: 4,
+      slug: "genealogy-of-morals",
+      title: "Till moralens genealogi (1887)",
+      quote: "Det finns ingen 'görare' bakom görandet — 'göraren' är bara diktad till gärningen.",
+      summary:
+        "Nietzsches historiska/psykologiska dissektion av var moraliska " +
+        "begrepp som 'gott' och 'ont' egentligen kommer ifrån — hans " +
+        "genomgång av 'ressentiment' (den svages förbittring som " +
+        "omformas till en moral som fördömer styrka) är en av hans mest " +
+        "inflytelserika idéer. Peterson återkommer ofta till ressentiment-" +
+        "begreppet när han diskuterar offerskap och ideologisk besatthet " +
+        "som en förvrängd form av moralisk vedergällning — ett tema som " +
+        "löper genom stora delar av hans egen samhällskritik.",
+    },
+    {
+      order: 5,
+      slug: "twilight-of-the-idols",
+      title: "Avgudaskymning (1888)",
+      quote: "Vad som inte dödar mig gör mig starkare.",
+      summary:
+        "Ett kort, aforistiskt sammandrag av Nietzsches mogna filosofi — " +
+        "att lidande som frivilligt bejakas och integreras stärker " +
+        "snarare än förstör. Denna tanke — att meningsfullt, frivilligt " +
+        "buret lidande är vägen till psykologisk styrka, inte något att " +
+        "undvika till varje pris — är ett av de mest direkta spåren från " +
+        "Nietzsche in i Petersons eget författarskap, uttryckligen " +
+        "återkommande i 12 Rules for Life och We Who Wrestle with God.",
+    },
+    {
+      order: 6,
+      slug: "ecce-homo",
+      title: "Ecce Homo (1888, publ. 1908)",
+      quote: "Min formel för människans storhet är amor fati: att man ingenting vill ha annorlunda.",
+      summary:
+        "Nietzsches egen, uttryckligt självmedvetna intellektuella " +
+        "självbiografi, skriven strax innan hans psykiska sammanbrott " +
+        "1889 — kapitelrubrikerna själva ('Varför jag är så vis', 'Varför " +
+        "jag skriver så goda böcker') är del av verkets ironiska poäng. " +
+        "'Amor fati' (kärlek till ödet) — att fullt ut bejaka sitt liv, " +
+        "inklusive dess lidande, utan önskan om att något varit " +
+        "annorlunda — är ett begrepp Peterson ofta lånar för att beskriva " +
+        "vad han menar med att bära sitt lidande meningsfullt snarare än " +
+        "att förneka eller fly det.",
+    },
+  ];
+
+  for (const w of nietzscheWorks) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: nietzscheBook.id, slug: w.slug } },
+      update: { title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+      create: { bookId: nietzscheBook.id, slug: w.slug, title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+    });
+    await prisma.storyCharacter.upsert({
+      where: { storyId_characterId: { storyId: story.id, characterId: nietzscheChar.id } },
+      update: {},
+      create: { storyId: story.id, characterId: nietzscheChar.id, role: "författare" },
+    });
+  }
+  console.log(`Seedat Friedrich Nietzsche: ${nietzscheWorks.length} verk.`);
+
   // --- Fas 14: Beyond Order: 12 More Rules for Life (2021) -----------
   // Uppföljaren till 12 Rules for Life — samma metod: inget digitalt
   // exemplar/transkript tillgängligt, så varje regels citat är
