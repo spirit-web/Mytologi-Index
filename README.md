@@ -70,6 +70,60 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 63 (2026-08-28): Bredda referens-djupet (Solzjenitsyn, Eliade, Neumann, Paglia)
+
+Fyra tänkare fanns redan lätt representerade i appen — som `refCharacterDefs`
+med enstaka, verifierade videoreferenser knutna till deras personsida —
+men saknade helt egna verk i "Källor & influenser". Samma person=bok-
+mönster som Nietzsche/Jung/Freud/Dostojevskij, tillämpat på:
+
+- **Aleksandr Solzjenitsyn** (d. 2008, skyddad till 2078): Gulagarkipelagen.
+  Kopplad till en HEL, dedikerad Peterson-föreläsning ("2017 Personality
+  13: Existentialism via Solzhenitsyn and the Gulag").
+- **Mircea Eliade** (d. 1986, skyddad till 2056): Det heliga och det
+  profana samt En historia om religiösa idéer. Båda kopplade till redan
+  verifierade citat/tidsstämplar (Noa-föreläsningen resp. Lex Fridman
+  #448, där Peterson uttryckligen säger att han använde "Sacred and the
+  Profane" i arbetet med We Who Wrestle with God).
+- **Erich Neumann** (d. 1960, skyddad till 2030): Medvetandets ursprung
+  och historia samt Den stora modern. Kopplade till Jordan B. Peterson-
+  podcasten #491 (Dawkins/O'Connor), där Peterson kallar förstnämnda
+  "ett verk av geni".
+- **Camille Paglia** (lever): Sexual Personae. Kopplad till hela
+  "Modern Times"-intervjun (2017), ett av Petersons tidigaste och mest
+  sedda poddavsnitt, där boken är huvudämnet.
+
+Alla sex citat är — liksom Jung tidigare — min egen svenska parafras av
+verkets kärntes, inte en direktöversättning av en specifik skyddad
+utgåva. Sex nya, verifierade `Reference`-rader kopplar respektive verk
+till en riktig video/tidsstämpel; tre återanvänder exakt samma,
+redan faktakontrollerade video+tidsstämpel som de äldre personsides-
+referenserna redan pekade på (ny riktning, ingen ny research krävdes).
+
+Sex nya porträttbilder hämtade (Wikimedia Commons, licens/källa
+verifierad per fil innan nedladdning): Eliade, Neumann, Paglia — samt,
+som en passande sidoeffekt (upptäckt att de saknades helt, gav "F"-
+bokstavscirklar istället för bilder i citat-attributionen), Carl Jung,
+Sigmund Freud och Fjodor Dostojevskij.
+
+**Allvarlig, pre-existerande bugg hittad och fixad under verifiering**:
+Eliades personsida visade "Peterson refererar till Mircea Eliade (109)"
+— en absurt hög siffra. Grundorsak: `references`-arrayens uppsert
+(det generella "person nämns i en video"-flödet, separat från de nyare
+verk-specifika `seed-workref-*`-raderna) använde en sammansatt unik
+nyckel `{videoId, storyId, characterId}` där `storyId` sattes till
+`story?.id ?? ""` i uppslaget men till `story?.id` (dvs `undefined` →
+NULL i databasen) vid skapandet — en tom sträng matchar aldrig NULL,
+så VARJE gång `npx prisma db seed` kördes om skapades en helt ny
+dubblettrad för alla referenser utan kopplad story, istället för att
+uppdatera den befintliga. Resultat: 331 rader i databasen där bara 66
+var unika (265 dubbletter, ansamlade över mängder av tidigare
+seed-körningar under hela projektets historia). Fixat genom att byta
+till samma stabila, deterministiska id-mönster (`seed-charref-*`) som
+redan användes på alla andra `Reference`-uppserter i filen; de 265
+dubblettraderna städades bort och idempotens verifierad genom att köra
+seed två gånger i rad utan att radantalet ökade.
+
 ## Fas 62 (2026-08-28): Fjodor Dostojevskij i "Källor & influenser"
 
 Fortsätter listan (Nietzsche → Jung → Freud → nu Dostojevskij), med

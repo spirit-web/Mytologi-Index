@@ -5952,6 +5952,355 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
   }
   console.log(`Seedat Fjodor Dostojevskij: ${dostoevskyWorks.length} verk, ${dostoevskyReferences.length} verifierade kopplingar.`);
 
+  // --- Fas 63: bredda referens-djupet för fyra redan lätt representerade
+  // tänkare (Solzjenitsyn, Eliade, Neumann, Paglia) --------------------
+  // Alla fyra fanns sedan tidigare som refCharacterDefs/refPortraits med
+  // enstaka videoreferenser (se längre ner i filen), men saknade helt
+  // egna verk i "Källor & influenser". Samma person=bok-mönster som
+  // Nietzsche/Jung/Freud/Dostojevskij ovan.
+  //
+  // UPPHOVSRÄTT: Solzjenitsyn (d. 2008) skyddad till 2078, Paglia lever
+  // fortfarande, Eliade (d. 1986) skyddad till 2056, Neumann (d. 1960)
+  // skyddad till 2030 — alla fyra får därför KORTA citat, medvetet
+  // formulerade som MIN EGEN svenska parafras/sammanfattning av verkets
+  // kärntes snarare än en direkt översättning av en specifik, skyddad
+  // engelsk/svensk utgåva (samma princip som Jung i Fas 59).
+  //
+  // Verk-kopplingarna nedan återanvänder i tre fall EXAKT samma,
+  // redan verifierade video+tidsstämpel som refCharacterDefs-referenserna
+  // längre ner i filen redan pekar på (samma källa, ny riktning: från
+  // verket istället för bara från personen) — inget nytt hittat på/gissat.
+  // Solzjenitsyns Gulagarkipelagen och Paglias Sexual Personae kopplas
+  // till varsin HEL, fristående föreläsning/intervju där verket är
+  // huvudämnet, samma "whole video, no atSec"-mönster som Dostojevskij-
+  // klippen ovan.
+  const solzhenitsynChar = await prisma.character.upsert({
+    where: { slug: "aleksandr-solzhenitsyn" },
+    update: {},
+    create: { slug: "aleksandr-solzhenitsyn", name: "Aleksandr Solzjenitsyn" },
+  });
+  const solzhenitsynBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: influencesCorpus.id, slug: "solzhenitsyn" } },
+    update: {},
+    create: {
+      corpusId: influencesCorpus.id,
+      slug: "solzhenitsyn",
+      name: "Aleksandr Solzjenitsyn",
+      order: 5,
+      description:
+        "Rysk författare (1918–2008), överlevare av åtta år i sovjetiska " +
+        "straffarbetsläger. Peterson kallar hans huvudverk 'kanske det " +
+        "viktigaste 1900-talsverket' och skrev själv förordet till en " +
+        "nyutgåva av det. Central i Peterson egen föreläsning " +
+        "'Existentialism via Solzhenitsyn and the Gulag'.",
+      authorship: "Aleksandr Isajevitj Solzjenitsyn, fångenskap i Gulag-lägersystemet 1945–1953 (dömd för kritiska yttranden om Stalin i ett privat brev), senare förvisad ur Sovjetunionen 1974, nobelpristagare i litteratur 1970.",
+      traditions: "Ett av 1900-talets mest inflytelserika vittnesbördsverk — brukar räknas till den ryska litterära vittnestraditionen, och bidrog dokumenterat till att undergräva västvärldens kvarvarande sympatier för sovjetkommunismen.",
+    },
+  });
+  const solzhenitsynWorks: ThinkerWorkDef[] = [
+    {
+      order: 1,
+      slug: "gulag-archipelago",
+      title: "Gulagarkipelagen (1973)",
+      quote:
+        "Om det bara fanns onda människor någonstans som i hemlighet " +
+        "begick onda handlingar, och man bara behövde skilja ut dem " +
+        "från oss andra och förinta dem — men linjen som skiljer gott " +
+        "från ont går rakt genom varje människas hjärta. Och vem är " +
+        "villig att förinta en bit av sitt eget hjärta?",
+      summary:
+        "Ett dokumentärt vittnesmål, byggt på Solzjenitsyns egna åtta år " +
+        "i lägren och vittnesmål från hundratals andra överlevare, om " +
+        "det sovjetiska straffarbetslägersystemet. Bokens mest citerade " +
+        "idé — att gränsen mellan gott och ont inte går mellan grupper " +
+        "av människor utan genom varje enskilt mänskligt hjärta — är " +
+        "central i Petersons Regel 6 ('Sätt ditt eget hus i ordning " +
+        "innan du kritiserar världen') i 12 Rules for Life: istället " +
+        "för att skylla på systemet vände Solzjenitsyn blicken inåt mot " +
+        "sina egna moraliska misslyckanden. Peterson skrev själv " +
+        "förordet till 50-årsjubileumsutgåvan av den förkortade " +
+        "versionen (2018).",
+    },
+  ];
+  for (const w of solzhenitsynWorks) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: solzhenitsynBook.id, slug: w.slug } },
+      update: { title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+      create: { bookId: solzhenitsynBook.id, slug: w.slug, title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+    });
+    await prisma.storyCharacter.upsert({
+      where: { storyId_characterId: { storyId: story.id, characterId: solzhenitsynChar.id } },
+      update: {},
+      create: { storyId: story.id, characterId: solzhenitsynChar.id, role: "författare" },
+    });
+  }
+
+  const eliadeChar = await prisma.character.upsert({
+    where: { slug: "mircea-eliade" },
+    update: {},
+    create: { slug: "mircea-eliade", name: "Mircea Eliade" },
+  });
+  const eliadeBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: influencesCorpus.id, slug: "eliade" } },
+    update: {},
+    create: {
+      corpusId: influencesCorpus.id,
+      slug: "eliade",
+      name: "Mircea Eliade",
+      order: 6,
+      description:
+        "Rumänsk religionshistoriker (1907–1986), en av 1900-talets mest " +
+        "inflytelserika jämförande religionsforskare. Peterson " +
+        "återkommer till honom genomgående — bl.a. tungt i We Who " +
+        "Wrestle with God (2024) — som motpol till reduktiva, rent " +
+        "sociologiska tolkningar av religion.",
+      authorship: "Mircea Eliade, professor i religionshistoria vid University of Chicago 1957–1985, tidigare kontroversiellt kopplad till den rumänska fascistiska Järngardet-rörelsen på 1930-talet — en biografisk skugga Peterson inte tar upp i de refererade klippen.",
+      traditions: "Grundare av den moderna jämförande religionsvetenskapen tillsammans med bl.a. James Frazer (redan refererad i appen, se Noa-föreläsningen). Central influens på Jungiansk mytforskning och på Neumann (nedan).",
+    },
+  });
+  const eliadeWorks: ThinkerWorkDef[] = [
+    {
+      order: 1,
+      slug: "sacred-and-profane",
+      title: "Det heliga och det profana (1957)",
+      quote:
+        "Den religiösa människan upplever två radikalt " +
+        "skilda sätt att vara i världen: det heliga rummet — " +
+        "ojämnt, uppbyggt kring en central axel (axis mundi) som binder " +
+        "himmel, jord och underjord, och som ständigt kan förnyas genom " +
+        "ritual — och det profana rummet, jämnt och odifferentierat. En " +
+        "hierofani är själva ögonblicket då det heliga bryter igenom och " +
+        "gör en bit av det profana rummet betydelsefullt.",
+      summary:
+        "Eliades mest lästa bok — en kort, tillgänglig introduktion till " +
+        "hans grundtes om hur 'religiös' och 'sekulär' människa " +
+        "upplever rum, tid och naturen på fundamentalt olika sätt. " +
+        "Peterson säger uttryckligen (Lex Fridman-podcasten #448) att " +
+        "han använde just den här boken 'ganska utförligt' i arbetet " +
+        "med We Who Wrestle with God.",
+    },
+    {
+      order: 2,
+      slug: "history-of-religious-ideas",
+      title: "En historia om religiösa idéer, vol. 1–3 (1976–1983)",
+      quote:
+        "Vissa religiösa idéer — som föreställningen om " +
+        "en syndaflod som periodvis sköljer bort en korrumperad " +
+        "tillvaro — återfinns, nästan universellt, i kulturer som " +
+        "aldrig haft kontakt med varandra. Det är inte en slump, utan " +
+        "ett tecken på att idén speglar något i själva den mänskliga " +
+        "erfarenhetens struktur, inte bara en enskild kulturs påhitt.",
+      summary:
+        "Eliades tre-volyms magnum opus — en genomgång av religiösa " +
+        "idéers utveckling från stenåldern till reformationen. Peterson " +
+        "rekommenderar den uttryckligen i sin egen Noa-föreläsning " +
+        "('brilliant, jag gillar det verkligen') och återkommer till " +
+        "den i Lex Fridman-podcasten #448 för dess tes om att religiösa " +
+        "idéer som 'skalar' och upprepas över de största tänkbara " +
+        "tidsspann avslöjar något om människans neuropsykologiska " +
+        "grundarkitektur, inte bara enskilda kulturers påfund.",
+    },
+  ];
+  for (const w of eliadeWorks) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: eliadeBook.id, slug: w.slug } },
+      update: { title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+      create: { bookId: eliadeBook.id, slug: w.slug, title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+    });
+    await prisma.storyCharacter.upsert({
+      where: { storyId_characterId: { storyId: story.id, characterId: eliadeChar.id } },
+      update: {},
+      create: { storyId: story.id, characterId: eliadeChar.id, role: "författare" },
+    });
+  }
+
+  const neumannChar = await prisma.character.upsert({
+    where: { slug: "erich-neumann" },
+    update: {},
+    create: { slug: "erich-neumann", name: "Erich Neumann" },
+  });
+  const neumannBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: influencesCorpus.id, slug: "neumann" } },
+    update: {},
+    create: {
+      corpusId: influencesCorpus.id,
+      slug: "neumann",
+      name: "Erich Neumann",
+      order: 7,
+      description:
+        "Tysk-israelisk psykolog (1905–1960), av Peterson kallad Jungs " +
+        "'kanske störste elev, möjligen den som överträffade honom' " +
+        "(Jordan B. Peterson-podcasten #491). Utvecklade Jungs " +
+        "arketyp-teori till en systematisk modell för medvetandets " +
+        "historiska/psykologiska utveckling.",
+      authorship: "Erich Neumann, tysk-judisk psykolog, tvingad emigrera till det brittiska Palestina 1934 undan nazismen. Nära elev till Jung men aldrig formellt utbildad analytiker i Zürich-etablissemangets ögon — arbetade i relativ isolering i Tel Aviv resten av livet.",
+      traditions: "Central länk mellan Jungiansk djuppsykologi och jämförande mytologi/religionsvetenskap (bl.a. Eliade, ovan). Enligt Peterson (samma poddavsnitt) djupt studerad av Camille Paglia (nedan).",
+    },
+  });
+  const neumannWorks: ThinkerWorkDef[] = [
+    {
+      order: 1,
+      slug: "origins-and-history-of-consciousness",
+      title: "Medvetandets ursprung och historia (1949)",
+      quote:
+        "Jaget föds inte färdigt — det växer fram ur " +
+        "en ursprunglig, odifferentierad omedvetenhet (den 'uroboriska' " +
+        "ormen som biter sig själv i svansen) genom en serie stadier " +
+        "som världens mytologier, oberoende av varandra, återberättar " +
+        "om och om igen: hjältens kamp mot draken/den stora modern, " +
+        "uppstigandet mot ett medvetet, 'soligt' själv.",
+      summary:
+        "Neumanns huvudverk, med ett förord av Jung själv som kallade " +
+        "det den bästa tillgängliga introduktionen till hans eget " +
+        "tänkande. Peterson kallar boken 'ett verk av geni' i " +
+        "Jordan B. Peterson-podcasten #491 (tillsammans med Richard " +
+        "Dawkins och Alex O'Connor) och använder den för att argumentera " +
+        "att Dawkins 'meme'-begrepp i grunden beskriver samma sak som " +
+        "Jungs/Neumanns arketyp-begrepp.",
+    },
+    {
+      order: 2,
+      slug: "the-great-mother",
+      title: "Den stora modern (1955)",
+      quote:
+        "Den Stora Modern-arketypen är fundamentalt " +
+        "dubbel: samma symbol som livmoder och grav, som den som föder " +
+        "och den som slukar tillbaka — dokumenterat genom tusentals år " +
+        "av gudinnebilder, konst och myt över hela världen, från samma " +
+        "arketypiska källa.",
+      summary:
+        "Neumanns andra stora arketyp-studie, en omfattande genomgång " +
+        "av det feminina symbolspråket i myt, religion och konst. " +
+        "Peterson kallar den, i samma poddavsnitt som ovan, 'en riktigt " +
+        "bra bok' och nämner den i samma andetag som Origins and " +
+        "History of Consciousness.",
+    },
+  ];
+  for (const w of neumannWorks) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: neumannBook.id, slug: w.slug } },
+      update: { title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+      create: { bookId: neumannBook.id, slug: w.slug, title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+    });
+    await prisma.storyCharacter.upsert({
+      where: { storyId_characterId: { storyId: story.id, characterId: neumannChar.id } },
+      update: {},
+      create: { storyId: story.id, characterId: neumannChar.id, role: "författare" },
+    });
+  }
+
+  const pagliaChar = await prisma.character.upsert({
+    where: { slug: "camille-paglia" },
+    update: {},
+    create: { slug: "camille-paglia", name: "Camille Paglia" },
+  });
+  const pagliaBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: influencesCorpus.id, slug: "paglia" } },
+    update: {},
+    create: {
+      corpusId: influencesCorpus.id,
+      slug: "paglia",
+      name: "Camille Paglia",
+      order: 8,
+      description:
+        "Amerikansk kulturkritiker och professor (f. 1947), känd för " +
+        "sin provokativa, tvärvetenskapliga stil och sitt motstånd mot " +
+        "både akademisk postmodernism och delar av 1900-talets " +
+        "feminism. Peterson och Paglia framträdde tillsammans i " +
+        "'Modern Times' (2017), ett av Petersons tidiga, mest sedda " +
+        "podcastavsnitt.",
+      authorship: "Camille Paglia, professor i humaniora och medievetenskap vid University of the Arts i Philadelphia sedan 1984. Fortfarande aktivt verksam — till skillnad från övriga i denna bok, i livet.",
+      traditions: "Självbeskriven 'dissident'-feminist och tvärvetenskaplig kulturkritiker, djupt influerad av Neumanns arketyp-forskning (ovan) — Peterson menar att stora delar av 1960–70-talets akademiska 'kulturkrig' hade kunnat undvikas om fältet lyssnat mer på Neumann/Paglia-linjen.",
+    },
+  });
+  const pagliaWorks: ThinkerWorkDef[] = [
+    {
+      order: 1,
+      slug: "sexual-personae",
+      title: "Sexual Personae (1990)",
+      quote:
+        "Civilisation, och särskilt den västerländska konsttraditionens " +
+        "strama, apolloniska formspråk, är ett bräckligt mänskligt " +
+        "bålverk mot en indifferent, allt uppslukande ('ktonisk') natur " +
+        "— könsroller och konsthistoria läses som ett enda långt, " +
+        "dramatiserat gränskrig mellan dessa två krafter.",
+      summary:
+        "Paglias mest kända verk, en vidareutveckling av hennes " +
+        "doktorsavhandling vid Yale, spårar 'sexuella personae' — " +
+        "återkommande maskliknande arketyper av manligt och kvinnligt " +
+        "— genom västerländsk konst- och litteraturhistoria från " +
+        "antikens Egypten till 1900-talet. Peterson och Paglia " +
+        "diskuterar boken och dess teser ingående i den nära två timmar " +
+        "långa intervjun 'Modern Times' (2017), ett av de tidigaste och " +
+        "mest sedda avsnitten av Petersons podcast.",
+    },
+  ];
+  for (const w of pagliaWorks) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: pagliaBook.id, slug: w.slug } },
+      update: { title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+      create: { bookId: pagliaBook.id, slug: w.slug, title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+    });
+    await prisma.storyCharacter.upsert({
+      where: { storyId_characterId: { storyId: story.id, characterId: pagliaChar.id } },
+      update: {},
+      create: { storyId: story.id, characterId: pagliaChar.id, role: "författare" },
+    });
+  }
+
+  // Verifierade verk-kopplingar för de fyra ovan.
+  const solzhenitsynLectureVideo = await prisma.petersonVideo.upsert({
+    where: { youtubeId: "w84uRYq0Uc8" },
+    update: { seriesId: personalitySeries.id, seriesOrder: 13 },
+    create: { youtubeId: "w84uRYq0Uc8", title: "2017 Personality 13: Existentialism via Solzhenitsyn and the Gulag", seriesId: personalitySeries.id, seriesOrder: 13 },
+  });
+  const pagliaModernTimesVideo = await prisma.petersonVideo.upsert({
+    where: { youtubeId: "v-hIVnmUdXM" },
+    update: { seriesId: standaloneClipsSeries.id },
+    create: { youtubeId: "v-hIVnmUdXM", title: "Modern Times: Camille Paglia & Jordan B Peterson", seriesId: standaloneClipsSeries.id, publishedAt: "2017-10-19" },
+  });
+  const lexFridman448VideoRef2 = await prisma.petersonVideo.findUniqueOrThrow({ where: { youtubeId: "q8VePUwjB9Y" } });
+  const floodVideo = await prisma.petersonVideo.findUniqueOrThrow({ where: { youtubeId: "wNjbasba-Qw" } });
+  const dawkinsOconnorVideo = await prisma.petersonVideo.findUniqueOrThrow({ where: { youtubeId: "8wBtFNj_o5k" } });
+
+  const breadthReferences: Array<{ storySlug: string; bookSlug: string; videoId: string; atSec: number | null; note: string }> = [
+    {
+      storySlug: "gulag-archipelago", bookSlug: "solzhenitsyn", videoId: solzhenitsynLectureVideo.id, atSec: null,
+      note: "En hel föreläsning ägnad åt just den här boken — kallar den kanske det viktigaste verket från 1900-talet och bygger sin egen existentialistiska analys av ondska/ansvar direkt på den.",
+    },
+    {
+      storySlug: "sacred-and-profane", bookSlug: "eliade", videoId: lexFridman448VideoRef2.id, atSec: 173,
+      note: "Säger uttryckligen att han använde just den här boken 'ganska utförligt' i arbetet med We Who Wrestle with God.",
+    },
+    {
+      storySlug: "history-of-religious-ideas", bookSlug: "eliade", videoId: floodVideo.id, atSec: 6465,
+      note: "Rekommenderar boken uttryckligen ('brilliant, jag gillar det verkligen') och återger dess tes om syndaflodsmyters nästan universella spridning, i sin egen Noa-föreläsning.",
+    },
+    {
+      storySlug: "origins-and-history-of-consciousness", bookSlug: "neumann", videoId: dawkinsOconnorVideo.id, atSec: 3663,
+      note: "Kallar boken 'ett verk av geni' — central för hans argument att Dawkins meme-begrepp och Jungs/Neumanns arketyp-begrepp i grunden beskriver samma sak.",
+    },
+    {
+      storySlug: "the-great-mother", bookSlug: "neumann", videoId: dawkinsOconnorVideo.id, atSec: 3667,
+      note: "Nämner boken i samma andetag som Origins and History of Consciousness — Neumanns andra stora arketyp-studie.",
+    },
+    {
+      storySlug: "sexual-personae", bookSlug: "paglia", videoId: pagliaModernTimesVideo.id, atSec: null,
+      note: "En nästan två timmar lång intervju där Paglias arbete, inklusive Sexual Personae, är huvudämnet genom hela samtalet.",
+    },
+  ];
+  for (const r of breadthReferences) {
+    const target = await prisma.story.findFirstOrThrow({
+      where: { slug: r.storySlug, book: { slug: r.bookSlug, corpus: { slug: "influences" } } },
+    });
+    await prisma.reference.upsert({
+      where: { id: `seed-workref-${r.storySlug}` },
+      update: { storyId: target.id, videoId: r.videoId, atSec: r.atSec, note: r.note },
+      create: { id: `seed-workref-${r.storySlug}`, storyId: target.id, videoId: r.videoId, atSec: r.atSec, note: r.note },
+    });
+  }
+  console.log(`Seedat Solzjenitsyn/Eliade/Neumann/Paglia: ${solzhenitsynWorks.length + eliadeWorks.length + neumannWorks.length + pagliaWorks.length} verk, ${breadthReferences.length} verifierade kopplingar.`);
+
   // --- Fas 14: Beyond Order: 12 More Rules for Life (2021) -----------
   // Uppföljaren till 12 Rules for Life — samma metod: inget digitalt
   // exemplar/transkript tillgängligt, så varje regels citat är
@@ -7027,6 +7376,41 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
       credit: "Foto: Franz Vesely, 1965 (Wikimedia Commons, CC BY-SA 3.0 DE)",
       creditUrl: "https://commons.wikimedia.org/wiki/File:Viktor_Frankl2.jpg",
     },
+    // --- Tillagda i Fas 63 (bredda referens-djup för redan lätt
+    // representerade tänkare): porträtt saknades helt för dessa sex,
+    // vilket gjorde att citat-attributionen på story-sidan visade en
+    // bokstavscirkel ("F" för Dostojevskij osv.) istället för en bild —
+    // fixat i samma veva. ---
+    "carl-jung": {
+      path: "/images/personer/jung.jpg",
+      credit: "Fotograf okänd, publicerat 2006 (Wikimedia Commons, public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Carl_Gustav_Jung_portrait.jpg",
+    },
+    "sigmund-freud": {
+      path: "/images/personer/freud.jpg",
+      credit: "Foto: Ferdinand Schmutzer, 1926 (Wikimedia Commons, public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Sigmund_Freud_1926.jpg",
+    },
+    dostojevskij: {
+      path: "/images/personer/dostojevskij.jpg",
+      credit: "Målning: Vasilij Perov, 1872, Tretjakovgalleriet (Wikimedia Commons, public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Dostoevsky_1872.jpg",
+    },
+    "mircea-eliade": {
+      path: "/images/personer/eliade.jpg",
+      credit: "Fotograf okänd, 1933 (Wikimedia Commons, public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Mircea_Eliade_young.jpg",
+    },
+    "erich-neumann": {
+      path: "/images/personer/neumann.jpg",
+      credit: "Foto: Micha Neumann, ca 1955, Tel Aviv (Wikimedia Commons, CC BY-SA 4.0)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Erich_Neumann,_psychologist.jpg",
+    },
+    "camille-paglia": {
+      path: "/images/personer/paglia.jpg",
+      credit: "Foto: Vaner Casaes/Ag. BAPRESS, 2017 (Wikimedia Commons, CC BY-SA 4.0)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Camille_Paglia.jpg",
+    },
   };
   for (const [slug, p] of Object.entries(refPortraits)) {
     await prisma.character.update({
@@ -7424,14 +7808,27 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
     },
   ];
 
+  // BUGFIX (Fas 63, upptäckt vid granskning av Eliades personsida — 109
+  // referenser visade sig vara 66 unika upprepade i snitt ~5 gånger):
+  // videoId_storyId_characterId-uppserten ovan bröts varje gång
+  // r.storySlug var ofylld. story?.id blir då `undefined` i CREATE
+  // (kolumnen sätts till NULL i databasen) men `story?.id ?? ""` i
+  // WHERE-uppslaget letar efter en rad med storyId === "" (tom sträng)
+  // — vilket ALDRIG matchar en rad med storyId === NULL. Varje omkörning
+  // av `prisma db seed` skapade alltså en helt ny dubblettrad istället
+  // för att uppdatera den befintliga. Fixat genom att, precis som
+  // seed-workref-*/seed-bookref-* på andra ställen i filen, använda ett
+  // stabilt, deterministiskt id istället för den opålitliga sammansatta
+  // unika nyckeln. Databasen städades samtidigt (265 dubblettrader borttagna).
   for (const r of references) {
     const video = await prisma.petersonVideo.findUniqueOrThrow({ where: { youtubeId: r.videoYoutubeId } });
     const story = r.storySlug ? await prisma.story.findFirst({ where: { slug: r.storySlug } }) : null;
     const characterId = refCharacters[r.characterSlug].id;
+    const stableId = `seed-charref-${r.videoYoutubeId}-${r.characterSlug}-${r.storySlug ?? "none"}-${r.atSec ?? "any"}`;
     await prisma.reference.upsert({
-      where: { videoId_storyId_characterId: { videoId: video.id, storyId: story?.id ?? "", characterId } },
-      update: { note: r.note, atSec: r.atSec, work: r.work },
-      create: { videoId: video.id, storyId: story?.id, characterId, atSec: r.atSec, work: r.work, note: r.note },
+      where: { id: stableId },
+      update: { videoId: video.id, storyId: story?.id, characterId, note: r.note, atSec: r.atSec, work: r.work },
+      create: { id: stableId, videoId: video.id, storyId: story?.id, characterId, atSec: r.atSec, work: r.work, note: r.note },
     });
   }
   console.log(`Seedat referens-index: ${refCharacterDefs.length} refererade personer, ${references.length} referenser.`);
