@@ -70,6 +70,21 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 53 (2026-08-27): Apostlagärningarna — pingst, Stefanus, Paulus
+
+Fas 6 av 7 i planen, sista NT-boken denna omgång. Fyra berättelser:
+Pingstdagen (kap. 2), Stefanus — den förste martyren (kap. 6:8-7:60),
+Paulus omvändelse (kap. 9:1-31), och Paulus och Silas i fängelset
+(kap. 16:16-40). NT-text — endast de "säkra" gudsnamn-mönstren
+(HERREN/Herren → Gud) kördes automatiskt, men två blinda
+felkonverteringar upptäcktes ändå vid manuell genomgång av varje
+kvarvarande "Herre": 9:10 (berättarrösten "sade Herren" hade blivit
+"sade Gud" — samma röst som Ananias sedan tilltalar "Herre", dvs.
+Jesus, inte Gud Fader) och 16:31 ("Tro på Herren Jesus" hade blivit
+det obegripliga "Tro på Gud Jesus", eftersom mönstret "Herren" följt
+av ett namn inte är säkert att konvertera blint). Båda rättade.
+Citat-extraktionen var annars helt ren.
+
 ## Fas 52 (2026-08-27): Nehemja — murbygget
 
 Fas 5 av 7 i planen. En enda story (kap. 1-6, hela den sammanhängande

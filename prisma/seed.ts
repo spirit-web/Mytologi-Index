@@ -26,6 +26,7 @@ import judgesCaptionsByCode from "./image-captions-judges.json";
 import kings1Captions2ByCode from "./image-captions-1kings-2.json";
 import kings2CaptionsByCode from "./image-captions-2kings.json";
 import nehemiahCaptionsByCode from "./image-captions-nehemiah.json";
+import actsCaptionsByCode from "./image-captions-acts.json";
 
 const prisma = new PrismaClient();
 
@@ -4349,6 +4350,139 @@ async function main() {
   });
   console.log("Seedat Nehemja: 1 story.");
 
+  // --- Apostlagärningarna — pingst, Stefanus, Paulus ------------------
+  // NY 2026-08-27, se README Fas 53: Fas 6 av 7 i planen, sista NT-boken
+  // i denna omgång. Fyra höjdpunkter: pingstdagen (kyrkans födelse),
+  // Stefanus — den förste martyren, Paulus omvändelse på vägen till
+  // Damaskus, och Paulus och Silas i fängelset i Filippi. NT-text —
+  // endast de "säkra" gudsnamn-mönstren normaliserades automatiskt;
+  // varje kvarvarande "Herre"/"Herren" gicks igenom manuellt (två
+  // felaktiga automatkonverteringar hittades och rättades, se README).
+  const actsBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "acts" } },
+    update: {},
+    create: { corpusId: bible.id, slug: "acts", name: "Apostlagärningarna", order: 24, testament: "new" },
+  });
+  const petrusChar = await prisma.character.upsert({ where: { slug: "petrus" }, update: {}, create: { slug: "petrus", name: "Petrus" } });
+  const actsCharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "stephen", name: "Stefanus" },
+    { slug: "paul", name: "Paulus" },
+    { slug: "ananias-of-damascus", name: "Ananias (i Damaskus)" },
+    { slug: "silas", name: "Silas" },
+  ];
+  const actsCharacters: Record<string, { id: string }> = {};
+  for (const c of actsCharacterDefs) {
+    actsCharacters[c.slug] = await prisma.character.upsert({ where: { slug: c.slug }, update: {}, create: c });
+  }
+
+  type ActsStoryDef = {
+    slug: string; title: string; startRef: string; endRef: string; orderInBook: number;
+    characterSlugs: string[]; themeSlugs: string[];
+  };
+  const actsStories: ActsStoryDef[] = [
+    {
+      slug: "pentecost",
+      title: "Pingstdagen",
+      startRef: "Acts 2:1", endRef: "Acts 2:47",
+      orderInBook: 1,
+      characterSlugs: ["petrus"],
+      themeSlugs: ["chaos-order", "testing-of-faith"],
+    },
+    {
+      slug: "stephen-martyred",
+      title: "Stefanus — den förste martyren",
+      startRef: "Acts 6:8", endRef: "Acts 7:60",
+      orderInBook: 2,
+      characterSlugs: ["stephen", "paul"],
+      themeSlugs: ["testing-of-faith", "sacrifice"],
+    },
+    {
+      slug: "pauls-conversion",
+      title: "Paulus omvändelse",
+      startRef: "Acts 9:1", endRef: "Acts 9:31",
+      orderInBook: 3,
+      characterSlugs: ["paul", "ananias-of-damascus"],
+      themeSlugs: ["testing-of-faith", "self-consciousness"],
+    },
+    {
+      slug: "paul-and-silas-in-prison",
+      title: "Paulus och Silas i fängelset",
+      startRef: "Acts 16:16", endRef: "Acts 16:40",
+      orderInBook: 4,
+      characterSlugs: ["paul", "silas"],
+      themeSlugs: ["testing-of-faith", "chaos-order"],
+    },
+  ];
+
+  for (const s of actsStories) {
+    const storyData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: actsBook.id, slug: s.slug } },
+      update: storyData,
+      create: { bookId: actsBook.id, slug: s.slug, ...storyData },
+    });
+    for (const charSlug of s.characterSlugs) {
+      const character = charSlug === "petrus" ? petrusChar : actsCharacters[charSlug];
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: character.id } },
+        update: {},
+        create: { storyId: story.id, characterId: character.id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: themes[themeSlug].id } },
+        update: {},
+        create: { storyId: story.id, themeId: themes[themeSlug].id },
+      });
+    }
+  }
+
+  const actsCaptions = actsCaptionsByCode as Record<string, string[]>;
+  const actsImageSets: Array<{ storySlug: string; code: string; count: number; credit: string; creditUrl: string }> = [
+    { storySlug: "pentecost", code: "FB_Pentecost", count: 13, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/pentecost/" },
+    { storySlug: "stephen-martyred", code: "FB_Stephen_Martyred", count: 18, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/stephen-martyred/" },
+    { storySlug: "pauls-conversion", code: "FB_Paul_Conversion", count: 26, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/paul-conversion/" },
+    { storySlug: "paul-and-silas-in-prison", code: "FB_Paul_Silas_Prison", count: 12, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/paul-silas-prison/" },
+  ];
+  for (const set of actsImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: actsBook.id, slug: set.storySlug } });
+    for (let fileNum = 1; fileNum <= set.count; fileNum++) {
+      const path = `/images/acts/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const caption = actsCaptions[set.code]?.[fileNum - 1] || null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order: fileNum } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order: fileNum, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+  const actsThumbnails: Record<string, number> = {
+    pentecost: 2, // tungor av eld
+    "stephen-martyred": 14, // Stefanus ser himlen öppen
+    "pauls-conversion": 5, // ljuset slår ner Saulus
+    "paul-and-silas-in-prison": 7, // jordbävningen
+  };
+  for (const [slug, order] of Object.entries(actsThumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: actsBook.id, slug }, data: { thumbnailOrder: order } });
+  }
+
+  await prisma.book.update({
+    where: { id: actsBook.id },
+    data: {
+      description:
+        "Fortsättningen på Lukasevangeliet (samma författare) — kyrkans " +
+        "första år, från den helige Andes utgjutelse på pingstdagen till " +
+        "evangeliets spridning från Jerusalem ut i den romerska världen. " +
+        "Fyra höjdpunkter indexeras här: pingstdagen, Stefanus (den " +
+        "förste martyren), Paulus dramatiska omvändelse på vägen till " +
+        "Damaskus, och Paulus och Silas fängelse i Filippi.",
+      authorship: "Traditionellt Lukas, samma författare som tredje evangeliet (jfr inledningarna, båda riktade till \"Teofilus\") — troligen en följeslagare till Paulus på delar av hans resor. Moderna forskare daterar den ofta till ca 80-90 e.Kr., någon gång efter Lukasevangeliet.",
+      traditions: "Judendom: ingen motsvarighet (kristen text). Kristendom: räknas som den enda historiska skildringen av den tidiga kyrkans första decennier — pingstdagen firas årligen som kyrkans \"födelsedag\". Islam: ingen direkt motsvarighet, men Isa (Jesus) och hans efterföljare omnämns i allmänna termer i Koranen.",
+    },
+  });
+  console.log(`Seedat Apostlagärningarna: ${actsStories.length} stories.`);
+
   // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
@@ -6727,6 +6861,10 @@ async function main() {
     { bookSlug: "2-kings", storySlug: "naaman-healed" },
     { bookSlug: "2-kings", storySlug: "hezekiah-and-sennacherib" },
     { bookSlug: "nehemiah", storySlug: "nehemiah-rebuilds-the-wall" },
+    { bookSlug: "acts", storySlug: "pentecost" },
+    { bookSlug: "acts", storySlug: "stephen-martyred" },
+    { bookSlug: "acts", storySlug: "pauls-conversion" },
+    { bookSlug: "acts", storySlug: "paul-and-silas-in-prison" },
     { bookSlug: "joshua", storySlug: "battle-of-jericho" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
@@ -6767,6 +6905,7 @@ async function main() {
     { slug: "judges", estimate: "Okänd författare — handlingen utspelar sig ca 1200-1050-talet f.Kr., men boken sammanställdes troligen under kungatiden eller senare." },
     { slug: "2-kings", estimate: "Okänd författare — handlingen utspelar sig ca 850-560-talet f.Kr., men boken fick sin slutredaktion under/efter den babyloniska fångenskapen (ca 500-talet f.Kr.)." },
     { slug: "nehemiah", estimate: "Traditionellt Nehemja själv (ca 440-talet f.Kr., baserat på \"Nehemja-memoaren\") — moderna forskare daterar slutredigeringen ofta till ca 400-talet f.Kr." },
+    { slug: "acts", estimate: "Traditionellt ca 62-63 e.Kr. (slutar mitt i Paulus fångenskap, utan att nämna hans död) — moderna forskare daterar den ofta till ca 80-90 e.Kr., strax efter Lukasevangeliet." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },
