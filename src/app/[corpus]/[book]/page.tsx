@@ -248,6 +248,7 @@ function StoryRow({
     themes: { theme: { name: string; slug: string } }[];
     images: { order: number; path: string }[];
     petersonSegments: unknown[];
+    referencesAsTarget: { videoId: string | null; bookSourceRef: string | null }[];
     progress?: { completedAt: Date | null; isFavorite: boolean } | null;
   };
 }) {
@@ -258,10 +259,22 @@ function StoryRow({
   // som litet omslag), annars första bilden i galleriet som tidigare.
   const thumb =
     story.images.find((img) => img.order === (story.thumbnailOrder ?? 1)) ?? story.images[0];
-  // Prioritetsnivå: Tier 1 = har verifierat Peterson-innehåll (segment
-  // eller bokcitat), Tier 2 = handplockat känd/central (isWellKnown),
-  // Tier 3 = default, inget märke. Se README "Prioritetsnivåer".
-  const tier = story.petersonSegments.length > 0 || !!story.quote ? 1 : story.isWellKnown ? 2 : 3;
+  // Prioritetsnivå: Tier 1 = har verifierat Peterson-innehåll (segment,
+  // en riktig källcitat-koppling via Reference, ELLER Story.quote — men
+  // OBS: i "influences"-korpusen (Nietzsche/Jung/Freud m.fl.) är
+  // Story.quote personens EGET citat, inte Peterson's, så det får INTE
+  // räknas som Peterson-innehåll där (bugg upptäckt 2026-08-28 via
+  // användarfeedback — Jordans emblem visades felaktigt på alla verk-
+  // sidor bara för att de hade ett eget citat inlagt, se README Fas 61).
+  // Tier 2 = handplockat känd/central (isWellKnown), Tier 3 = default.
+  const hasPetersonReference = story.referencesAsTarget.some((r) => r.videoId || r.bookSourceRef);
+  const hasOwnBookQuote = !!story.quote && book.corpus.slug !== "influences";
+  const tier =
+    story.petersonSegments.length > 0 || hasOwnBookQuote || hasPetersonReference
+      ? 1
+      : story.isWellKnown
+        ? 2
+        : 3;
   return (
     <div className="flex flex-col gap-2 px-5 py-4 transition hover:bg-[var(--accent-bg)]">
       <Link

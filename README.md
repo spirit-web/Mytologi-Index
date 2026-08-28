@@ -70,6 +70,46 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 61 (2026-08-28): Fixa Jordan-emblem-buggen + citat-attribution + verifierade verk-kopplingar
+
+Direkt användarfeedback (skärmdump): Jordans emblem visades på ALLA
+verk-sidor för Nietzsche/Jung/Freud, trots att ingen faktisk Peterson-
+koppling fanns. Grundorsak: `hasPetersonContent`/tier-logiken (tre
+ställen: bok-sidan, tidslinjen, gamification.ts) antog att
+`Story.quote` alltid är PETERSONS eget citat — sant för hans egna
+böcker (12 Rules, We Who Wrestle, ...) men fel för "influences"-
+korpusen, där `quote` är PERSONENS EGET citat (Fas 58-60). Fixat på
+alla tre ställen: `Story.quote` räknas bara som Peterson-innehåll när
+boken INTE tillhör `influences`-korpusen; en riktig `Reference`-rad
+(med videoId eller bookSourceRef) mot storyn räknas dock alltid.
+
+**Citat-attribution**: berättelsesidan visar nu VEM som säger
+citatet — personens porträtt/initial + namn ovanför citatet
+("CITAT AV FRIEDRICH NIETZSCHE"), eller Jordans egen badge när det är
+hans eget citat (alla andra framework-böcker). Avgörs via en ny
+`role: "författare"`-koppling på StoryCharacter, satt när verk-
+storyerna skapades.
+
+**Klickbara kopplingar**: "Peterson refererar hit från"-sektionen
+(story-sidan) länkade tidigare bara som text — nu riktiga länkar:
+video+tidsstämpel → YouTube, bookSourceRef → uppslaget mot den
+faktiska storyn (parsar "${bokens namn}, ${startRef}"-mönstret
+omvänt, samma konvention som redan användes åt andra hållet).
+
+**Sex verifierade verk-kopplingar** tillagda som riktiga
+`Reference`-rader (inte gissningar): Nietzsches "Den galne mannen"
+och Freuds "Totem och tabu" återanvänder två REDAN seedade Maps of
+Meaning-videor (samma video, ny riktning — nu synlig på både
+föreläsningens OCH verkets sida). Fyra nya källor hittades och
+lades in med riktiga YouTube-ID:n i två nya `PetersonSeries`
+("2017 Personality Lectures" och "Lex Fridman Podcast"): Freuds
+Drömtydning (Personality-föreläsning 9), Jungs Människan och hennes
+symboler (Personality-föreläsning 7, "Carl Jung and the Lion King"),
+Nietzsches Så talade Zarathustra och Bortom gott och ont (båda från
+Lex Fridman-podden avsnitt 448). De 14 återstående verken saknar
+MEDVETET en Reference-rad — ingen verifierad, citerbar Peterson-
+koppling till just det specifika verket hittades.
+
 ## Fas 60 (2026-08-28): Nietzsches egna ord i fulltext + Sigmund Freud
 
 Direkt användarönskemål: "lägg in [Nietzsches] viktigaste [citat] även om

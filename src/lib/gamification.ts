@@ -104,27 +104,44 @@ export async function getGamificationStats(): Promise<GamificationStats> {
     include: {
       book: { include: { corpus: true } },
       petersonSegments: { select: { id: true } },
+      // Bara för att kunna avgöra "har Peterson faktiskt kommenterat den
+      // här specifika story:n" — se hasPetersonContent nedan.
+      referencesAsTarget: { select: { videoId: true, bookSourceRef: true } },
       progress: true,
     },
     orderBy: [{ book: { order: "asc" } }, { orderInBook: "asc" }],
   });
 
-  const stories: StoryStat[] = rows.map((s) => ({
-    id: s.id,
-    title: s.title,
-    slug: s.slug,
-    bookSlug: s.book.slug,
-    bookName: s.book.name,
-    corpusSlug: s.book.corpus.slug,
-    corpusName: s.book.corpus.name,
-    corpusKind: s.book.corpus.kind,
-    seriesSlug: s.seriesSlug,
-    seriesTitle: s.seriesTitle,
-    hasPetersonContent: s.petersonSegments.length > 0 || !!s.quote,
-    completed: !!s.progress?.completedAt,
-    completedAt: s.progress?.completedAt ?? null,
-    favorite: !!s.progress?.isFavorite,
-  }));
+  const stories: StoryStat[] = rows.map((s) => {
+    // Story.quote betyder OLIKA saker beroende på korpus: i Petersons
+    // egna böcker (12 Rules, We Who Wrestle, ...) är det Petersons eget
+    // citat — räknas som Peterson-innehåll. I "influences"-korpusen
+    // (Nietzsche/Jung/Freud m.fl., se README Fas 58+) är det istället
+    // PERSONENS EGET citat ur sitt verk — ska INTE räknas som Peterson-
+    // innehåll bara för att det finns. Bugg upptäckt 2026-08-28 via
+    // användarfeedback (Jordans emblem visades på alla verk-sidor), se
+    // README Fas 61. Peterson-koppling till ett specifikt verk räknas
+    // istället via en riktig Reference-rad (videoId eller bookSourceRef
+    // satt) som pekar på just den storyn.
+    const hasOwnBookQuote = !!s.quote && s.book.corpus.slug !== "influences";
+    const hasPetersonReference = s.referencesAsTarget.some((r) => r.videoId || r.bookSourceRef);
+    return {
+      id: s.id,
+      title: s.title,
+      slug: s.slug,
+      bookSlug: s.book.slug,
+      bookName: s.book.name,
+      corpusSlug: s.book.corpus.slug,
+      corpusName: s.book.corpus.name,
+      corpusKind: s.book.corpus.kind,
+      seriesSlug: s.seriesSlug,
+      seriesTitle: s.seriesTitle,
+      hasPetersonContent: s.petersonSegments.length > 0 || hasOwnBookQuote || hasPetersonReference,
+      completed: !!s.progress?.completedAt,
+      completedAt: s.progress?.completedAt ?? null,
+      favorite: !!s.progress?.isFavorite,
+    };
+  });
 
   const totalStories = stories.length;
   const totalCompleted = stories.filter((s) => s.completed).length;

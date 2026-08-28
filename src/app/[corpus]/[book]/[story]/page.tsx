@@ -41,6 +41,16 @@ export default async function StoryPage({
 
   if (!story) notFound();
 
+  // Vems ord är story.quote? I "influences"-korpusen (Nietzsche/Jung/
+  // Freud m.fl., se README Fas 58+) är citatet PERSONENS EGET — den
+  // StoryCharacter-rad som lades till med role "författare" pekar ut
+  // vem. Saknas en sådan (alla andra framework-böcker: 12 Rules, We Who
+  // Wrestle, Maps of Meaning, Beyond Order) är citatet Petersons eget.
+  // Direkt användarönskemål 2026-08-28 (se README Fas 61) — annars går
+  // det inte att se VEM som säger vad.
+  const quoteAuthorCharacter = story.characters.find((c) => c.role === "författare")?.character;
+  const quoteAuthorIsPeterson = story.book.corpus.kind === "framework" && !quoteAuthorCharacter;
+
   // Bok-interna referenser (t.ex. "12 Rules for Life, Regel 6" ->
   // Solzjenitsyn, eller "We Who Wrestle with God, Kapitel 2" -> Adam och
   // Eva i Edens lustgård): vilka andra personer/berättelser Jordan
@@ -58,6 +68,45 @@ export default async function StoryPage({
           },
         })
       : [];
+
+  // Omvänd uppslagning för referensAsTarget-sektionen nedan ("Peterson
+  // refererar hit från"): bookSourceRef är bara fri text (t.ex. "We Who
+  // Wrestle with God, Kapitel 2"), ingen FK — så för att kunna länka
+  // VIDARE till den story:n (direkt användarönskemål 2026-08-28, se
+  // README Fas 61: "vill kunna gå till de verk där han gjorde
+  // kopplingen") måste vi tolka strängen mot samma "${bokens namn}, " +
+  // startRef-mönster som seed.ts bygger den med ovan.
+  const sourceRefTargets = new Map<
+    string,
+    { corpusSlug: string; bookSlug: string; storySlug: string; title: string } | null
+  >();
+  const distinctSourceRefs = [
+    ...new Set(story.referencesAsTarget.map((r) => r.bookSourceRef).filter((r): r is string => !!r)),
+  ];
+  if (distinctSourceRefs.length > 0) {
+    const frameworkBooks = await prisma.book.findMany({
+      where: { corpus: { kind: "framework" } },
+      select: { name: true, slug: true, corpus: { select: { slug: true } } },
+    });
+    for (const ref of distinctSourceRefs) {
+      const matchedBook = frameworkBooks.find((b) => ref.startsWith(`${b.name}, `));
+      if (!matchedBook) {
+        sourceRefTargets.set(ref, null);
+        continue;
+      }
+      const startRef = ref.slice(matchedBook.name.length + 2);
+      const targetStory = await prisma.story.findFirst({
+        where: { book: { slug: matchedBook.slug }, startRef },
+        select: { slug: true, title: true },
+      });
+      sourceRefTargets.set(
+        ref,
+        targetStory
+          ? { corpusSlug: matchedBook.corpus.slug, bookSlug: matchedBook.slug, storySlug: targetStory.slug, title: targetStory.title }
+          : null,
+      );
+    }
+  }
 
   // Segment-nivå-koppling finns ännu inte (Phase 2). Tills vidare: visa en
   // grov, omärkt kandidatlista baserad på titel-matchning mot bokens
@@ -275,9 +324,39 @@ export default async function StoryPage({
         ) : story.quote || story.summary ? (
           <div>
             {story.quote && (
-              <blockquote className="mb-3 border-l-2 border-[var(--border)] pl-4 font-serif text-[1.05rem] italic leading-relaxed text-[var(--text)]">
-                "{story.quote}"
-              </blockquote>
+              <>
+                {(quoteAuthorCharacter || quoteAuthorIsPeterson) && (
+                  <div className="mb-2 flex items-center gap-2">
+                    {quoteAuthorIsPeterson ? (
+                      <Image
+                        src="/images/badges/jordan-peterson-badge.png"
+                        alt=""
+                        width={24}
+                        height={24}
+                        className="h-6 w-6 rounded-full"
+                      />
+                    ) : quoteAuthorCharacter?.portraitPath ? (
+                      <Image
+                        src={quoteAuthorCharacter.portraitPath}
+                        alt=""
+                        width={24}
+                        height={24}
+                        className="h-6 w-6 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--accent-bg)] text-xs font-medium text-[var(--accent)]">
+                        {(quoteAuthorCharacter?.name ?? "").charAt(0)}
+                      </span>
+                    )}
+                    <span className="text-xs font-medium uppercase tracking-wide text-[var(--text-faint)]">
+                      Citat av {quoteAuthorIsPeterson ? "Jordan Peterson" : quoteAuthorCharacter?.name}
+                    </span>
+                  </div>
+                )}
+                <blockquote className="mb-3 border-l-2 border-[var(--border)] pl-4 font-serif text-[1.05rem] italic leading-relaxed text-[var(--text)]">
+                  "{story.quote}"
+                </blockquote>
+              </>
             )}
             {story.summary && (
               <p className="text-sm leading-relaxed text-[var(--text-muted)]">{story.summary}</p>
@@ -458,7 +537,31 @@ export default async function StoryPage({
                 )}
                 {ref.work && <span className="italic text-[var(--text-faint)]"> ({ref.work})</span>}
                 {ref.character && " — "}
-                {ref.video ? `${ref.video.series.title} — ${ref.video.title}` : ref.bookSourceRef}
+                {ref.video ? (
+                  <a
+                    href={`https://youtube.com/watch?v=${ref.video.youtubeId}${ref.atSec ? `&t=${ref.atSec}s` : ""}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-medium text-[var(--accent)] underline decoration-[var(--accent-border)] underline-offset-2"
+                  >
+                    {ref.video.series.title} — {ref.video.title}
+                    {ref.atSec ? ` (${formatTime(ref.atSec)})` : ""}
+                  </a>
+                ) : ref.bookSourceRef ? (
+                  (() => {
+                    const target = sourceRefTargets.get(ref.bookSourceRef);
+                    return target ? (
+                      <Link
+                        href={`/${target.corpusSlug}/${target.bookSlug}/${target.storySlug}`}
+                        className="font-medium text-[var(--accent)] underline decoration-[var(--accent-border)] underline-offset-2"
+                      >
+                        {ref.bookSourceRef}
+                      </Link>
+                    ) : (
+                      ref.bookSourceRef
+                    );
+                  })()
+                ) : null}
                 {": "}
                 {ref.note}
               </li>

@@ -5655,6 +5655,99 @@ I conjure you, my brethren, REMAIN TRUE TO THE EARTH, and believe not those who 
   }
   console.log(`Seedat Sigmund Freud: ${freudWorks.length} verk.`);
 
+  // --- Fas 61: Verifierade Peterson-kopplingar till specifika verk -----
+  // Direkt användarönskemål: "dubbelkolla om Jordan har citat för alla
+  // dessa böcker och lägg in dessa citat under respektive bok". Sex
+  // riktiga, källverifierade kopplingar hittade och inlagda som Reference-
+  // rader (storyId = det specifika VERKET, inte bara personen) — två
+  // återanvänder redan seedade Maps of Meaning-videor (samma video, ny
+  // riktning), fyra kräver nya PetersonVideo-rader i två nya serier.
+  // Verk UTAN en rad här har medvetet INGEN källverifierad Peterson-
+  // koppling hittad — se README Fas 61 för fullständig researchlogg.
+  const personalitySeries = await prisma.petersonSeries.upsert({
+    where: { slug: "personality-2017" },
+    update: {},
+    create: {
+      slug: "personality-2017",
+      title: "2017 Personality Lectures (University of Toronto)",
+      requiresPaidAccess: false,
+      isPanelDiscussion: false,
+      enabledByDefault: true,
+      notes: "Petersons personlighetspsykologi-kurs, fritt på YouTube (2017) — separat serie från Biblical Series/Maps of Meaning samma år.",
+    },
+  });
+  const lexFridmanSeries = await prisma.petersonSeries.upsert({
+    where: { slug: "lex-fridman-podcast" },
+    update: {},
+    create: {
+      slug: "lex-fridman-podcast",
+      title: "Lex Fridman Podcast (gästframträdanden)",
+      requiresPaidAccess: false,
+      isPanelDiscussion: false,
+      enabledByDefault: true,
+      notes: "Petersons framträdanden som GÄST på Lex Fridmans podcast — fritt på YouTube.",
+    },
+  });
+  const freudPersonalityVideo = await prisma.petersonVideo.upsert({
+    where: { youtubeId: "YFWLwYyrMRE" },
+    update: {},
+    create: { youtubeId: "YFWLwYyrMRE", title: "2017 Personality Lecture 09: Freud and the Dynamic Unconscious", seriesId: personalitySeries.id, seriesOrder: 9 },
+  });
+  const jungPersonalityVideo = await prisma.petersonVideo.upsert({
+    where: { youtubeId: "3iLiKMUiyTI" },
+    update: {},
+    create: { youtubeId: "3iLiKMUiyTI", title: "2017 Personality Lecture 07: Carl Jung and the Lion King (Part 1)", seriesId: personalitySeries.id, seriesOrder: 7 },
+  });
+  const lexFridman448Video = await prisma.petersonVideo.upsert({
+    where: { youtubeId: "q8VePUwjB9Y" },
+    update: {},
+    create: { youtubeId: "q8VePUwjB9Y", title: "#448 – Jordan Peterson: Nietzsche, Hitler, God, Psychopathy, Suffering & Meaning", seriesId: lexFridmanSeries.id, publishedAt: "2024-10-11" },
+  });
+  // De två Maps of Meaning-videorna finns redan (seedade tidigare i
+  // filen) — hämtas via youtubeId, ingen ny video skapas.
+  const mapsOfMeaningLecture8 = await prisma.petersonVideo.findUniqueOrThrow({ where: { youtubeId: "Nb5cBkbQpGY" } });
+  const mapsOfMeaningLecture4 = await prisma.petersonVideo.findUniqueOrThrow({ where: { youtubeId: "bV16NEWld8Q" } });
+
+  const verifiedWorkReferences: Array<{
+    storySlug: string; bookSlug: string; videoId: string; atSec: number | null; note: string;
+  }> = [
+    {
+      storySlug: "the-madman", bookSlug: "nietzsche", videoId: mapsOfMeaningLecture8.id, atSec: 6642,
+      note: "Kopplar direkt till just denna passage (den galne mannen/'Gud är död') och den mesopotamiska skapelsemyten om Tiamat — kallar det 'ingen skillnad' och använder det som språngbräda för en kritik av postmodernismen.",
+    },
+    {
+      storySlug: "totem-and-taboo", bookSlug: "freud", videoId: mapsOfMeaningLecture4.id, atSec: 4739,
+      note: "Refererar till just den här bokens tes — att 'ingen kan bli en fullvärdig man förrän hans far [symboliskt] har dött' — och hur Jung vidareutvecklade tanken, som en förklaring till Pinocchio-filmens narrativ.",
+    },
+    {
+      storySlug: "man-and-his-symbols", bookSlug: "jung", videoId: jungPersonalityVideo.id, atSec: null,
+      note: "Använder Disneys Lejonkungen genom hela föreläsningen för att konkretisera arketyp-begreppet så som det presenteras tillgängligt i den här boken — Jungs sista och mest lättillgängliga verk.",
+    },
+    {
+      storySlug: "interpretation-of-dreams", bookSlug: "freud", videoId: freudPersonalityVideo.id, atSec: null,
+      note: "En hel föreläsning ägnad åt just Freuds teori om det dynamiska omedvetna, med drömtydning (och den här bokens grundtes) som utgångspunkt, innan han går vidare till Jungs bredare uppfattning veckan efter.",
+    },
+    {
+      storySlug: "thus-spoke-zarathustra", bookSlug: "nietzsche", videoId: lexFridman448Video.id, atSec: null,
+      note: "Diskuterar Övermänniskan (Übermensch) ingående — hur begreppet, som det introduceras i just den här boken, förvrängdes av nazismen till sin motsats efter Nietzsches död.",
+    },
+    {
+      storySlug: "beyond-good-and-evil", bookSlug: "nietzsche", videoId: lexFridman448Video.id, atSec: null,
+      note: "Kallar boken en av de tätaste han läst och diskuterar hur 'viljan till makt' — dess centrala begrepp — misstolkades av fascister som en hyllning av ren dominans.",
+    },
+  ];
+  for (const r of verifiedWorkReferences) {
+    const target = await prisma.story.findFirstOrThrow({
+      where: { slug: r.storySlug, book: { slug: r.bookSlug, corpus: { slug: "influences" } } },
+    });
+    await prisma.reference.upsert({
+      where: { id: `seed-workref-${r.storySlug}` },
+      update: { storyId: target.id, videoId: r.videoId, atSec: r.atSec, note: r.note },
+      create: { id: `seed-workref-${r.storySlug}`, storyId: target.id, videoId: r.videoId, atSec: r.atSec, note: r.note },
+    });
+  }
+  console.log(`Seedat verifierade verk-kopplingar: ${verifiedWorkReferences.length}.`);
+
   // --- Fas 14: Beyond Order: 12 More Rules for Life (2021) -----------
   // Uppföljaren till 12 Rules for Life — samma metod: inget digitalt
   // exemplar/transkript tillgängligt, så varje regels citat är

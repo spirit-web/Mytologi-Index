@@ -18,7 +18,11 @@ export default async function TidslinjePage() {
         include: {
           stories: {
             orderBy: { orderInBook: "asc" },
-            include: { progress: true, petersonSegments: { select: { id: true } } },
+            include: {
+              progress: true,
+              petersonSegments: { select: { id: true } },
+              referencesAsTarget: { select: { videoId: true, bookSourceRef: true } },
+            },
           },
         },
       },
@@ -92,7 +96,17 @@ export default async function TidslinjePage() {
                     {book.stories.map((s) => {
                       const completedRow = !!s.progress?.completedAt;
                       const favorite = !!s.progress?.isFavorite;
-                      const tier = s.petersonSegments.length > 0 || !!s.quote ? 1 : s.isWellKnown ? 2 : 3;
+                      // Se README Fas 61: Story.quote är personens EGET
+                      // citat i "influences"-korpusen (Nietzsche/Jung/...),
+                      // inte Petersons — ska inte ge Tier 1 där.
+                      const hasOwnBookQuote = !!s.quote && corpus.slug !== "influences";
+                      const hasPetersonReference = s.referencesAsTarget.some((r) => r.videoId || r.bookSourceRef);
+                      const tier =
+                        s.petersonSegments.length > 0 || hasOwnBookQuote || hasPetersonReference
+                          ? 1
+                          : s.isWellKnown
+                            ? 2
+                            : 3;
                       return (
                         <li key={s.id}>
                           <Link
