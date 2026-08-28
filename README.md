@@ -70,6 +70,17 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 64 (2026-08-28): Skelett för andra religiösa texter
+
+Ny Corpus `other-scriptures` ("Andra religiösa texter", kind
+"scripture") med tre platshållar-`Book`-rader: Koranen, Talmud,
+Bhagavad Gita. INGA Story-rader än — ren struktur, så att kommande
+faser vet exakt var innehållet ska in. Varje bok kommer enligt
+tidigare effort-uppskattning kräva flera egna faser (som Bibelböckerna
+själva) den dag den faktiskt fylls i; syftet här var bara att göra
+"vad som är kvar" synligt och navigerbart redan nu, inte att börja
+fylla i innehållet.
+
 ## Fas 63 (2026-08-28): Bredda referens-djupet (Solzjenitsyn, Eliade, Neumann, Paglia)
 
 Fyra tänkare fanns redan lätt representerade i appen — som `refCharacterDefs`

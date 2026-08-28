@@ -6301,6 +6301,49 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
   }
   console.log(`Seedat Solzjenitsyn/Eliade/Neumann/Paglia: ${solzhenitsynWorks.length + eliadeWorks.length + neumannWorks.length + pagliaWorks.length} verk, ${breadthReferences.length} verifierade kopplingar.`);
 
+  // --- Fas 64: SKELETT för andra religiösa texter (Koranen, Talmud,
+  // Bhagavad Gita) ------------------------------------------------------
+  // Bara Corpus+Book, INGA Story-rader än — ren strukturell platshållare
+  // så framtida faser vet exakt vad som ska fyllas i. Varje "description"
+  // fylls i på riktigt i respektive faktiska fas; texten här markerar
+  // uttryckligen att den INTE är gjord än. Se README Fas 64 för
+  // omfattning/plan per verk (flera faser per text, enligt tidigare
+  // effort-uppskattning till användaren).
+  const otherScripturesCorpus = await prisma.corpus.upsert({
+    where: { slug: "other-scriptures" },
+    update: {},
+    create: {
+      slug: "other-scriptures",
+      name: "Andra religiösa texter",
+      kind: "scripture",
+      description:
+        "Centrala texter från andra religiösa/andliga traditioner än " +
+        "kristendomen — tillagda i skelettform, en i taget, som egna " +
+        "faser. Ingen Peterson-koppling krävs för att en berättelse ska " +
+        "läggas in här (till skillnad från 'Källor & influenser'), men " +
+        "läggs in där det finns.",
+    },
+  });
+  const skeletonBooks: Array<{ slug: string; name: string; order: number }> = [
+    { slug: "quran", name: "Koranen" },
+    { slug: "talmud", name: "Talmud" },
+    { slug: "bhagavad-gita", name: "Bhagavad Gita" },
+  ].map((b, i) => ({ ...b, order: i + 1 }));
+  for (const b of skeletonBooks) {
+    await prisma.book.upsert({
+      where: { corpusId_slug: { corpusId: otherScripturesCorpus.id, slug: b.slug } },
+      update: {},
+      create: {
+        corpusId: otherScripturesCorpus.id,
+        slug: b.slug,
+        name: b.name,
+        order: b.order,
+        description: "SKELETT — inte påbörjad än. Se README Fas 64.",
+      },
+    });
+  }
+  console.log(`Seedat skelett för andra religiösa texter: ${skeletonBooks.length} böcker (inga stories än).`);
+
   // --- Fas 14: Beyond Order: 12 More Rules for Life (2021) -----------
   // Uppföljaren till 12 Rules for Life — samma metod: inget digitalt
   // exemplar/transkript tillgängligt, så varje regels citat är
