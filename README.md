@@ -70,6 +70,31 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 57 (2026-08-28): Research — Petersons spridda bibelkommentarer utanför de tre kända serierna
+
+Gedigen sökning (via subagent) efter om Peterson kommenterat någon av
+sessionens nytillagda berättelser (David & Goljat, Daniel, Ester,
+Simson, Gideon, pingstdagen, Stefanus, Paulus omvändelse, m.fl.)
+utanför sina tre etablerade bibelserier (Genesis-föreläsningarna,
+Exodus-panelen, Kristi död/uppståndelse-sammanslagningen). Resultat:
+
+- **En fjärde formell serie upptäcktes**: "The Gospels" (DailyWire+,
+  dec 2024–jan 2025, 10 avsnitt paneldiskussion — samma format som
+  Exodus). Avsnittsnamnen antyder brett innehåll som sannolikt täcker
+  flera Lukas/Johannes-berättelser (förlorade sonen, Sackeus, Emmaus)
+  men ligger bakom betalvägg. Användaren saknar DailyWire+-access för
+  att verifiera exakt avsnitt↔story-koppling — lämnas olänkad tills
+  vidare, dokumenterad i seed.ts vid `christSeries`.
+- Ett svagt fynd (gäst-pastor predikar om förlorade sonen i Petersons
+  podcast) bedömdes INTE vara "Jordans egen tolkning" och lades
+  medvetet inte in.
+- För alla övriga sökta berättelser: inget citerbart hittades —
+  webbsökning indexerar podcast-ljud dåligt, så detta är ett negativt
+  sökresultat, inte bevis på att han aldrig nämnt dem.
+
+Ingen ny data lades till denna fas — bara research + dokumentation för
+framtida sessioner.
+
 ## Fas 56 (2026-08-28): Emblem-finputsning + tre riktiga buggar hittade och fixade
 
 Föranledd av en direkt begäran om att leta igenom appen efter saknade

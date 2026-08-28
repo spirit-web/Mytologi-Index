@@ -81,6 +81,17 @@ async function main() {
     },
   });
 
+  // UPPTÄCKT 2026-08-28 (se README Fas 57), EJ ÄNNU SEEDAD: en fjärde
+  // formell serie, "The Gospels" (DailyWire+, dec 2024–jan 2025, 10
+  // avsnitt paneldiskussion, samma format som Exodus-serien). Tio avsnitt
+  // ("Birth-Youth-Baptism", "Miracles", "Parables", "The Ministry
+  // Continues", "Conflict with Authority", "Holy Week...", "Crucifixion
+  // and Resurrection" m.fl.) täcker sannolikt bl.a. Liknelsen om den
+  // förlorade sonen, Sackeus och Vandringen till Emmaus — men bakom
+  // betalvägg, och användaren saknar DailyWire+-access för att verifiera
+  // exakt vilket avsnitt som täcker vilken story. Lämnas olänkad tills
+  // vidare (samma status som Exodus-panelens tidsstämplar) — se README
+  // Fas 57 för hela researchloggen om Petersons spridda bibelkommentarer.
   const christSeries = await prisma.petersonSeries.upsert({
     where: { slug: "death-resurrection-of-christ" },
     update: {},
