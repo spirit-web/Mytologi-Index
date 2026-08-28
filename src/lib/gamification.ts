@@ -212,6 +212,29 @@ const BOOK_BADGE_STYLE: Record<string, { emoji: string; name: string }> = {
   "12-rules-for-life": { emoji: "📏", name: "12 regler bemästrade" },
   "we-who-wrestle-with-god": { emoji: "🤼", name: "Brottas med Gud" },
   "beyond-order": { emoji: "🌀", name: "Bortom ordningen" },
+  // NY 2026-08-28, se README Fas 56: resten av Bibel-böckerna saknade
+  // finputsning (fick bara generisk 📖 + "{namn} klar") — kompletterat
+  // för alla, inte bara böckerna från den här sessionen.
+  mark: { emoji: "⚡", name: "Markus-mästare" },
+  john: { emoji: "💡", name: "Johannes-mästare" },
+  jonah: { emoji: "🐋", name: "Jona-mästare" },
+  ruth: { emoji: "🌾", name: "Rut-mästare" },
+  esther: { emoji: "👑", name: "Ester-mästare" },
+  daniel: { emoji: "🦁", name: "Daniel-mästare" },
+  "1-samuel": { emoji: "🎯", name: "Första Samuelsboken-mästare" },
+  leviticus: { emoji: "🕯️", name: "Tredje Moseboken-mästare" },
+  deuteronomy: { emoji: "📜", name: "Femte Moseboken-mästare" },
+  job: { emoji: "⚖️", name: "Job-mästare" },
+  "song-of-songs": { emoji: "🌹", name: "Höga Visan-mästare" },
+  jeremiah: { emoji: "🪣", name: "Jeremia-mästare" },
+  joshua: { emoji: "📯", name: "Josua-mästare" },
+  "2-samuel": { emoji: "🏹", name: "Andra Samuelsboken-mästare" },
+  "1-kings": { emoji: "🏛️", name: "Första Konungaboken-mästare" },
+  numbers: { emoji: "🐍", name: "Numeri-mästare" },
+  judges: { emoji: "⚔️", name: "Domarboken-mästare" },
+  "2-kings": { emoji: "🌪️", name: "Andra Konungaboken-mästare" },
+  nehemiah: { emoji: "🧱", name: "Nehemja-mästare" },
+  acts: { emoji: "🕊️", name: "Apostlagärningarna-mästare" },
 };
 const SERIES_BADGE_STYLE: Record<string, { emoji: string }> = {
   "genesis:jacob": { emoji: "🪜" },

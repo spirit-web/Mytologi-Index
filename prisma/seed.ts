@@ -3506,7 +3506,10 @@ async function main() {
     update: {},
     create: { corpusId: bible.id, slug: "joshua", name: "Josua", order: 17, testament: "old" },
   });
-  const joshuaChar = await prisma.character.upsert({ where: { slug: "joshua" }, update: {}, create: { slug: "joshua", name: "Josua" } });
+  // Samma slug som redan finns (Exodus, vatten-ur-klippan-berättelsen) —
+  // bugg upptäckt och fixad 2026-08-28 (se README Fas 56): en dubblett
+  // "joshua" hade av misstag skapats istället för att återanvända "josua".
+  const joshuaChar = await prisma.character.upsert({ where: { slug: "josua" }, update: {}, create: { slug: "josua", name: "Josua" } });
   const jerichoStory = await prisma.story.upsert({
     where: { bookId_slug: { bookId: joshuaBook.id, slug: "battle-of-jericho" } },
     update: { title: "Jerikos murar faller", startRef: "Joshua 6:1", endRef: "Joshua 6:27", orderInBook: 1 },
@@ -3707,7 +3710,11 @@ async function main() {
   });
   const kings1CharacterDefs: Array<{ slug: string; name: string }> = [
     { slug: "solomon", name: "Salomo" },
-    { slug: "elijah", name: "Elia" },
+    // Samma slug som redan finns (Matteus/Markus förklaringsberget) —
+    // bugg upptäckt och fixad 2026-08-28 (se README Fas 56): en dubblett-
+    // karaktär "elijah" hade av misstag skapats istället för att
+    // återanvända "elia", vilket splittrade hans statistik i två rader.
+    { slug: "elia", name: "Elia" },
     { slug: "ahab", name: "Ahab" },
   ];
   const kings1Characters: Record<string, { id: string }> = {};
@@ -3741,7 +3748,7 @@ async function main() {
       title: "Elia och Baals profeter",
       startRef: "1 Kings 17:1", endRef: "1 Kings 18:46",
       orderInBook: 3,
-      characterSlugs: ["elijah", "ahab"],
+      characterSlugs: ["elia", "ahab"],
       themeSlugs: ["testing-of-faith", "chaos-order"],
     },
     {
@@ -3749,7 +3756,7 @@ async function main() {
       title: "Elia vid Horeb",
       startRef: "1 Kings 19:1", endRef: "1 Kings 19:21",
       orderInBook: 4,
-      characterSlugs: ["elijah"],
+      characterSlugs: ["elia"],
       themeSlugs: ["testing-of-faith"],
     },
   ];
@@ -3837,10 +3844,12 @@ async function main() {
     { slug: "balaam", name: "Bileam" },
     // Mose, Aron och Josua finns redan (Exodus/Leviticus/Josua-avsnitten)
     // — samma slug här återanvänder och länkar ihop dem, upsert no-opar
-    // på redan satta fält.
+    // på redan satta fält. (Slugen var av misstag "joshua" här, en
+    // dubblett av den redan existerande "josua" — fixat 2026-08-28, se
+    // README Fas 56.)
     { slug: "mose", name: "Mose" },
     { slug: "aron", name: "Aron" },
-    { slug: "joshua", name: "Josua" },
+    { slug: "josua", name: "Josua" },
   ];
   const numbersCharacters: Record<string, { id: string }> = {};
   for (const c of numbersCharacterDefs) {
@@ -3857,7 +3866,7 @@ async function main() {
       title: "Spejarna i Kanaan",
       startRef: "Numbers 13:1", endRef: "Numbers 14:45",
       orderInBook: 1,
-      characterSlugs: ["mose", "aron", "caleb", "joshua"],
+      characterSlugs: ["mose", "aron", "caleb", "josua"],
       themeSlugs: ["testing-of-faith", "chaos-order"],
     },
     {
@@ -4207,7 +4216,7 @@ async function main() {
       title: "Elias himmelsfärd",
       startRef: "2 Kings 2:1", endRef: "2 Kings 2:18",
       orderInBook: 1,
-      characterSlugs: ["elijah", "elisha"],
+      characterSlugs: ["elia", "elisha"],
       themeSlugs: ["hierarchy", "testing-of-faith"],
     },
     {

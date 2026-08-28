@@ -70,6 +70,35 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 56 (2026-08-28): Emblem-finputsning + tre riktiga buggar hittade och fixade
+
+Föranledd av en direkt begäran om att leta igenom appen efter saknade
+emblem och bildbuggar. Tre fynd:
+
+1. **Emblem-finputsning**: bok-emblem genereras automatiskt (ingen kod
+   krävs för nya böcker), men 20 böcker — alla från den här sessionen
+   plus flera äldre (Markus, Johannes, Jona, Rut, Ester, Daniel) —
+   hade bara det generiska 📖-emblemet. Lade till egna emoji/namn för
+   alla 20 i `BOOK_BADGE_STYLE`.
+2. **4 saknade bildfiler**: `exodus/water-from-rock-and-amalek/06-09.jpg`
+   fanns i databasen men inte på disk — en ofullständig nedladdning
+   från Fas 6, långt innan den här sessionen. Full skanning av alla
+   1598 StoryImage-rader bekräftade att detta var det ENDA problemet
+   (inga andra saknade filer, inga korrupta/för små filer, inga
+   saknade credits, inga hål i bildordningen, inga trasiga
+   porträtt-referenser). Laddade om de 4 filerna i samma upplösning
+   som resten av bildsetet.
+3. **Två dubblett-karaktärer**: "Elia" fanns som både `elia` (befintlig
+   sedan Matteus/Markus förklaringsberget) och `elijah` (skapad av
+   misstag i Fas 47/51 istället för att återanvända `elia`) — splittrade
+   hans statistik i två separata karaktärsrader. Samma bugg för "Josua":
+   `josua` (befintlig sedan Exodus) vs `joshua` (skapad av misstag i Fas
+   45/48). Båda dubbletterna slogs ihop till de befintliga sluggarna;
+   de föräldralösa `StoryCharacter`-raderna och dubblett-`Character`-
+   raderna togs bort manuellt (seed-scriptets upsert-mönster tar aldrig
+   bort gamla rader på egen hand). En fullständig sökning efter fler
+   namn-dubbletter bland alla karaktärer bekräftar: inga fler kvar.
+
 ## Fas 55 (2026-08-27): Peterson-korslänkar färdigställda + stor citat-städning i Andra Moseboken
 
 Föranledd av frågan "finns det något med högre prioritet kvar, eller
