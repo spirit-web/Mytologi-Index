@@ -20,6 +20,7 @@ import deutCaptionsByCode from "./image-captions-deuteronomy.json";
 import jeremiahCaptionsByCode from "./image-captions-jeremiah.json";
 import joshuaCaptionsByCode from "./image-captions-joshua.json";
 import samuel2CaptionsByCode from "./image-captions-2samuel.json";
+import kings1CaptionsByCode from "./image-captions-1kings.json";
 
 const prisma = new PrismaClient();
 
@@ -3670,6 +3671,133 @@ async function main() {
   });
   console.log(`Seedat Andra Samuelsboken: ${samuel2Stories.length} stories.`);
 
+  // --- Första Konungaboken — Salomos vishet, templet, Elia ------------
+  // NY 2026-08-27, se README Fas 47: fortsätter "starka kandidater".
+  // Salomos höjdpunkter (vishet, templet) och Elia-cykelns två mest
+  // kända episoder (Karmel, Horeb). Drottningen av Saba (kap. 10) och
+  // rikets splittring (kap. 11-12) uteslutna — inget AI-tillåtet bildset
+  // hittat för det förra, lägre narrativ prioritet för det senare.
+  const kings1Book = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: bible.id, slug: "1-kings" } },
+    update: {},
+    create: { corpusId: bible.id, slug: "1-kings", name: "Första Konungaboken", order: 19, testament: "old" },
+  });
+  const kings1CharacterDefs: Array<{ slug: string; name: string }> = [
+    { slug: "solomon", name: "Salomo" },
+    { slug: "elijah", name: "Elia" },
+    { slug: "ahab", name: "Ahab" },
+  ];
+  const kings1Characters: Record<string, { id: string }> = {};
+  for (const c of kings1CharacterDefs) {
+    kings1Characters[c.slug] = await prisma.character.upsert({ where: { slug: c.slug }, update: {}, create: c });
+  }
+
+  type Kings1StoryDef = {
+    slug: string; title: string; startRef: string; endRef: string; orderInBook: number;
+    characterSlugs: string[]; themeSlugs: string[];
+  };
+  const kings1Stories: Kings1StoryDef[] = [
+    {
+      slug: "solomons-wisdom",
+      title: "Salomos vishet",
+      startRef: "1 Kings 3:1", endRef: "1 Kings 3:28",
+      orderInBook: 1,
+      characterSlugs: ["solomon"],
+      themeSlugs: ["hierarchy"],
+    },
+    {
+      slug: "temple-built-and-dedicated",
+      title: "Templet byggs och invigs",
+      startRef: "1 Kings 8:1", endRef: "1 Kings 8:66",
+      orderInBook: 2,
+      characterSlugs: ["solomon"],
+      themeSlugs: ["covenant", "sacrifice"],
+    },
+    {
+      slug: "elijah-and-the-prophets-of-baal",
+      title: "Elia och Baals profeter",
+      startRef: "1 Kings 17:1", endRef: "1 Kings 18:46",
+      orderInBook: 3,
+      characterSlugs: ["elijah", "ahab"],
+      themeSlugs: ["testing-of-faith", "chaos-order"],
+    },
+    {
+      slug: "elijah-at-horeb",
+      title: "Elia vid Horeb",
+      startRef: "1 Kings 19:1", endRef: "1 Kings 19:21",
+      orderInBook: 4,
+      characterSlugs: ["elijah"],
+      themeSlugs: ["testing-of-faith"],
+    },
+  ];
+
+  for (const s of kings1Stories) {
+    const storyData = { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: s.orderInBook };
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: kings1Book.id, slug: s.slug } },
+      update: storyData,
+      create: { bookId: kings1Book.id, slug: s.slug, ...storyData },
+    });
+    for (const charSlug of s.characterSlugs) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId: kings1Characters[charSlug].id } },
+        update: {},
+        create: { storyId: story.id, characterId: kings1Characters[charSlug].id },
+      });
+    }
+    for (const themeSlug of s.themeSlugs) {
+      await prisma.storyTheme.upsert({
+        where: { storyId_themeId: { storyId: story.id, themeId: themes[themeSlug].id } },
+        update: {},
+        create: { storyId: story.id, themeId: themes[themeSlug].id },
+      });
+    }
+  }
+
+  const kings1Captions = kings1CaptionsByCode as Record<string, string[]>;
+  const kings1ImageSets: Array<{ storySlug: string; code: string; count: number; credit: string; creditUrl: string }> = [
+    { storySlug: "solomons-wisdom", code: "FB_LS_Solomon_Wisdom", count: 9, credit: "Lambsongs / Jill Kemp & Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/ls-solomon-wise/" },
+    { storySlug: "temple-built-and-dedicated", code: "FB_Solomon_Temple", count: 17, credit: "Sweet Publishing (freebibleimages.org), CC BY-SA", creditUrl: "https://www.freebibleimages.org/illustrations/solomon-temple/" },
+    { storySlug: "elijah-and-the-prophets-of-baal", code: "FB_LS_Elijah_Baal", count: 8, credit: "Lambsongs / Jill Kemp & Richard Gunther (freebibleimages.org), CC BY-NC", creditUrl: "https://www.freebibleimages.org/illustrations/ls-elijah-baal/" },
+    { storySlug: "elijah-at-horeb", code: "FB_Elijah_Horeb", count: 23, credit: "FreeBibleimages.org, CC BY-SA 4.0", creditUrl: "https://freebibleimages.org/photos/elijah-horeb/" },
+  ];
+  for (const set of kings1ImageSets) {
+    const story = await prisma.story.findFirstOrThrow({ where: { bookId: kings1Book.id, slug: set.storySlug } });
+    for (let fileNum = 1; fileNum <= set.count; fileNum++) {
+      const path = `/images/1-kings/${set.storySlug}/${String(fileNum).padStart(2, "0")}.jpg`;
+      const caption = kings1Captions[set.code]?.[fileNum - 1] || null;
+      await prisma.storyImage.upsert({
+        where: { storyId_order: { storyId: story.id, order: fileNum } },
+        update: { path, caption, credit: set.credit, creditUrl: set.creditUrl },
+        create: { storyId: story.id, order: fileNum, path, caption, credit: set.credit, creditUrl: set.creditUrl },
+      });
+    }
+  }
+  const kings1Thumbnails: Record<string, number> = {
+    "solomons-wisdom": 6, // mödrarna reagerar på Salomos dom
+    "temple-built-and-dedicated": 12, // molnskyn fyller templet
+    "elijah-and-the-prophets-of-baal": 7, // elden faller över Elias altare
+    "elijah-at-horeb": 20, // Elia döljer ansiktet vid grottans mynning
+  };
+  for (const [slug, order] of Object.entries(kings1Thumbnails)) {
+    await prisma.story.updateMany({ where: { bookId: kings1Book.id, slug }, data: { thumbnailOrder: order } });
+  }
+
+  await prisma.book.update({
+    where: { id: kings1Book.id },
+    data: {
+      description:
+        "Salomos glansfulla start — visheten, templet — och sedan Elia-" +
+        "cykelns två mest kända episoder: den öppna tävlingen mot Baals " +
+        "profeter på berget Karmel, och den tysta, sakta susningen vid " +
+        "Horeb som följer. Rikets splittring efter Salomo (kap. 11-12) " +
+        "och Drottningen av Saba (kap. 10) är inte indexerade här ännu.",
+      authorship: "Okänd författare, del av det deuteronomistiska historieverket — sammanställt/redigerat under eller efter den babyloniska fångenskapen (ca 500-talet f.Kr.), byggt på äldre kungliga krönikor och profetberättelser.",
+      traditions: "Judendom: del av \"Nevi'im\" (de tidigare profeterna). Kristendom: Elia förknippas med Johannes Döparen (Matt. 11:14) och uppträder tillsammans med Mose vid Jesu förklaring på berget (Matt. 17:3). Islam: Sulayman (Salomo) och Ilyas (Elia) är båda erkända profeter i Koranen — Sulayman berömd för sin visdom och makt över naturen/andarna.",
+    },
+  });
+  console.log(`Seedat Första Konungaboken: ${kings1Stories.length} stories.`);
+
   // ======================================================================
   // FAS 6: Andra Moseboken (Exodus) på djupet
   // ======================================================================
@@ -6031,6 +6159,10 @@ async function main() {
     { bookSlug: "2-samuel", storySlug: "davidic-covenant" },
     { bookSlug: "2-samuel", storySlug: "david-and-bathsheba" },
     { bookSlug: "2-samuel", storySlug: "absaloms-rebellion" },
+    { bookSlug: "1-kings", storySlug: "solomons-wisdom" },
+    { bookSlug: "1-kings", storySlug: "temple-built-and-dedicated" },
+    { bookSlug: "1-kings", storySlug: "elijah-and-the-prophets-of-baal" },
+    { bookSlug: "1-kings", storySlug: "elijah-at-horeb" },
     { bookSlug: "joshua", storySlug: "battle-of-jericho" },
     // ("moses-flees-to-midian" och "the-tabernacle" lämnas medvetet som
     // Tier 3 — mindre kända/mer perifera även bland bibelläsare.)
@@ -6066,6 +6198,7 @@ async function main() {
     { slug: "jeremiah", estimate: "Traditionellt Jeremia/Baruk (sent 600-talet–tidigt 500-talet f.Kr., under och efter Jerusalems fall 587 f.Kr.) — moderna forskare ser boken som redigerad/utvidgad i flera steg efteråt." },
     { slug: "joshua", estimate: "Traditionellt Josua själv (ca 1200-talet f.Kr.) — moderna forskare daterar slutredigeringen ofta till ca 600-talet f.Kr. eller senare, som del av det deuteronomistiska historieverket." },
     { slug: "2-samuel", estimate: "Okänd författare — handlingen utspelar sig ca 1000-talet f.Kr., men boken sammanställdes troligen under eller efter kungatiden, med slutredaktion under/efter den babyloniska fångenskapen (ca 500-talet f.Kr.)." },
+    { slug: "1-kings", estimate: "Okänd författare — handlingen utspelar sig ca 970-850-talet f.Kr., men boken sammanställdes troligen under eller efter kungatiden, med slutredaktion under/efter den babyloniska fångenskapen (ca 500-talet f.Kr.)." },
     { slug: "matthew", estimate: "Traditionellt ca 70–80 e.Kr. — moderna forskare ofta ca 80–90 e.Kr." },
     { slug: "luke", estimate: "Traditionellt ca 60 e.Kr. — moderna forskare ofta ca 80–90 e.Kr., efter eller samtidigt med Matteus." },
     { slug: "john", estimate: "Traditionellt ca 90 e.Kr. (apostelns höga ålder) — moderna forskare ofta ca 90–100 e.Kr., det senast skrivna evangeliet." },

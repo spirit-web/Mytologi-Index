@@ -70,6 +70,23 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 47 (2026-08-27): Första Konungaboken — Salomos vishet, templet, Elia
+
+Fortsätter listan över "starka kandidater". Fyra berättelser: Salomos
+vishet (kap. 3, domen mellan de två mödrarna), Templet byggs och
+invigs (kap. 8, molnskyn fyller templet), Elia och Baals profeter
+(kap. 17-18, EN sammanhängande story från Elias introduktion till
+Karmel-tävlingen, samma mönster som "Absaloms uppror"), och Elia vid
+Horeb (kap. 19, den sakta susningen). 65 automatfixade + 12 manuellt
+fixade citat-kontamineringar, en fullständigt återskapad förlorad
+vers (3:1, samma "text-taggen nästlad i fel verse-element"-bugg som
+tidigare — se Fas 42/43/44).
+
+Utelämnat medvetet: Drottningen av Saba (kap. 10) — inget AI-tillåtet
+bildset hittades (närmaste träff, "Solomon the Temple builder", har
+AI-adaptationer förbjudna). Rikets splittring efter Salomo (kap.
+11-12) — lägre narrativ prioritet, mest politisk uppräkning.
+
 ## Fas 46 (2026-08-27): Andra Samuelsboken — Davids kungadöme
 
 Fortsätter listan över "starka kandidater", naturlig fortsättning på
