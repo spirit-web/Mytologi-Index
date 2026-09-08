@@ -70,6 +70,28 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 75 (2026-08-28): Talmud färdigställd
+
+Fas 8 av 10. Alla 7 skelett-stubbar från Fas 65 fyllda i. **Viktig
+källskillnad mot resten av appen**: de klassiska fria, gamla engelska
+Talmud-översättningarna (Rodkinson 1918 m.fl.) visade sig i praktiken
+svåra att hitta i ren, komplett textform för just dessa specifika
+folio-sidor — Wikisources Rodkinson-transkription täcker bara ett fåtal
+inledande sidor per traktat, långt ifrån de aktuella (Bava Metzia 59b
+osv.). Använde istället **Sefarias "William Davidson Talmud"**
+(sefaria.org/api, CC BY-NC 4.0) — fri att använda för icke-kommersiellt
+bruk, vilket appen är, men INTE public domain som de flesta andra
+källorna hittills. Pirkei Avot är däremot äkta public domain (Joseph
+Gorfinkles 1913-översättning, Gutenberg #8548).
+
+Sju berättelser, alla med hela, ordagrant kontrollerade citat: Akhnais
+ugn (rabbinsk auktoritet mot en himmelsk röst — "Mina barn har besegrat
+Mig"), Kamtza och Bar Kamtza (grundlöst hat som leder till Jerusalems
+fall), Choni cirkeldragaren, Hillel och konvertiten ("stå på ett ben"),
+De fyra som gick in i Pardes, Rabbi Akivas martyrdöd, och Pirkei Avot
+(Hillels tre frågor, Ben Zomas vishet/styrka/rikedom/ära-definition,
+Rabbi Tarfons "det är inte din plikt att fullborda verket").
+
 ## Fas 74 (2026-08-28): Koranen färdigställd
 
 Fas 7 av 10. Alla 10 skelett-stubbar från Fas 65 fyllda i med riktiga,

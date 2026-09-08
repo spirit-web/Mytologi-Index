@@ -7294,6 +7294,135 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
   }
   console.log(`Seedat Koranen (Fas 74): ${quranContent.length} berättelser fyllda i.`);
 
+  // --- Fas 75: Färdigställ Talmud — fyller i alla 7 stubbar från Fas 65.
+  // De klassiska GAMLA fria engelska Talmud-översättningarna (Rodkinson
+  // 1918 m.fl.) visade sig i praktiken svåra att hitta i ren, komplett
+  // textform för just dessa specifika folio-sidor (Wikisources
+  // Rodkinson-transkription är ofullständig, arkiv.org-volymerna
+  // svårnavigerade per exakt daf). Använder istället Sefarias "William
+  // Davidson Talmud"-översättning (CC BY-NC 4.0, sefaria.org/api) —
+  // fri att använda/dela för icke-kommersiellt bruk, vilket den här
+  // appen är. INTE public domain, till skillnad från de flesta andra
+  // källorna i appen — se README Fas 75 för den avgränsningen. Pirkei
+  // Avot är däremot äkta public domain: Joseph Gorfinkles 1913-
+  // översättning, Gutenberg #8548.
+  const talmudBook = await prisma.book.findFirstOrThrow({ where: { slug: "talmud", corpus: { slug: "other-scriptures" } } });
+  const talmudContent: Array<{ slug: string; quote: string; summary: string }> = [
+    {
+      slug: "oven-of-akhnai",
+      quote:
+        "Rabbi Eliezer then said to them: If the halakha is in accordance with my opinion, this carob tree will prove it. The carob tree was uprooted from its place one hundred cubits [...] The Rabbis said to him: One does not cite halakhic proof from the carob tree. [...] Rabbi Eliezer then said to them: If the halakha is in accordance with my opinion, Heaven will prove it. A Divine Voice emerged from Heaven and said: Why are you differing with Rabbi Eliezer, as the halakha is in accordance with his opinion in every place that he expresses an opinion? Rabbi Yehoshua stood on his feet and said: It is written: \"It is not in heaven\" (Deuteronomy 30:12). [...] Rabbi Natan encountered Elijah the prophet and said to him: What did the Holy One, Blessed be He, do at that time? Elijah said to him: The Holy One, Blessed be He, smiled and said: My children have triumphed over Me; My children have triumphed over Me.",
+      summary:
+        "Bava Metzia 59b. Rabbi Eliezer, ensam mot majoriteten i en " +
+        "juridisk tvist, kallar in mirakel efter mirakel — ett träd som " +
+        "flyttar sig, en bäck som vänder, väggarna som lutar — och till " +
+        "slut en röst från himlen själv som ger honom rätt. Rabbi " +
+        "Jehoshua svarar med ett bibelcitat ('det är inte i himlen') " +
+        "för att hävda att Toran, en gång given, tolkas av MÄNSKLIG " +
+        "majoritet — inte längre av direkta gudomliga ingripanden. " +
+        "Guds egen reaktion (enligt profeten Elias vittnesmål långt " +
+        "senare): ett leende, och orden 'Mina barn har besegrat Mig.' " +
+        "En av judendomens mest citerade texter om rabbinsk auktoritets " +
+        "gränser gentemot uppenbarelse.",
+    },
+    {
+      slug: "kamtza-and-bar-kamtza",
+      quote:
+        "Jerusalem was destroyed on account of Kamtza and bar Kamtza. There was a certain man whose friend was named Kamtza and whose enemy was named bar Kamtza. He once made a large feast and said to his servant: Go bring me my friend Kamtza. The servant went and mistakenly brought him his enemy bar Kamtza. [...] The host said to bar Kamtza: You are my enemy. What then do you want here? Arise and leave. Bar Kamtza said to him: Since I have already come, let me stay and I will give you money for whatever I eat and drink. Just do not embarrass me by sending me out. [...] the host took bar Kamtza by his hand, stood him up, and took him out. [...] Bar Kamtza said to himself: Since the Sages were sitting there and did not protest the actions of the host, although they saw how he humiliated me, learn from it that they were content with what he did. I will therefore go and inform against them to the king.",
+      summary:
+        "Gittin 55b–56a. En inbjudan som av misstag går till fel person " +
+        "(en förväxling mellan två snarlika namn) utlöser en offentlig " +
+        "förnedring som ingen av de närvarande lärde protesterar mot — " +
+        "och den förödmjukade mannen hämnas genom att sätta igång en " +
+        "kedja av händelser som enligt traditionen leder ända fram till " +
+        "Jerusalems förstörelse. Talmud använder berättelsen som sitt " +
+        "främsta exempel på 'sinat chinam' (grundlöst hat) som en av " +
+        "judiska folkets största självförvållade katastrofer — och på " +
+        "hur allvarligt tystnad inför andras förödmjukelse kan te sig " +
+        "i efterhand.",
+    },
+    {
+      slug: "honi-the-circle-drawer",
+      quote:
+        "Once, most of the month of Adar had passed but rain had still not fallen. They sent this message to Ḥoni HaMe'aggel: Pray, and rain will fall. He prayed, but no rain fell. He drew a circle in the dust and stood inside it [...] Ḥoni said before God: Master of the Universe, Your children have turned their faces toward me, as I am like a member of Your household. Therefore, I take an oath by Your great name that I will not move from here until you have mercy upon Your children and answer their prayers for rain. [...] Rain began to fall furiously, until each and every drop was as big as the mouth of a barrel [...] His students said to him: Rabbi, we have seen that you can call on God to perform miracles and we will not die, but now it appears to us that rain is falling only to destroy the world.",
+      summary:
+        "Taanit 23a. Under en svår torka drar Choni en cirkel i sanden, " +
+        "ställer sig i den, och vägrar bokstavligen lämna platsen förrän " +
+        "Gud sänder regn — en djärvhet gentemot Gud som gränsar till " +
+        "det respektlösa (senare rabbiner debatterar om han förtjänade " +
+        "bannlysning för sitt sätt att be). Regnet kommer i tre " +
+        "'felaktiga' vågor (för svagt, sedan förstörande kraftigt) innan " +
+        "Choni ber om exakt rätt mängd — en berättelse om bönens " +
+        "precision lika mycket som dess kraft.",
+    },
+    {
+      slug: "hillel-and-the-convert",
+      quote:
+        "There was another incident involving one gentile who came before Shammai and said to Shammai: Convert me on condition that you teach me the entire Torah while I am standing on one foot. Shammai pushed him away with the builder's cubit in his hand. [...] The same gentile came before Hillel. He converted him and said to him: That which is hateful to you do not do to another; that is the entire Torah, and the rest is its interpretation. Go study.",
+      summary:
+        "Shabbat 31a. En hedning ställer ett uppenbart orimligt krav — " +
+        "sammanfatta hela Toran medan jag står på ett ben — som ett sätt " +
+        "att testa/förlöjliga judendomen. Shammai, känd för sin " +
+        "sträng het, jagar bort honom med sin murarlinjal. Hillel, känd " +
+        "för sitt tålamod, konverterar honom på plats med en enda mening " +
+        "— en tidig, kortfattad formulering av den gyllene regeln, " +
+        "given innan Jesu 'gör mot andra...' i Matteus 7:12 (om än i sin " +
+        "negativa, avhållande form snarare än en positiv uppmaning).",
+    },
+    {
+      slug: "four-who-entered-pardes",
+      quote:
+        "The Sages taught: Four entered the orchard [pardes] [...] and they are as follows: Ben Azzai; and ben Zoma; Aḥer, the other, a name for Elisha ben Avuya; and Rabbi Akiva. Rabbi Akiva, the senior among them, said to them: When you reach pure marble stones, do not say: Water, water [...] Ben Azzai glimpsed at the Divine Presence and died. [...] Ben Zoma glimpsed at the Divine Presence and was harmed, i.e., he lost his mind. [...] Aḥer chopped down the shoots of saplings. In other words, he became a heretic. Rabbi Akiva came out safely.",
+      summary:
+        "Chagigah 14b. Fyra av tidens främsta lärde ger sig in i den " +
+        "mystiska spekulationens 'lustgård' (pardes, samma ord som i " +
+        "Edens lustgård) — och bara en, Rabbi Akiva, klarar sig helskinnad. " +
+        "En dör, en förlorar förståndet, en blir kättare. En av " +
+        "judendomens mest citerade varningsberättelser om andlig/" +
+        "intellektuell överreach: förmågan att uthärda den djupaste " +
+        "kunskapen utan att gå under kräver ett mognadsmått de flesta, " +
+        "även de mest lärda, saknar.",
+    },
+    {
+      slug: "death-of-rabbi-akiva",
+      quote:
+        "When they brought Rabbi Akiva out to be executed, it was time for the recitation of Shema. And they were raking his flesh with iron combs, and he was reciting Shema, thereby accepting upon himself the yoke of Heaven. His students said to him: Our teacher, even now, as you suffer, you recite Shema? He said to them: All my days I have been troubled by the verse: With all your soul, meaning: Even if God takes your soul. I said to myself: When will the opportunity be afforded me to fulfill this verse? Now that it has been afforded me, shall I not fulfill it? He prolonged his uttering of the word: One, until his soul left his body as he uttered his final word: One. A voice descended from heaven and said: Happy are you, Rabbi Akiva, that your soul left your body as you uttered: One.",
+      summary:
+        "Berakhot 61b. Romarna avrättar Rabbi Akiva genom att riva hans " +
+        "kött med järnkammar, som straff för att fortsätta undervisa " +
+        "Tora trots förbud (se hans egen 'rävens liknelse' till Pappos " +
+        "ben Jehuda tidigare på samma sida: fiskar som flyr vattnet av " +
+        "rädsla för nät dör snabbare på land — judar utan Tora är som " +
+        "fiskar utan sitt element). Akiva reciterar medvetet Shema " +
+        "('med hela din själ' — dvs. även om Gud tar din själ) under " +
+        "tortyren och drar ut det sista ordet, 'Ett', tills han dör mitt " +
+        "i det — en av judendomens mest citerade bilder av villig " +
+        "martyrdöd som en fullbordan snarare än ett nederlag.",
+    },
+    {
+      slug: "pirkei-avot",
+      quote:
+        "He [Hillel] used to say, \"If I am not for myself, who will be for me? But if I care for myself only, what am I? And if not now, when?\" [...] Ben Zoma said, \"Who is wise? He who learns from all men... Who is mighty? He who controls his passions... Who is rich? He who rejoices in his portion... Who is honored? He who honors others.\" [...] Rabbi Tarfon said, \"The day is short, the task is great, the laborers are sluggish, the reward is much, and the Master of the house is urgent.\" He also used to say, \"It is not thy duty to complete the work, but neither art thou free to desist from it.\"",
+      summary:
+        "'Fädernas etik' — tekniskt en del av Mishna, inte Gemara, men " +
+        "alltid buntad med Talmud-studier. En samling korta, praktiska " +
+        "levnadsvisdomar i samma tradition som Ordspråksboken eller " +
+        "Dhammapadens öppningsverser (se Buddhism ovan). Hillels tre " +
+        "frågor (1:14) hör till judendomens mest citerade enskilda " +
+        "rader; Ben Zomas definition av vishet/styrka/rikedom/ära (4:1) " +
+        "och Rabbi Tarfons 'det är inte din plikt att fullborda verket, " +
+        "men du är inte heller fri att avstå från det' (2:16) är " +
+        "nästan lika kända.",
+    },
+  ];
+  for (const c of talmudContent) {
+    await prisma.story.update({
+      where: { bookId_slug: { bookId: talmudBook.id, slug: c.slug } },
+      data: { quote: c.quote, summary: c.summary },
+    });
+  }
+  console.log(`Seedat Talmud (Fas 75): ${talmudContent.length} berättelser fyllda i.`);
+
   // --- Tvärtraditions-karaktärslänkning: Koranens berättelser om samma
   // personer som redan finns i Bibel-korpusen länkas till SAMMA
   // Character-rad (inte en ny "islamisk Adam" osv.) — detta är vad som
