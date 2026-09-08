@@ -6982,6 +6982,166 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
   });
   console.log(`Seedat Buddhism: ${buddhismWorks.length} berättelser.`);
 
+  // --- Fas 72: Nordisk mytologi -----------------------------------------
+  // Svagast källäge av alla nya civilisationer den här sessionen (direkt
+  // användarbeslut att ändå lägga till den) — enda fyndet var en lös
+  // referens till Jörmungandr och ett klipp där Peterson "marvels at"
+  // Yggdrasil-symbolen i ett samtal med Dawkins, ingen dedikerad analys
+  // och ingen exakt video+tidsstämpel verifierad. INGEN Reference-rad
+  // läggs därför till — samma ärliga avgränsning som Gilgamesh (Fas 68)
+  // och Horus-ögat (Fas 66). Källtexter: Snorris Prosaiska Eddan
+  // (Brodeurs fria översättning, 1916, Gutenberg #18947) och Den
+  // poetiska Eddan/Hávamál (Bellows fria översättning, 1936, Wikisource).
+  const thorChar = await prisma.character.upsert({ where: { slug: "thor" }, update: {}, create: { slug: "thor", name: "Tor" } });
+  const jormungandrChar = await prisma.character.upsert({ where: { slug: "jormungandr" }, update: {}, create: { slug: "jormungandr", name: "Jörmungandr (Midgårdsormen)" } });
+  const odinChar = await prisma.character.upsert({ where: { slug: "odin" }, update: {}, create: { slug: "odin", name: "Oden" } });
+  const norseBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: otherScripturesCorpus.id, slug: "norse-mythology" } },
+    update: {},
+    create: {
+      corpusId: otherScripturesCorpus.id,
+      slug: "norse-mythology",
+      name: "Nordisk mytologi",
+      order: 9,
+      description:
+        "Fornnordisk mytologi, huvudsakligen känd via Snorri " +
+        "Sturlusons Prosaiska Edda (ca 1220 e.Kr.) och den äldre " +
+        "Poetiska Eddan (dikter från vikingatiden, nedtecknade ca " +
+        "1270). Svagast bekräftade Peterson-kopplingen av alla nya " +
+        "civilisationer den här fasen — ett löst omnämnande av " +
+        "Jörmungandr och ett klipp där han 'marvels at' (förundras " +
+        "över) Yggdrasil-symbolen, men ingen dedikerad analys eller " +
+        "verifierad tidsstämpel. Tillagd ändå, på egna mytologiska " +
+        "meriter och för fullständighetens skull.",
+    },
+  });
+  const norseWorks: Array<{ order: number; slug: string; title: string; startRef: string; endRef: string; quote: string; summary: string; characterIds: string[] }> = [
+    {
+      order: 1, slug: "thor-and-the-midgard-serpent", title: "Tor och Midgårdsormen", startRef: "Prosaiska Eddan, Gylfaginning 48", endRef: "Prosaiska Eddan, Gylfaginning 48",
+      characterIds: [thorChar.id, jormungandrChar.id],
+      quote:
+        "Then said Hymer that they had come so far out that it was dangerous to stay there, for the Midgard-serpent. Thor said he wished to row a while longer, and so he did [...] When he had put on the ox-head for bait, he cast it overboard and it sank to the bottom. [...] The Midgard-serpent took the ox-head into his mouth, whereby the hook entered his palate, but when the serpent perceived this he tugged so hard that both Thor's hands were dashed against the gunwale. Now Thor became angry, assumed his asa-might and spurned so hard that both his feet went through the boat and he stood on the bottom of the sea. He pulled the serpent up to the gunwale; and in truth no one has ever seen a more terrible sight than when Thor whet his eyes on the serpent, and the latter stared at him and spouted venom. [...] just at the moment when Thor grasped the hammer and lifted it in the air, the giant fumbled for his fishing-knife and cut off Thor's line at the gunwale, whereby the serpent sank back into the sea.",
+      summary:
+        "Tor ror ut på havet med jätten Hymer, under förevändning att " +
+        "fiska, men syftet är att locka fram Midgårdsormen — den " +
+        "jätteorm som ligger runt hela världen och biter sig själv i " +
+        "svansen. Tor får napp med ett oxhuvud som bete, drar upp " +
+        "ormen till relingen och lyfter sin hammare Mjölner för att " +
+        "döda den — men den fege Hymer skär av linan av ren skräck, " +
+        "och ormen sjunker tillbaka i havet för att slutligen mötas " +
+        "igen först vid Ragnarök. Samma 'hjälte mot kaosdrake'-mönster " +
+        "som Marduk/Tiamat, Zeus/Typhon och Indra/Vritra (se Jordans " +
+        "Mytologi) — men här, ovanligt, slutar mötet OAVGJORT.",
+    },
+    {
+      order: 2, slug: "odins-sacrifice", title: "Odens självoffer på Yggdrasil", startRef: "Poetiska Eddan, Hávamál 138", endRef: "Poetiska Eddan, Hávamál 141",
+      characterIds: [odinChar.id],
+      quote:
+        "I ween that I hung on the windy tree, Hung there for nights full nine; With the spear I was wounded, and offered I was To Othin, myself to myself, On the tree that none may ever know What root beneath it runs. None made me happy with loaf or horn, And there below I looked; I took up the runes, shrieking I took them, And forthwith back I fell.",
+      summary:
+        "Oden hänger sig själv, sårad av sitt eget spjut, i nio nätter " +
+        "på världsträdet Yggdrasil ('Odens häst') som ett offer till " +
+        "sig själv — 'myself to myself' — utan mat eller dryck, tills " +
+        "han till slut ser och griper runorna (det nordiska " +
+        "skriftsystemet, här också en källa till magisk kunskap) och " +
+        "faller tillbaka från trädet förvandlad. Ett av mytologins " +
+        "tydligaste exempel på kunskap köpt genom frivilligt, " +
+        "extremt personligt lidande — jämförbart med hur Peterson " +
+        "läser andra 'hjälten offrar sig för att vinna något värdefullt'-" +
+        "mönster i sina föreläsningar, dock utan en specifikt " +
+        "verifierad koppling här.",
+    },
+  ];
+  for (const w of norseWorks) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: norseBook.id, slug: w.slug } },
+      update: { title: w.title, startRef: w.startRef, endRef: w.endRef, quote: w.quote, summary: w.summary, orderInBook: w.order },
+      create: { bookId: norseBook.id, slug: w.slug, title: w.title, startRef: w.startRef, endRef: w.endRef, quote: w.quote, summary: w.summary, orderInBook: w.order },
+    });
+    for (const characterId of w.characterIds) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId } },
+        update: {},
+        create: { storyId: story.id, characterId },
+      });
+    }
+  }
+  console.log(`Seedat nordisk mytologi: ${norseWorks.length} berättelser.`);
+
+  // --- Fas 73: Zoroastrism ----------------------------------------------
+  // Inget källbelagt Peterson-omnämnande hittat alls (till skillnad från
+  // Nordisk mytologi ovan, som ändå hade ett löst fynd) — tillagd helt
+  // på egna, komparativ-religionsvetenskapliga meriter: Zarathustras
+  // "tvillingandarna"-lära (Yasna 30) är en av de allra äldsta kända,
+  // tydliga formuleringarna av etisk dualism (gott mot ont som ett
+  // MEDVETET VAL, inte bara ett kosmiskt sakförhållande) och nämns ofta
+  // av religionshistoriker (bl.a. Mircea Eliade, redan i appen) som en
+  // möjlig influens på den judiska föreställningsvärlden under den
+  // babyloniska fångenskapen. INGEN Reference-rad. Källtext: Yasna
+  // (Mills fria översättning, 1887, Sacred Books of the East vol. 31,
+  // avesta.org).
+  const zoroasterChar = await prisma.character.upsert({ where: { slug: "zoroaster" }, update: {}, create: { slug: "zoroaster", name: "Zarathustra (Zoroaster)" } });
+  const zoroastrianismBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: otherScripturesCorpus.id, slug: "zoroastrianism" } },
+    update: {},
+    create: {
+      corpusId: otherScripturesCorpus.id,
+      slug: "zoroastrianism",
+      name: "Zoroastrism",
+      order: 10,
+      description:
+        "Grundad av den persiske profeten Zarathustra (dateringen " +
+        "mycket omtvistad — traditionellt runt 600-talet f.Kr., vissa " +
+        "lingvistiska analyser av Gathas pekar mot 1200–1000 f.Kr.). " +
+        "Inget källbelagt Peterson-omnämnande hittat — tillagd på egna " +
+        "komparativ-religionsvetenskapliga meriter: en av de allra " +
+        "äldsta kända, tydliga formuleringarna av etisk dualism som " +
+        "ett MEDVETET VAL, ofta diskuterad som en möjlig influens på " +
+        "judendomens gott/ont-föreställningar under den babyloniska " +
+        "fångenskapen.",
+    },
+  });
+  const twinSpiritsStory = await prisma.story.upsert({
+    where: { bookId_slug: { bookId: zoroastrianismBook.id, slug: "the-twin-spirits" } },
+    update: {
+      title: "De två tvillingandarna", startRef: "Yasna 30", endRef: "Yasna 30", orderInBook: 1,
+      quote:
+        "Now the two primal Spirits, who reveal themselves in vision as Twins, are the Better and the Bad, in thought and word and action. And between these two the wise ones chose aright, the foolish not so. And when these twain Spirits came together in the beginning, they created Life and Not-Life, and that at the last Worst Existence shall be to the followers of the Lie, but the Best Existence to him that follows Right. [...] Then truly on the (world of) Lie shall come the destruction of delight; but they who get themselves good name shall be partakers in the promised reward in the fair abode of Good Thought, of Mazda, and of Right.",
+      summary:
+        "Zarathustras egna ord (Gathas, de äldsta och mest " +
+        "personliga delarna av Avestan): två ursprungliga andar, " +
+        "'Twins', den Bättre och den Onda — och MELLAN dem måste " +
+        "varje människa, vis eller ovis, aktivt VÄLJA. Detta är inte " +
+        "bara en beskrivning av kosmisk konflikt (som Marduk mot " +
+        "Tiamat) utan en etisk uppmaning: valet mellan Sanning (Asha) " +
+        "och Lögnen (Druj) avgör varje människas öde. En av de äldsta " +
+        "kända texterna som formulerar ondska som ett medvetet val " +
+        "snarare än ett kaosmonster som besegras utifrån.",
+    },
+    create: {
+      bookId: zoroastrianismBook.id, slug: "the-twin-spirits",
+      title: "De två tvillingandarna", startRef: "Yasna 30", endRef: "Yasna 30", orderInBook: 1,
+      quote:
+        "Now the two primal Spirits, who reveal themselves in vision as Twins, are the Better and the Bad, in thought and word and action. And between these two the wise ones chose aright, the foolish not so. And when these twain Spirits came together in the beginning, they created Life and Not-Life, and that at the last Worst Existence shall be to the followers of the Lie, but the Best Existence to him that follows Right. [...] Then truly on the (world of) Lie shall come the destruction of delight; but they who get themselves good name shall be partakers in the promised reward in the fair abode of Good Thought, of Mazda, and of Right.",
+      summary:
+        "Zarathustras egna ord (Gathas, de äldsta och mest " +
+        "personliga delarna av Avestan): två ursprungliga andar, " +
+        "'Twins', den Bättre och den Onda — och MELLAN dem måste " +
+        "varje människa, vis eller ovis, aktivt VÄLJA. Detta är inte " +
+        "bara en beskrivning av kosmisk konflikt (som Marduk mot " +
+        "Tiamat) utan en etisk uppmaning: valet mellan Sanning (Asha) " +
+        "och Lögnen (Druj) avgör varje människas öde. En av de äldsta " +
+        "kända texterna som formulerar ondska som ett medvetet val " +
+        "snarare än ett kaosmonster som besegras utifrån.",
+    },
+  });
+  await prisma.storyCharacter.upsert({
+    where: { storyId_characterId: { storyId: twinSpiritsStory.id, characterId: zoroasterChar.id } },
+    update: {},
+    create: { storyId: twinSpiritsStory.id, characterId: zoroasterChar.id, role: "författare" },
+  });
+  console.log("Seedat Zoroastrism: 1 berättelse (De två tvillingandarna).");
+
   // --- Tvärtraditions-karaktärslänkning: Koranens berättelser om samma
   // personer som redan finns i Bibel-korpusen länkas till SAMMA
   // Character-rad (inte en ny "islamisk Adam" osv.) — detta är vad som
@@ -7038,6 +7198,7 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
     quran: [610, 632], talmud: [200, 500], "bhagavad-gita": [-400, -200],
     mesopotamia: [-2100, -1100], egypt: [-2400, -100], taoism: [-400, -200],
     "greek-mythology": [-700, -429], buddhism: [-563, -483],
+    "norse-mythology": [1220, 1270], zoroastrianism: [-1200, -1000],
   };
   let yearsUpdated = 0;
   for (const [slug, [start, end]] of Object.entries(approxYears)) {
@@ -8181,6 +8342,16 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
       credit: "Foto: Ethan Doyle White, 2017, Victoria and Albert Museum (Wikimedia Commons, CC BY-SA 4.0)",
       creditUrl: "https://commons.wikimedia.org/wiki/File:Meditating_Buddha_Statue_from_Gandhara.JPG",
     },
+    thor: {
+      path: "/images/personer/thor.jpg",
+      credit: "Målning: Mårten Eskil Winge, 1872 (Wikimedia Commons, public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:M%C3%A5rten_Eskil_Winge_-_Tor%27s_Fight_with_the_Giants_-_Google_Art_Project.jpg",
+    },
+    odin: {
+      path: "/images/personer/odin.jpg",
+      credit: "Målning: Georg von Rosen, 1886 (Wikimedia Commons, public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Georg_von_Rosen_-_Oden_som_vandringsman,_1886_(Odin,_the_Wanderer).jpg",
+    },
   };
   for (const [slug, p] of Object.entries(refPortraits)) {
     await prisma.character.update({
@@ -8868,6 +9039,7 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
   });
 
   const zeusTyphonStory = await prisma.story.findFirstOrThrow({ where: { bookId: greekBook.id, slug: "zeus-and-typhon" } });
+  const thorMidgardStory = await prisma.story.findFirstOrThrow({ where: { bookId: norseBook.id, slug: "thor-and-the-midgard-serpent" } });
 
   // Fas 71-tillägg: Petersons EGEN, uttryckliga jämförelse (en hel
   // föreläsning ägnad just åt den) — starkast verifierad av alla
@@ -8904,6 +9076,8 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
     [heroParallel.id, enumaElishStory.id, "Marduk väljs till kung för att han kan SE och TALA ('logos') — inte för att han är starkast."],
     [heroParallel.id, zeusTyphonStory.id, "Zeus möter sin sista utmanare efter att ha störtat titanerna — samma 'bevisa ordningen genom att besegra kaos'-mönster, en av flera antika varianter Peterson återkommer till."],
     [heroParallel.id, indraVritraStory.id, "Peterson räknar uttryckligen upp just den här myten (Indra mot 'the Cosmic Serpent') tillsammans med Marduk/Tiamat och Zeus/Typhon i sina föreläsningar om ordning och kaos."],
+    [heroParallel.id, thorMidgardStory.id, "Ovanligt nog slutar detta möte OAVGJORT — ormen sjunker tillbaka i havet, och de båda möts först slutgiltigt vid Ragnarök."],
+    [dualityParallel.id, twinSpiritsStory.id, "Till skillnad från yin-yang är Zarathustras tvillingandar explicit MORALISKA (den Bättre och den Onda) och kräver ett aktivt val — samma dualitets-grundform, men etiskt laddad."],
     [heroParallel.id, osirisHorusStory.id, "Horus mot Seth appliceras på statens förfall/förnyelse istället för kosmos skapelse — samma mönster, ny kontext."],
     [heroParallel.id, creationStory.id, "Gud talar ordning ur kaos ('Guds ande svävade över vattnet') — samma djupstruktur i en mer abstrakt, avpersonifierad form."],
     [floodParallel.id, noahsFloodStoryForParallel.id, "Den bibliska versionen — Noa varnas, bygger arken, överlever med sin familj och djuren."],

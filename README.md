@@ -70,6 +70,35 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 72–73 (2026-08-28): Nordisk mytologi + Zoroastrism
+
+Fas 5 och 6 av 10, körda direkt efter varandra på användarens begäran.
+De två svagast källbelagda tilläggen i hela civilisations-serien —
+tillagda ändå, på egna mytologiska/religionshistoriska meriter, med
+tydlig ärlig markering om vad som INTE är verifierat.
+
+**Nordisk mytologi** (Fas 72): svagast Peterson-källäge av alla nya
+civilisationer (ett löst Jörmungandr-omnämnande + ett klipp där han
+"marvels at" Yggdrasil, ingen dedikerad analys). Två berättelser med
+hela verifierade citat: **Tor och Midgårdsormen** (Snorris Prosaiska
+Edda, Brodeurs fria 1916-översättning, Gutenberg #18947) — ovanligt
+nog slutar mötet OAVGJORT, tillagd i "Hjälten mot kaos-monstret"-
+Parallelen — och **Odens självoffer på Yggdrasil** (Poetiska Eddan,
+Hávamál 138–141, Bellows fria 1936-översättning, Wikisource).
+
+**Zoroastrism** (Fas 73): INGET källbelagt Peterson-omnämnande hittat
+alls — tillagd helt på egna meriter som en av de äldsta kända, tydliga
+formuleringarna av etisk dualism. **De två tvillingandarna** (Yasna
+30, Zarathustras egna ord, Mills fria 1887-översättning, Sacred Books
+of the East vol. 31) — tillagd i "Ordning och kaos som urkrafter"-
+Parallelen, med en tydlig distinktion mot yin-yang: Zarathustras
+dualitet är explicit MORALISK och kräver ett aktivt val, inte bara en
+konfliktfri balans.
+
+Fyra nya porträtt (Tor, Oden — Zoroaster/Jörmungandr fick inget,
+tidsbrist). Båda tillagda i historiska tidslinjen (Nordisk mytologi
+1220–1270 e.Kr.; Zoroastrism 1200–1000 f.Kr.).
+
 ## Fas 71 (2026-08-28): Buddhism
 
 Fas 4 av 10 — starkast källäge av alla fyra nya civilisationer. Peterson
