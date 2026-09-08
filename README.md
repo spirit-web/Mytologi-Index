@@ -70,6 +70,25 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 76 (2026-08-28): Bhagavad Gita färdigställd
+
+Fas 9 av 10 — sista av de tre "färdigställ skelettet"-faserna. De
+kvarvarande 6 kapitlen (Indra/Vritra fylldes redan i Fas 70) med hela,
+verifierade citat ur Sir Edwin Arnolds "The Song Celestial" (1885) —
+den mest kända engelska versöversättningen, fri (Arnold död 1904,
+Wikisource): Arjunas förtvivlan, själens odödlighet ("som när man
+lägger bort utslitna kläder"), karma yoga ("låt rätta handlingar vara
+ditt motiv, inte frukten"), den kosmiska uppenbarelsen ("tusen solars
+glans"), bhakti yoga ("den människan älskar jag"), och avslutningen.
+
+**Självrättelse**: research inför den här fasen visade att Fas 70:s
+sidonot var FEL — "the sage does not contrive to win..." i 12 Rules
+for Life är ett Tao Te Ching-citat, inte Bhagavad Gita (en
+sammanblandning i en tidigare sökningssammanfattning). Rättat i Fas
+70:s avsnitt ovan. Ingen verifierad direkt Peterson-Gita-koppling
+hittades i stället — bara ett löst omnämnande i en Art of Manliness-
+podcast om dharma-begreppet, utan exakt avsnitt/tidsstämpel.
+
 ## Fas 75 (2026-08-28): Talmud färdigställd
 
 Fas 8 av 10. Alla 7 skelett-stubbar från Fas 65 fyllda i. **Viktig
@@ -191,11 +210,13 @@ Lagt till i "Hjälten som besegrar kaos-monstret"-Parallelen, som nu
 spänner över FEM traditioner (Bibeln, Mesopotamien, Egypten, Grekland,
 Vedisk mytologi) — synligt direkt på varje enskild berättelses sida.
 
-**Sidofynd, sparat för Fas 76**: research bekräftade att Peterson
+~~**Sidofynd, sparat för Fas 76**: research bekräftade att Peterson
 faktiskt citerat Bhagavad Gita direkt i 12 Rules for Life ("the sage
-does not contrive to win, and therefore is not defeated") — en
-konkret, verifierbar koppling att bygga vidare på när Gitan
-färdigställs.
+does not contrive to win, and therefore is not defeated").~~ **RÄTTELSE
+(Fas 76)**: detta var fel — citatet visade sig vid närmare kontroll
+komma från Tao Te Ching, inte Bhagavad Gita (en sammanblandning i den
+ursprungliga sökningens sammanfattning). Rättat här för att inte sprida
+felet vidare — se Fas 76 nedan för vad som faktiskt hittades istället.
 
 ## Fas 69 (2026-08-28): Grekisk mytologi
 

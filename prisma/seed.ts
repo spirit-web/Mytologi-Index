@@ -7423,6 +7423,113 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
   }
   console.log(`Seedat Talmud (Fas 75): ${talmudContent.length} berättelser fyllda i.`);
 
+  // --- Fas 76: Färdigställ Bhagavad Gita — fyller i de sista 6 stubbarna
+  // från Fas 65 (Indra/Vritra fylldes redan i Fas 70). Sir Edwin
+  // Arnolds "The Song Celestial" (1885) — den mest kända engelska
+  // versöversättningen, fri (Arnold död 1904, publicerad före 1929) —
+  // via Wikisource. OBS/självrättelse: README Fas 70 påstod felaktigt
+  // att "the sage does not contrive to win..." i 12 Rules for Life är
+  // ett Gita-citat — vid närmare efterforskning inför den här fasen
+  // visade det sig vara ett Tao Te Ching-citat (redan citerat på annat
+  // sätt i vår egen Taoism-bok, Fas 68). Rättat i README. Ingen
+  // verifierad direkt Peterson-Gita-koppling hittades i stället — bara
+  // ett löst omnämnande i en Art of Manliness-podcast om dharma-
+  // begreppet, utan exakt avsnitt/tidsstämpel.
+  const gitaBook = await prisma.book.findFirstOrThrow({ where: { slug: "bhagavad-gita", corpus: { slug: "other-scriptures" } } });
+  const gitaContent: Array<{ slug: string; quote: string; summary: string }> = [
+    {
+      slug: "arjunas-despair",
+      quote:
+        "Krishna! as I behold, come here to shed / Their common blood, yon concourse of our kin, / My members fail, my tongue dries in my mouth, / A shudder thrills my body, and my hair / Bristles with horror; from my weak hand slips / Gandiv, the goodly bow; a fever burns / My skin to parching; hardly may I stand; / The life within me seems to swim and faint! [...] Killing these / Must breed but anguish, Krishna! If they be / Guilty, we shall grow guilty by their deaths.",
+      summary:
+        "Arjuna, ledare för en av de två arméerna i det förestående " +
+        "brödrafolks-kriget, ser sina egna släktingar, lärare och vänner " +
+        "uppställda på båda sidor — och förlamas fysiskt av sorg och " +
+        "moralisk fasa inför att behöva döda dem. Hela Gitan är " +
+        "Krishnas (hans vagnskörare, som visar sig vara en gudomlig " +
+        "avatar) svar på denna förlamning — ett av världslitteraturens " +
+        "mest utdragna, filosofiskt djupa svar på frågan 'hur kan jag " +
+        "handla när handling själv verkar omoralisk?'",
+    },
+    {
+      slug: "sankhya-yoga",
+      quote:
+        "Never the spirit was born; the spirit shall cease to be never; / Never was time it was not; End and Beginning are dreams! / Birthless and deathless and changeless remaineth the spirit for ever; / Death hath not touched it at all, dead though the house of it seems! [...] Nay, but as when one layeth / His worn-out robes away, / And, taking new ones, sayeth, / \"These will I wear to-day!\" / So putteth by the spirit / Lightly its garb of flesh, / And passeth to inherit / A residence afresh.",
+      summary:
+        "Krishnas första svar på Arjunas förlamning: själen (atman) är " +
+        "odödlig och oföränderlig — kroppen är bara ett 'plagg' den " +
+        "byter ut vid döden, som kläder. Eftersom det som verkligen är " +
+        "'du' aldrig kan dödas, är sorgen över döden i grunden en " +
+        "missuppfattning om vad som faktiskt existerar. En av världens " +
+        "mest citerade formuleringar av själens odödlighet, jämförbar i " +
+        "funktion med Platons argument i Faidon.",
+    },
+    {
+      slug: "karma-yoga",
+      quote:
+        "But thou, want not! ask not! Find full reward / Of doing right in right! Let right deeds be / Thy motive, not the fruit which comes from them. / And live in action! Labour! Make thine acts / Thy piety, casting all self aside [...] all thy dues discharging, for My sake, / With meditation centred inwardly, / Seeking no profit, satisfied, serene, / Heedless of issue — fight!",
+      summary:
+        "Gitans mest inflytelserika praktiska lära, 'karma yoga': handla " +
+        "fullt ut och plikttroget, men utan att fästa sig vid resultatet " +
+        "— 'rätt handling' ska vara sitt eget motiv, inte frukten den " +
+        "bär. Läran sträcker sig över slutet av kapitel 2 och hela " +
+        "kapitel 3 i Arnolds kapitelindelning. En idé med tydliga " +
+        "beröringspunkter med stoicismen (fokusera på det du kan " +
+        "kontrollera) och med Petersons egna, återkommande råd om att " +
+        "fokusera på processen/plikten snarare än ångest över utfall — " +
+        "dock ingen specifik, verifierad Peterson-koppling till just " +
+        "den här Gita-passagen.",
+    },
+    {
+      slug: "universal-form",
+      quote:
+        "Out of countless eyes beholding, / Out of countless mouths commanding, / Countless mystic forms enfolding / In one Form [...] If there should rise / Suddenly within the skies / Sunburst of a thousand suns / Flooding earth with beams undeemed-of, / Then might be that Holy One's / Majesty and radiance dreamed of!",
+      summary:
+        "Gitans mest visuellt överväldigande scen: på Arjunas begäran " +
+        "avslöjar Krishna sin sanna, kosmiska gudsform — oändliga ögon, " +
+        "munnar och gestalter, ett enda alltomfattande Väsen bortom " +
+        "mänskligt språk. Den berömda 'tusen solars glans'-liknelsen " +
+        "används senare av fysikern J. Robert Oppenheimer (fast i en " +
+        "annan, senare Gita-översättning) för att beskriva sin reaktion " +
+        "på det första kärnvapenprovet — en av de mest kända moderna " +
+        "referenserna till just det här kapitlet.",
+    },
+    {
+      slug: "bhakti-yoga",
+      quote:
+        "Who, dwelling quiet-eyed, / Stainless, serene, well-balanced, unperplexed, / Working with Me, yet from all works detached, / That man I love! Who, fixed in faith on Me, / Dotes upon none, scorns none; rejoices not, / And grieves not [...] That man I love! Who, unto friend and foe / Keeping an equal heart, with equal mind / Bears shame and glory [...] Linked by no ties to earth, steadfast in Me, / That man I love!",
+      summary:
+        "Krishna beskriver, i en refräng-liknande uppräkning ('den " +
+        "människan älskar jag'), den hängivna (bhakti) vägen till " +
+        "befrielse — jämnmod inför lycka/olycka, beröm/förtal, vän/" +
+        "fiende, kombinerat med kärleksfull hängivenhet till det " +
+        "gudomliga. Framställs i kapitlet som lättare tillgänglig för de " +
+        "flesta människor än den rent intellektuella kunskapens väg " +
+        "(jnana yoga) som dominerar tidigare kapitel.",
+    },
+    {
+      slug: "moksha-conclusion",
+      quote:
+        "Give Me thy heart! adore Me! serve Me! cling / In faith and love and reverence to Me! / So shalt thou come to Me! [...] Sanjaya. Thus gathered I the gracious speech of Krishna, O my King! [...] there shall not fail / Blessing, and victory, and power, for Thy most mighty sake, / Where this song comes of Arjun, and how with God he spake.\n\nHERE ENDS, WITH CHAPTER XVIII, Entitled \"Mokshasanyasayog,\" Or \"The Book of Religion by Deliverance and Renunciation,\" THE BHAGAVAD-GITA.",
+      summary:
+        "Krishnas sista, mest direkta instruktion till Arjuna — 'ge mig " +
+        "ditt hjärta, tillbe mig, tjäna mig' — som sammanfattning av " +
+        "alla föregående kapitlens vägar (kunskap, handling, hängivenhet) " +
+        "i en enda, enkel uppmaning. Arjuna, nu övertygad, återupptar " +
+        "sin plikt och slaget kan börja. Diktens allra sista rader ges " +
+        "åt Sanjaya (berättaren som återgett hela samtalet för den " +
+        "blinde kung Dhritarashtra) och hans egen förundran över det " +
+        "han just återgett.",
+    },
+  ];
+  for (const c of gitaContent) {
+    await prisma.story.update({
+      where: { bookId_slug: { bookId: gitaBook.id, slug: c.slug } },
+      data: { quote: c.quote, summary: c.summary },
+    });
+  }
+  console.log(`Seedat Bhagavad Gita (Fas 76): ${gitaContent.length} berättelser fyllda i.`);
+
   // --- Tvärtraditions-karaktärslänkning: Koranens berättelser om samma
   // personer som redan finns i Bibel-korpusen länkas till SAMMA
   // Character-rad (inte en ny "islamisk Adam" osv.) — detta är vad som
