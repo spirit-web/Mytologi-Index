@@ -70,6 +70,29 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 69 (2026-08-28): Grekisk mytologi
+
+Fas 2 av 10. Svagare Peterson-källäge än Taoismen (flaggat redan i Fas
+67), men alla tre källtexter är fritt tillgängliga så HELA verifierade
+passager kunde ändå användas: Hesiodos Theogonin (Evelyn-White övers.
+1914, Gutenberg #348) för Zeus/Typhon och Prometheus, Sofokles Kung
+Oidipus (F. Storr övers. 1912, Gutenberg #31).
+
+- **Zeus och Typhon**: en av Petersons återkommande "kaosdrake"-
+  exempel (samma mönster som Marduk/Tiamat, Horus/Seth) — lades till i
+  "Hjälten som besegrar kaos-monstret"-Parallelen (Fas 66/67).
+- **Prometheus stjäl elden**: ingen specifik Peterson-koppling
+  verifierad, men en av världslitteraturens mest kända bilder för
+  priset av förbjuden kunskap — inkluderad på egna meriter.
+- **Oidipus (Kung Oidipus)**: kopplad till den redan seedade Freud-
+  föreläsningen (Fas 61, "2017 Personality Lecture 09") — Oidipus-
+  komplexet är kärninnehåll där. Peterson ställer (enligt research)
+  Freuds läsning av myten ("misslyckad hjälte") mot Jungs bredare syn
+  på hjälteresan.
+
+Tre nya porträtt (Zeus, Prometheus, Oidipus — Wikimedia Commons,
+public domain), tillagd i historiska tidslinjen (700–429 f.Kr.).
+
 ## Fas 68 (2026-08-28): Taoismen (Tao Te Ching)
 
 Första fasen i en ny, tio-fas-plan (nya civilisationer + färdigställa

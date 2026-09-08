@@ -6711,6 +6711,120 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
   });
   console.log(`Seedat Taoismen: ${taoismWorks.length} kapitel.`);
 
+  // --- Fas 69: Grekisk mytologi ----------------------------------------
+  // Svagare källäge än Taoismen (se README Fas 67) — Peterson återkommer
+  // till Zeus/Typhon som en av sina "kaosdrake"-exempel (samma mönster
+  // som Marduk/Tiamat) och till Oidipus specifikt i sin jämförelse
+  // Freud (misslyckad hjälte/incest-tabu) vs. Jung (arketypisk hjälte-
+  // resa) — men ingen exakt tidsstämpel för Zeus/Typhon eller Prometheus
+  // är verifierad mot ett primärt transkript. Alla tre källtexter är
+  // dock fritt tillgängliga (antik grekiska + väl förfluten upphovsrätt
+  // på översättningarna) så HELA verifierade passager kunde ändå
+  // användas: Hesiodos Theogonin (Evelyn-White övers. 1914, Gutenberg
+  // #348) för Zeus/Typhon och Prometheus, Sofokles Oidipus (F. Storr
+  // övers. 1912, Gutenberg #31) för Oidipus.
+  const zeusChar = await prisma.character.upsert({ where: { slug: "zeus" }, update: {}, create: { slug: "zeus", name: "Zeus" } });
+  const typhonChar = await prisma.character.upsert({ where: { slug: "typhon" }, update: {}, create: { slug: "typhon", name: "Typhon (kaosdrake)" } });
+  const prometheusChar = await prisma.character.upsert({ where: { slug: "prometheus" }, update: {}, create: { slug: "prometheus", name: "Prometheus" } });
+  const oedipusChar = await prisma.character.upsert({ where: { slug: "oedipus" }, update: {}, create: { slug: "oedipus", name: "Oidipus" } });
+
+  const greekBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: otherScripturesCorpus.id, slug: "greek-mythology" } },
+    update: {},
+    create: {
+      corpusId: otherScripturesCorpus.id,
+      slug: "greek-mythology",
+      name: "Grekisk mytologi",
+      order: 7,
+      description:
+        "Antik grekisk mytologi, framför allt känd via Hesiodos " +
+        "Theogonin (ca 700-talet f.Kr.) och de klassiska tragikerna " +
+        "(400-talet f.Kr.). Peterson använder Zeus mot Typhon som ett " +
+        "av flera exempel på sin 'kaosdrake'-tes (samma mönster som " +
+        "Marduk mot Tiamat, se Mesopotamisk mytologi ovan) och Oidipus-" +
+        "myten specifikt i sin jämförelse mellan Freuds och Jungs syn " +
+        "på vad som är människans centrala psykologiska myt.",
+    },
+  });
+  const greekWorks: Array<{ order: number; slug: string; title: string; startRef: string; endRef: string; quote: string; summary: string; characterIds: string[] }> = [
+    {
+      order: 1, slug: "zeus-and-typhon", title: "Zeus och Typhon", startRef: "Theogonin, rad 820", endRef: "Theogonin, rad 868",
+      characterIds: [zeusChar.id, typhonChar.id],
+      quote:
+        "From his shoulders grew an hundred heads of a snake, a fearful dragon, with dark, flickering tongues, and from under the brows of his eyes in his marvellous heads flashed fire, and fire burned from his heads as he glared. [...] So when Zeus had raised up his might and seized his arms, thunder and lightning and lurid thunderbolt, he leaped from Olympus and struck him, and burned all the marvellous heads of the monster about him. But when Zeus had conquered him and lashed him with strokes, Typhoeus was hurled down, a maimed wreck, so that the huge earth groaned.",
+      summary:
+        "Efter att ha störtat titanerna möter Zeus sin sista utmanare: " +
+        "Typhon, jordens (Gaias) yngsta barn — en hundrahövdad " +
+        "drake vars röster lät som allt från tjurar till lejon till " +
+        "valpar. Hade Typhon vunnit hade han 'kommit att regera över " +
+        "dödliga och odödliga'. Samma grundmönster som Marduk mot " +
+        "Tiamat (Mesopotamien) och Horus mot Seth (Egypten) — en av " +
+        "Petersons återkommande 'kaosdrake'-exempel på att ordningens " +
+        "härskare måste bevisa sig genom att besegra kaos, inte bara " +
+        "ärva sin position.",
+    },
+    {
+      order: 2, slug: "prometheus-fire", title: "Prometheus stjäl elden", startRef: "Theogonin, rad 507", endRef: "Theogonin, rad 616",
+      characterIds: [prometheusChar.id, zeusChar.id],
+      quote:
+        "Ready-witted Prometheus he bound with inextricable bonds, cruel chains, and drove a shaft through his middle, and set on him a long-winged eagle, which used to eat his immortal liver; but by night the liver grew as much again everyway as the long-winged bird devoured in the whole day. [...] the noble son of Iapetus outwitted him and stole the far-seen gleam of unwearying fire in a hollow fennel stalk. And Zeus who thunders on high was stung in spirit, and his dear heart was angered when he saw amongst men the far-seen ray of fire.",
+      summary:
+        "Prometheus lurar först Zeus i en offerritual (får honom att " +
+        "välja de vackra men värdelösa benen istället för köttet), och " +
+        "stjäl sedan elden åt mänskligheten trots Zeus uttryckliga " +
+        "förbud. Straffet — kedjad vid en klippa, en örn äter hans " +
+        "lever varje dag, som växer tillbaka varje natt — är en av " +
+        "världslitteraturens mest kända bilder för priset av " +
+        "förbjuden/stulen kunskap given till mänskligheten mot en " +
+        "gudomlig auktoritets vilja.",
+    },
+    {
+      order: 3, slug: "oedipus-rex", title: "Oidipus (Sofokles, Kung Oidipus)", startRef: "Kung Oidipus", endRef: "Kung Oidipus",
+      characterIds: [oedipusChar.id],
+      quote:
+        "Or else to wed my mother and slay my sire, Polybus, who begat me and upreared? If one should say, this is the handiwork of some inhuman power, who could blame his judgment? But, ye pure and awful gods, forbid, forbid that I should see that day! May I be blotted out from living men Ere such a plague spot set on me its brand!",
+      summary:
+        "Oidipus, i sitt eget tal, återger profetian han flydde ifrån " +
+        "(döda sin far, gifta sig med sin mor) — utan att ännu inse " +
+        "att han redan uppfyllt den. Freud gjorde myten till namnet på " +
+        "sin teori om barnets omedvetna rivalitet med samkönade " +
+        "föräldern om den andra förälderns kärlek. Peterson ställer " +
+        "(i sina föreläsningar om Freud kontra Jung) Freuds läsning — " +
+        "Oidipus som en 'misslyckad hjälte', fast i incest-tabut — mot " +
+        "Jungs bredare uppfattning av hjälteresan som inte nödvändigtvis " +
+        "slutar i katastrof.",
+    },
+  ];
+  for (const w of greekWorks) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: greekBook.id, slug: w.slug } },
+      update: { title: w.title, startRef: w.startRef, endRef: w.endRef, quote: w.quote, summary: w.summary, orderInBook: w.order },
+      create: { bookId: greekBook.id, slug: w.slug, title: w.title, startRef: w.startRef, endRef: w.endRef, quote: w.quote, summary: w.summary, orderInBook: w.order },
+    });
+    for (const characterId of w.characterIds) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId } },
+        update: {},
+        create: { storyId: story.id, characterId },
+      });
+    }
+  }
+  // Verifierad koppling: Oidipus <-> Freud-föreläsningen (redan seedad,
+  // Fas 61) — Oidipuskomplexet är kärninnehåll i just den föreläsningen,
+  // men ingen exakt tidsstämpel för Oidipus-passagen specifikt är
+  // verifierad, så samma "hel föreläsning"-mönster som t.ex. Man and His
+  // Symbols i Fas 61 (atSec: null).
+  const oedipusStory = await prisma.story.findFirstOrThrow({ where: { bookId: greekBook.id, slug: "oedipus-rex" } });
+  await prisma.reference.upsert({
+    where: { id: "seed-workref-oedipus-rex" },
+    update: { storyId: oedipusStory.id, videoId: freudPersonalityVideo.id, atSec: null },
+    create: {
+      id: "seed-workref-oedipus-rex", storyId: oedipusStory.id, videoId: freudPersonalityVideo.id, atSec: null,
+      note: "Oidipuskomplexet — barnets omedvetna rivalitet med samkönade föräldern — är kärninnehåll i just den här föreläsningen om Freuds dynamiska omedvetna.",
+    },
+  });
+  console.log(`Seedat grekisk mytologi: ${greekWorks.length} berättelser.`);
+
   // --- Tvärtraditions-karaktärslänkning: Koranens berättelser om samma
   // personer som redan finns i Bibel-korpusen länkas till SAMMA
   // Character-rad (inte en ny "islamisk Adam" osv.) — detta är vad som
@@ -6766,6 +6880,7 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
     // Andra religiösa texter
     quran: [610, 632], talmud: [200, 500], "bhagavad-gita": [-400, -200],
     mesopotamia: [-2100, -1100], egypt: [-2400, -100], taoism: [-400, -200],
+    "greek-mythology": [-700, -429],
   };
   let yearsUpdated = 0;
   for (const [slug, [start, end]] of Object.entries(approxYears)) {
@@ -7889,6 +8004,21 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
       credit: "Kinesiskt träsnitt, konstnär okänd (Wikimedia Commons, public domain)",
       creditUrl: "https://commons.wikimedia.org/wiki/File:Representation_of_Laozi.PNG",
     },
+    zeus: {
+      path: "/images/personer/zeus.jpg",
+      credit: "Gravyr: Philippe Galle efter Maarten van Heemskerck, 1572 (Wikimedia Commons, public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Statue_of_Zeus.jpg",
+    },
+    prometheus: {
+      path: "/images/personer/prometheus.jpg",
+      credit: "Målning: Gustave Moreau, 1868 (Wikimedia Commons, public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Prometheus_by_Gustave_Moreau.jpg",
+    },
+    oedipus: {
+      path: "/images/personer/oedipus.jpg",
+      credit: "Målning: Jean-Auguste-Dominique Ingres, 1864 (Wikimedia Commons, public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Jean-Auguste-Dominique_Ingres_-_Oedipus_and_the_Sphinx_-_Walters_379.jpg",
+    },
   };
   for (const [slug, p] of Object.entries(refPortraits)) {
     await prisma.character.update({
@@ -8575,11 +8705,14 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
     },
   });
 
+  const zeusTyphonStory = await prisma.story.findFirstOrThrow({ where: { bookId: greekBook.id, slug: "zeus-and-typhon" } });
+
   const moreParallelLinks: Array<[string, string, string]> = [
     [dualityParallel.id, chapter42Story.id, "Tao frambringar Ett, Ett frambringar Två (traditionellt tolkat som yin och yang) — duplitetens filosofiska källtext."],
     [dualityParallel.id, creationStory.id, "'Jorden var öde och tom' (tohu wa-bohu) före Guds ordnande ord — kaos som förutsättning, inte fiende."],
     [dualityParallel.id, enumaElishStory.id, "Tiamat SOM formlöst kaosvatten, före Marduks ordnande — här dock med en aktiv kamp, inte bara ren dualitet."],
     [heroParallel.id, enumaElishStory.id, "Marduk väljs till kung för att han kan SE och TALA ('logos') — inte för att han är starkast."],
+    [heroParallel.id, zeusTyphonStory.id, "Zeus möter sin sista utmanare efter att ha störtat titanerna — samma 'bevisa ordningen genom att besegra kaos'-mönster, en av flera antika varianter Peterson återkommer till."],
     [heroParallel.id, osirisHorusStory.id, "Horus mot Seth appliceras på statens förfall/förnyelse istället för kosmos skapelse — samma mönster, ny kontext."],
     [heroParallel.id, creationStory.id, "Gud talar ordning ur kaos ('Guds ande svävade över vattnet') — samma djupstruktur i en mer abstrakt, avpersonifierad form."],
     [floodParallel.id, noahsFloodStoryForParallel.id, "Den bibliska versionen — Noa varnas, bygger arken, överlever med sin familj och djuren."],
