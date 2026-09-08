@@ -70,6 +70,53 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 67 (2026-08-28): Historisk tidslinje + "Jordans Mytologi"
+
+Två nya sidor, ett schema-tillägg (via `prisma db push`, INTE `migrate
+dev` — se nedan), och tre nya tvärtext-`Parallel`-poster.
+
+**Ny sida `/tidslinje-historisk`**: alla ~41 böcker, oavsett tradition,
+på EN gemensam tidsskala (2500 f.Kr.–idag), sorterad kronologiskt.
+Kräver `Book.approxYearStart`/`approxYearEnd` (nya, nullable Int-fält)
+— en sorterbar komplettering till den redan existerande fritexts-
+`writtenEstimate`, INTE en ny oberoende bedömning: siffrorna är
+hämtade direkt ur samma "moderna forskare"-uppskattningar som redan
+stod där för Bibel-böckerna. För Källor & influenser/Andra religiösa
+texter (som saknade writtenEstimate helt) användes motsvarande
+etablerade forskningskonsensus (t.ex. Koranen 610–632, Talmud
+ca 200–500, Bhagavad Gita ofta daterad 400–200 f.Kr., Gilgamesh-
+eposets äldsta sumeriska version ca 2100 f.Kr.). Varje rad visar en
+👁-markering om Jordan kommenterat något i boken, plus de mest
+återkommande karaktärerna i just den boken.
+
+**Bieffekt, upptäckt under arbetet**: `npx prisma migrate dev` ville
+NOLLSTÄLLA hela dev-databasen (projektet har aldrig använt spårade
+migrationer, bara `db push`, och Prisma tolkade den ospårade historiken
+som en konflikt). Avbrutet innan något kördes — `db push` användes
+istället, vilket applicerade schemaändringen additivt utan dataförlust.
+
+**Ny sida `/jordans-mytologi`**: en samlingssida för det redan
+existerande men aldrig UI-exponerade `Parallel`-konceptet (fanns i
+schemat sedan tidigare, bara en enda exempel-post och ingen
+översiktssida). Tre nya poster utöver det gamla uppoffrings-exemplet:
+- **"Hjälten som besegrar kaos-monstret"** — Marduk/Tiamat, Osiris/
+  Horus/Seth och Guds skapelseord, samma djupmönster i tre traditioner
+  (Petersons egen, ofta upprepade tes).
+- **"Syndafloden som återkommande arketyp"** — Noa, Nuh (Koranen) och
+  Gilgamesh-eposets Utnapishtim, grundat i Eliades redan verifierade
+  poäng om flodmyters nästan universella spridning.
+- **"Adam och den första olydnaden"** — Bibelns och Koranens Adam,
+  med skillnaden i hur syndafallets konsekvenser hanteras (bestående
+  vs. direkt förlåtelse efter ånger).
+
+`Parallel` fick även ett nytt `quote`-fält (ordagrant Peterson-citat,
+när ett sådant faktiskt finns källverifierat) — lämnat NULL på alla
+tre nya poster ovan: kopplingarna bygger på redan etablerad, väl
+underbyggd research (delvis Petersons egna ord i sekundärkällor utan
+en exakt pinpointad video+tidsstämpel än), inte en nyupptäckt, ordagrant
+citerbar enskild replik. Ärligare att hålla `description` som egen
+parafras här än att låtsas ett verbatim-citat som inte är verifierat.
+
 ## Fas 66 (2026-08-28): Egyptisk/mesopotamisk mytologi + tvärtraditions-karaktärslänkning
 
 Föranledd av: "Jordan brukar referera till mesopotamiska historier och

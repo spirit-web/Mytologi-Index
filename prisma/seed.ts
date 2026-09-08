@@ -6619,6 +6619,40 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
   }
   console.log(`Seedat tvärtraditions-karaktärslänkning: ${crossTraditionLinks.length} länkar.`);
 
+  // --- Fas 67: approxYearStart/End för ALLA böcker, för den historiska
+  // tvärverk-tidslinjen (/tidslinje-historisk) --------------------------
+  // Negativa värden = f.Kr. Siffrorna här är EXAKT samma "moderna
+  // forskare"-uppskattningar som redan står i varje boks writtenEstimate
+  // (fritext) — bara omvandlade till sorterbara heltal, inte en ny,
+  // oberoende bedömning. Se README Fas 67 för källor på de böcker som
+  // INTE redan hade en writtenEstimate (Källor & influenser, Andra
+  // religiösa texter).
+  const approxYears: Record<string, [number, number]> = {
+    // Bibeln — GT (moderna forskares slutredigerings-uppskattning)
+    genesis: [-950, -400], exodus: [-600, -500], leviticus: [-600, -450], numbers: [-600, -450],
+    deuteronomy: [-650, -600], joshua: [-600, -550], judges: [-700, -550], ruth: [-550, -450],
+    "1-samuel": [-550, -500], "2-samuel": [-550, -500], "1-kings": [-550, -500], "2-kings": [-550, -500],
+    nehemiah: [-400, -350], esther: [-199, -100], job: [-600, -400], "song-of-songs": [-500, -200],
+    jeremiah: [-620, -580], daniel: [-400, -164], jonah: [-400, -350],
+    // Bibeln — NT
+    mark: [65, 75], matthew: [80, 90], luke: [80, 90], john: [90, 100], acts: [80, 90],
+    // Maps of Meaning (Petersons egna verk)
+    "maps-of-meaning-2017": [2017, 2017], "12-rules-for-life": [2018, 2018],
+    "beyond-order": [2021, 2021], "we-who-wrestle-with-god": [2024, 2024],
+    // Källor & influenser (personens huvudsakliga verksamma period)
+    nietzsche: [1872, 1888], jung: [1900, 1961], freud: [1895, 1939], dostoevsky: [1846, 1881],
+    solzhenitsyn: [1962, 2008], eliade: [1949, 1983], neumann: [1949, 1960], paglia: [1990, 2026],
+    // Andra religiösa texter
+    quran: [610, 632], talmud: [200, 500], "bhagavad-gita": [-400, -200],
+    mesopotamia: [-2100, -1100], egypt: [-2400, -100],
+  };
+  let yearsUpdated = 0;
+  for (const [slug, [start, end]] of Object.entries(approxYears)) {
+    const res = await prisma.book.updateMany({ where: { slug }, data: { approxYearStart: start, approxYearEnd: end } });
+    yearsUpdated += res.count;
+  }
+  console.log(`Seedat approxYear för ${yearsUpdated} böcker (historisk tidslinje).`);
+
   // --- Fas 14: Beyond Order: 12 More Rules for Life (2021) -----------
   // Uppföljaren till 12 Rules for Life — samma metod: inget digitalt
   // exemplar/transkript tillgängligt, så varje regels citat är
@@ -8312,6 +8346,103 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
       create: { parallelId: sacrificeParallel.id, storyId, note },
     });
   }
+
+  // --- Fas 67: "Jordans Mytologi" — fler tvärtext-Parallels, nu när
+  // Koranen/Mesopotamien/Egypten är indexerade (utlovat ovan i Fas-
+  // kommentaren från tidigare i sessionen). Samma Parallel-modell, bara
+  // fler poster. `quote` lämnas medvetet NULL på alla utom där vi redan
+  // har ett faktiskt, ordagrant Peterson-citat att visa (se README Fas
+  // 67 för avgränsningen citat vs. egen parafras).
+  const selfConsciousnessTheme = themes["self-consciousness"];
+  const enumaElishStory = await prisma.story.findFirstOrThrow({ where: { slug: "enuma-elish" } });
+  const osirisHorusStory = await prisma.story.findFirstOrThrow({ where: { slug: "osiris-horus-seth" } });
+  const gardenOfEdenStory = await prisma.story.findFirstOrThrow({ where: { slug: "garden-of-eden" } });
+  const quranAdamStory = await prisma.story.findFirstOrThrow({ where: { slug: "adam-and-the-fall", book: { slug: "quran" } } });
+  const nuhStory = await prisma.story.findFirstOrThrow({ where: { slug: "nuh" } });
+  const gilgameshStory = await prisma.story.findFirstOrThrow({ where: { slug: "epic-of-gilgamesh" } });
+  const noahsFloodStoryForParallel = await prisma.story.findFirstOrThrow({ where: { slug: "noahs-flood" } });
+
+  const heroParallel = await prisma.parallel.upsert({
+    where: { id: "seed-parallel-hero-vs-chaos" },
+    update: {},
+    create: {
+      id: "seed-parallel-hero-vs-chaos",
+      title: "Hjälten som besegrar kaos-monstret",
+      description:
+        "Petersons kanske mest centrala tvärkulturella tes: samma " +
+        "grundmönster — en hjälte-figur som frivilligt konfronterar " +
+        "kaos, vinner värde ur det, och förnyar/skapar ordningens värld " +
+        "— återkommer oberoende i civilisation efter civilisation. " +
+        "Marduk mot Tiamat (Mesopotamien) och Horus mot Seth (Egypten) " +
+        "är två tidiga varianter; Peterson läser sedan den bibliska " +
+        "Gud-talar-världen-till-existens-berättelsen (och senare Kristus) " +
+        "som samma underliggande mönster i en mer utrenad, abstrakt form. " +
+        "Poängen är INTE att en tradition kopierade en annan, utan att " +
+        "mönstret är så psykologiskt grundläggande att det uppstår om " +
+        "och om igen oberoende.",
+      themeId: chaosOrderTheme.id,
+    },
+  });
+  const floodParallel = await prisma.parallel.upsert({
+    where: { id: "seed-parallel-flood-myths" },
+    update: {},
+    create: {
+      id: "seed-parallel-flood-myths",
+      title: "Syndafloden som återkommande arketyp",
+      description:
+        "En global katastrof som sköljer bort en korrumperad värld, " +
+        "överlevd av en varnad, rättfärdig familj i ett fartyg — samma " +
+        "grundberättelse i Bibeln (Noa), Koranen (Nuh) och det äldre " +
+        "mesopotamiska Gilgamesh-eposet (Utnapishtim), som troligen är " +
+        "en gemensam källa/parallell till de två senare. Peterson " +
+        "hänvisar (via religionshistorikern Mircea Eliade, se Källor & " +
+        "influenser) till att flodmyter förekommer nästan universellt " +
+        "över världens kulturer — ett tecken, menar han, på att myten " +
+        "speglar en allmänmänsklig idé (att tillvaron periodvis 'faller " +
+        "sönder' av samlad mänsklig ondska) snarare än en enskild " +
+        "kulturs säregna påhitt.",
+      themeId: chaosOrderTheme.id,
+    },
+  });
+  const adamParallel = await prisma.parallel.upsert({
+    where: { id: "seed-parallel-adam-fall" },
+    update: {},
+    create: {
+      id: "seed-parallel-adam-fall",
+      title: "Adam och den första olydnaden",
+      description:
+        "Samma urscen — den första människan, ett förbud, ett medvetet " +
+        "val att bryta mot det, och konsekvensen av nyvunnen " +
+        "självmedvetenhet — återberättas i både Bibeln och Koranen " +
+        "(där Adam förlåts direkt av Gud efter ånger, till skillnad " +
+        "från den bibliska versionens mer bestående konsekvenser). " +
+        "Peterson läser den bibliska versionen som människans " +
+        "grundberättelse om hur självmedvetenhet om den egna sårbarheten " +
+        "och skammen föder både moraliskt ansvar och lidande på en gång " +
+        "— värt att jämföra med hur samma urscen hanteras något " +
+        "annorlunda i en annan tradition.",
+      themeId: selfConsciousnessTheme.id,
+    },
+  });
+
+  const moreParallelLinks: Array<[string, string, string]> = [
+    [heroParallel.id, enumaElishStory.id, "Marduk väljs till kung för att han kan SE och TALA ('logos') — inte för att han är starkast."],
+    [heroParallel.id, osirisHorusStory.id, "Horus mot Seth appliceras på statens förfall/förnyelse istället för kosmos skapelse — samma mönster, ny kontext."],
+    [heroParallel.id, creationStory.id, "Gud talar ordning ur kaos ('Guds ande svävade över vattnet') — samma djupstruktur i en mer abstrakt, avpersonifierad form."],
+    [floodParallel.id, noahsFloodStoryForParallel.id, "Den bibliska versionen — Noa varnas, bygger arken, överlever med sin familj och djuren."],
+    [floodParallel.id, nuhStory.id, "Koranens version — samma grundstruktur, men Nuh predikar länge för sitt folk innan floden kommer."],
+    [floodParallel.id, gilgameshStory.id, "Den äldsta bevarade versionen (Utnapishtim) — troligen en gemensam källa/parallell till de två bibliska/koraniska versionerna."],
+    [adamParallel.id, gardenOfEdenStory.id, "Den bibliska versionen — ormen frestar, ätandet av frukten ger bestående konsekvenser (dödlighet, smärta, utvisning)."],
+    [adamParallel.id, quranAdamStory.id, "Koranens version — Adam och Eva förleds av Iblis/Satan, men Adam ångrar sig och förlåts direkt av Gud."],
+  ];
+  for (const [parallelId, storyId, note] of moreParallelLinks) {
+    await prisma.parallelStory.upsert({
+      where: { parallelId_storyId: { parallelId, storyId } },
+      update: { note },
+      create: { parallelId, storyId, note },
+    });
+  }
+  console.log(`Seedat Jordans Mytologi: 3 nya Parallels, ${moreParallelLinks.length} kopplingar.`);
 
   console.log(
     `Seedat: ${stories.length} stories i Genesis, ` +

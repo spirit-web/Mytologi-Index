@@ -72,6 +72,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 Tidslinje
               </Link>
               <Link
+                href="/tidslinje-historisk"
+                className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3.5 py-2 text-[var(--text-muted)] shadow-sm transition hover:border-[var(--accent-border)] hover:bg-[var(--accent-bg)] hover:text-[var(--accent)]"
+              >
+                Historik
+              </Link>
+              <Link
+                href="/jordans-mytologi"
+                className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3.5 py-2 text-[var(--text-muted)] shadow-sm transition hover:border-[var(--accent-border)] hover:bg-[var(--accent-bg)] hover:text-[var(--accent)]"
+              >
+                Mytologi
+              </Link>
+              <Link
                 href="/framsteg"
                 title="Ditt framsteg"
                 className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] p-1 shadow-sm transition hover:scale-105 hover:border-[var(--accent-border)] hover:bg-[var(--accent-bg)]"

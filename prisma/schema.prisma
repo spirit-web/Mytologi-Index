@@ -51,6 +51,17 @@ model Book {
   // är omtvistad. Används av tidslinje-sidan (/tidslinje).
   writtenEstimate String?
 
+  // Numerisk, SORTERBAR komplettering till writtenEstimate ovan — bara
+  // för den historiska tvärverk-tidslinjen (/tidslinje-historisk, Fas
+  // 67), som behöver kunna placera och sortera böcker från helt olika
+  // traditioner/tidsepoker på EN gemensam skala. Negativa värden = f.Kr.
+  // Medvetet ett separat fält (inte en parsning av writtenEstimate) för
+  // att fritexten kan förbli nyanserad/omtvistad medan skalan ändå får
+  // ett konkret, redaktionellt valt mittvärde att rita ut. Null = boken
+  // saknar ännu en uppskattning och visas inte på tidslinjen.
+  approxYearStart Int?
+  approxYearEnd   Int?
+
   stories Story[]
 
   @@unique([corpusId, slug])
@@ -365,7 +376,14 @@ model Reference {
 model Parallel {
   id          String  @id @default(cuid())
   title       String // t.ex. "Syndafloden som återkommande arketyp"
-  description String // vad är gemensamt, vad skiljer
+  description String // vad är gemensamt, vad skiljer — EGEN parafras
+
+  // Ett kort, verbatim Peterson-citat där han själv gör just den här
+  // jämförelsen (Fas 67) — INTE alltid ifyllt: ibland är kopplingen
+  // vår egen, komparativ-religionsvetenskapligt grundad observation
+  // (t.ex. via Eliade) snarare än en enskild, citerbar Peterson-replik.
+  // Se README Fas 67 för avgränsningen mellan de två.
+  quote String?
 
   themeId String?
   theme   Theme?  @relation(fields: [themeId], references: [id])
