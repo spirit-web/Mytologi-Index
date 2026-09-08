@@ -70,6 +70,39 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 71 (2026-08-28): Buddhism
+
+Fas 4 av 10 — starkast källäge av alla fyra nya civilisationer. Peterson
+har en HEL, egen, namngiven Maps of Meaning-föreläsning ("Genesis and
+the Buddha", 2017 års serie, redan seedad sedan tidigare i filen) som
+specifikt jämför Första Mosebokens skapelseberättelser med Buddhas
+ursprungsberättelse.
+
+Två nya berättelser: **De fyra synerna** (hela citatet ur Ashvaghoshas
+Buddhacharita, Cowells fria 1894-översättning, Sacred Books of the
+East vol. 49, Internet Archive) — kung Suddhodanas profetia, det
+instängda palatset, och den åldrade mannen som utlöser Den stora
+försakelsen. **Dhammapada: Tvillingverserna** (Max Müllers fria
+1881-översättning, Gutenberg #2017) — buddhismens mest citerade
+öppningsverser, en aforism-samling i samma tradition som Ordspråksboken
+eller Pirkei Avot.
+
+Kopplat till videon direkt (`seed-workref-the-four-sights`) och en ny
+Jordans Mytologi-Parallel: **"Ett fungerande utgångsläge, ett problem,
+en lösning"** — till skillnad från kaosdrake-Parallelen (Fas 66/67/69/
+70) handlar den här om själva BERÄTTELSESTRUKTUREN, inte en fysisk
+konflikt. Starkast verifierad av alla fem Parallels hittills — inte
+vår egen komparativa observation, utan en namngiven Peterson-
+föreläsning ägnad exakt åt den.
+
+**Känd, odokumenterad skörhet** (upptäckt vid granskning, inte fixad —
+utanför fasens omfattning): kopplingen till videon `7XtEZvLo-Sc`
+använder `findUniqueOrThrow` på en rad som skapas LÄNGRE NER i samma
+seed-fil (momLectures-loopen). Fungerar eftersom `dev.db` aldrig är
+helt tom vid en omkörning i den här sessionen, men skulle fallera på
+en helt fräsch databas — samma mönster som redan finns för
+`Nb5cBkbQpGY` sedan Fas 61/66/69.
+
 ## Fas 70 (2026-08-28): Vedisk mytologi (Indra och Vritra)
 
 Fas 3 av 10. Direkt användarbeslut: läggs till som en Gita-KOPPLAD

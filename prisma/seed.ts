@@ -6884,6 +6884,104 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
   }
   console.log("Seedat vedisk mytologi: 1 berättelse (Indra och Vritra, Gita-kopplad).");
 
+  // --- Fas 71: Buddhism ------------------------------------------------
+  // Starkast källäge av de fyra nya civilisationerna (Taoism/Grekland/
+  // Vedisk/Buddhism): Peterson har en HEL, namngiven, redan seedad Maps
+  // of Meaning-föreläsning ("Genesis och Buddha", lecture 10, se Fas
+  // 12/tidigt i filen) som specifikt jämför Första Mosebokens skapelse-
+  // berättelser med Buddhas ursprungsberättelse. OBS: youtubeId
+  // "7XtEZvLo-Sc" skapas som PetersonVideo längre NER i filen (momLectures-
+  // loopen) — samma exekveringsordnings-skörhet som redan finns för
+  // Nb5cBkbQpGY (Fas 61/66/69 ovan): fungerar eftersom dev.db aldrig är
+  // helt tom vid en omkörning, men vore ett problem på en fräsch
+  // databas. Inte fixat här — utanför den här fasens omfattning.
+  //
+  // Källtexter: Ashvaghoshas Buddhacharita (Cowells fria översättning,
+  // 1894, Sacred Books of the East vol. 49, Internet Archive) för De
+  // fyra synerna, samt Dhammapada (Max Müllers fria översättning, 1881,
+  // Gutenberg #2017) för de berömda öppningsverserna.
+  const buddhaChar = await prisma.character.upsert({ where: { slug: "buddha" }, update: {}, create: { slug: "buddha", name: "Siddharta Gautama (Buddha)" } });
+  const buddhismBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: otherScripturesCorpus.id, slug: "buddhism" } },
+    update: {},
+    create: {
+      corpusId: otherScripturesCorpus.id,
+      slug: "buddhism",
+      name: "Buddhism",
+      order: 8,
+      description:
+        "Grundad av Siddharta Gautama (traditionellt ca 500-talet " +
+        "f.Kr.; moderna forskare daterar honom ofta något senare). " +
+        "Peterson har en hel, egen Maps of Meaning-föreläsning " +
+        "('Genesis and the Buddha', 2017 års serie, redan indexerad " +
+        "under Maps of Meaning ovan) som jämför Första Mosebokens " +
+        "skapelseberättelser med Buddhas ursprungsberättelse som två " +
+        "exempel på samma arketypiska mönster: ett fungerande " +
+        "utgångsläge, ett problem, en förändring/lösning.",
+    },
+  });
+  const buddhismWorks: Array<{ order: number; slug: string; title: string; startRef: string; endRef: string; quote: string; summary: string }> = [
+    {
+      order: 1, slug: "the-four-sights", title: "De fyra synerna", startRef: "Buddhacharita, bok III", endRef: "Buddhacharita, bok III",
+      quote:
+        "But then the gods, dwelling in pure abodes, having beheld that city thus rejoicing like heaven itself, created an old man to walk along on purpose to stir the heart of the king's son. The prince having beheld him thus overcome with decrepitude and different in form from other men, with his gaze intently fixed on him, thus addressed his driver: 'Who is this man that has come here, O charioteer, with white hair and his hand resting on a staff, his eyes hidden beneath his brows, his limbs bent down and hanging loose — is this a change produced in him or his natural state or an accident?' [...] 'That is old age by which he is broken down — the ravisher of beauty, the ruin of vigour, the cause of sorrow, the destruction of delights.' [...] Being thus addressed, the prince, starting a little, spoke these words to the charioteer, 'What! will this evil come to me also?'",
+      summary:
+        "Kung Suddhodana, varnad av en profetia om att sonen antingen " +
+        "skulle bli en stor världshärskare eller en stor andlig lärare, " +
+        "stänger in prins Siddharta i en instängd, njutningsfylld " +
+        "palatsvärld för att skydda honom från all mänsklig smärta. " +
+        "Vid fyra separata utflykter ser prinsen ändå — genom gudarnas " +
+        "försorg — det han skyddats från: en åldrad man (återgivet " +
+        "här), en sjuk man, ett lik, och slutligen en asket som funnit " +
+        "ro trots att ha avstått allt. De fyra synerna utlöser 'Den " +
+        "stora försakelsen' — prinsen lämnar palatset, hustru och barn " +
+        "för att söka ett svar på lidandets problem. Peterson jämför i " +
+        "sin egen föreläsning just den här ursprungsberättelsen med " +
+        "Första Mosebokens skapelseberättelser som två varianter av " +
+        "samma djupstruktur.",
+    },
+    {
+      order: 2, slug: "dhammapada-twin-verses", title: "Dhammapada: Tvillingverserna", startRef: "Dhammapada, kap. 1", endRef: "Dhammapada, kap. 1",
+      quote:
+        "All that we are is the result of what we have thought: it is founded on our thoughts, it is made up of our thoughts. If a man speaks or acts with an evil thought, pain follows him, as the wheel follows the foot of the ox that draws the carriage.\n\nAll that we are is the result of what we have thought: it is founded on our thoughts, it is made up of our thoughts. If a man speaks or acts with a pure thought, happiness follows him, like a shadow that never leaves him. [...] For hatred does not cease by hatred at any time: hatred ceases by love, this is an old rule.",
+      summary:
+        "Dhammapadens berömda öppning — en av buddhismens mest citerade " +
+        "textsamlingar, korta aforismer i samma tradition som " +
+        "Ordspråksboken eller Pirkei Avot (Talmud, se ovan). Den " +
+        "grundläggande tesen — att lidande och lycka ytterst formas av " +
+        "sinnets egna tankar, inte av yttre omständigheter — och den " +
+        "efterföljande principen att hat aldrig upphör genom hat utan " +
+        "bara genom kärlek, hör till buddhismens mest spridda och " +
+        "inflytelserika enskilda formuleringar.",
+    },
+  ];
+  for (const w of buddhismWorks) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: buddhismBook.id, slug: w.slug } },
+      update: { title: w.title, startRef: w.startRef, endRef: w.endRef, quote: w.quote, summary: w.summary, orderInBook: w.order },
+      create: { bookId: buddhismBook.id, slug: w.slug, title: w.title, startRef: w.startRef, endRef: w.endRef, quote: w.quote, summary: w.summary, orderInBook: w.order },
+    });
+    await prisma.storyCharacter.upsert({
+      where: { storyId_characterId: { storyId: story.id, characterId: buddhaChar.id } },
+      update: {},
+      create: { storyId: story.id, characterId: buddhaChar.id },
+    });
+  }
+  // Verifierad koppling: hela "Genesis and the Buddha"-föreläsningen
+  // (redan seedad, se momLectures nedan) handlar specifikt om De fyra
+  // synerna/Buddhas ursprungsberättelse.
+  const fourSightsStory = await prisma.story.findFirstOrThrow({ where: { bookId: buddhismBook.id, slug: "the-four-sights" } });
+  const genesisAndBuddhaVideo = await prisma.petersonVideo.findUniqueOrThrow({ where: { youtubeId: "7XtEZvLo-Sc" } });
+  await prisma.reference.upsert({
+    where: { id: "seed-workref-the-four-sights" },
+    update: { storyId: fourSightsStory.id, videoId: genesisAndBuddhaVideo.id },
+    create: {
+      id: "seed-workref-the-four-sights", storyId: fourSightsStory.id, videoId: genesisAndBuddhaVideo.id,
+      note: "En hel föreläsning som jämför just den här ursprungsberättelsen med Första Mosebokens skapelseberättelser — samma arketypiska mönster: fungerande utgångsläge, problem, förändring/lösning.",
+    },
+  });
+  console.log(`Seedat Buddhism: ${buddhismWorks.length} berättelser.`);
+
   // --- Tvärtraditions-karaktärslänkning: Koranens berättelser om samma
   // personer som redan finns i Bibel-korpusen länkas till SAMMA
   // Character-rad (inte en ny "islamisk Adam" osv.) — detta är vad som
@@ -6939,7 +7037,7 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
     // Andra religiösa texter
     quran: [610, 632], talmud: [200, 500], "bhagavad-gita": [-400, -200],
     mesopotamia: [-2100, -1100], egypt: [-2400, -100], taoism: [-400, -200],
-    "greek-mythology": [-700, -429],
+    "greek-mythology": [-700, -429], buddhism: [-563, -483],
   };
   let yearsUpdated = 0;
   for (const [slug, [start, end]] of Object.entries(approxYears)) {
@@ -8078,6 +8176,11 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
       credit: "Målning: Jean-Auguste-Dominique Ingres, 1864 (Wikimedia Commons, public domain)",
       creditUrl: "https://commons.wikimedia.org/wiki/File:Jean-Auguste-Dominique_Ingres_-_Oedipus_and_the_Sphinx_-_Walters_379.jpg",
     },
+    buddha: {
+      path: "/images/personer/buddha.jpg",
+      credit: "Foto: Ethan Doyle White, 2017, Victoria and Albert Museum (Wikimedia Commons, CC BY-SA 4.0)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Meditating_Buddha_Statue_from_Gandhara.JPG",
+    },
   };
   for (const [slug, p] of Object.entries(refPortraits)) {
     await prisma.character.update({
@@ -8766,7 +8869,35 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
 
   const zeusTyphonStory = await prisma.story.findFirstOrThrow({ where: { bookId: greekBook.id, slug: "zeus-and-typhon" } });
 
+  // Fas 71-tillägg: Petersons EGEN, uttryckliga jämförelse (en hel
+  // föreläsning ägnad just åt den) — starkast verifierad av alla
+  // Parallels hittills, eftersom det inte är vår egen komparativa
+  // observation utan en namngiven Peterson-föreläsning.
+  const genesisBuddhaParallel = await prisma.parallel.upsert({
+    where: { id: "seed-parallel-genesis-buddha" },
+    update: {},
+    create: {
+      id: "seed-parallel-genesis-buddha",
+      title: "Ett fungerande utgångsläge, ett problem, en lösning",
+      description:
+        "Peterson har en hel, egen föreläsning ('Genesis and the " +
+        "Buddha', Maps of Meaning-serien 2017) ägnad åt just den här " +
+        "jämförelsen: Första Mosebokens skapelseberättelser och Buddhas " +
+        "ursprungsberättelse (De fyra synerna) delar, menar han, samma " +
+        "underliggande narrativa arketyp — ett fungerande, harmoniskt " +
+        "utgångsläge, uppkomsten av ett olösbart problem (syndafallet " +
+        "respektive insikten om lidande/död/ålderdom), och en radikal " +
+        "förändring som följd. Till skillnad från Parallelsen ovan " +
+        "handlar det INTE om en kaosdrake utan om berättelsestruktur " +
+        "i sig.",
+      themeId: selfConsciousnessTheme.id,
+    },
+  });
+
   const moreParallelLinks: Array<[string, string, string]> = [
+    [genesisBuddhaParallel.id, creationStory.id, "Ett harmoniskt utgångsläge, sedan Guds ord som skiljer ordning från kaos — Peterson läser skapelsen själv som ett slags 'problem-lösning'-mönster."],
+    [genesisBuddhaParallel.id, gardenOfEdenStory.id, "Edens lustgård som det 'fungerande utgångsläget' — syndafallet som det olösbara problemet som utlöser förändring (självmedvetenhet, dödlighet)."],
+    [genesisBuddhaParallel.id, fourSightsStory.id, "Det instängda palatset som det 'fungerande utgångsläget' — insikten om ålderdom, sjukdom och död som det olösbara problemet som utlöser Den stora försakelsen."],
     [dualityParallel.id, chapter42Story.id, "Tao frambringar Ett, Ett frambringar Två (traditionellt tolkat som yin och yang) — duplitetens filosofiska källtext."],
     [dualityParallel.id, creationStory.id, "'Jorden var öde och tom' (tohu wa-bohu) före Guds ordnande ord — kaos som förutsättning, inte fiende."],
     [dualityParallel.id, enumaElishStory.id, "Tiamat SOM formlöst kaosvatten, före Marduks ordnande — här dock med en aktiv kamp, inte bara ren dualitet."],
@@ -8788,7 +8919,7 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
       create: { parallelId, storyId, note },
     });
   }
-  console.log(`Seedat Jordans Mytologi: 4 nya Parallels, ${moreParallelLinks.length} kopplingar.`);
+  console.log(`Seedat Jordans Mytologi: 5 nya Parallels, ${moreParallelLinks.length} kopplingar.`);
 
   console.log(
     `Seedat: ${stories.length} stories i Genesis, ` +
