@@ -6825,6 +6825,65 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
   });
   console.log(`Seedat grekisk mytologi: ${greekWorks.length} berättelser.`);
 
+  // --- Fas 70: Vedisk mytologi (Indra och Vritra) — som Gita-kopplad
+  // berättelse, INTE ett eget verk (direkt användarbeslut: "troligen
+  // bäst som Gita-kopplad referens snarare än eget verk", eftersom
+  // Bhagavad Gita är en del av samma vidare vediska/hinduiska tradition
+  // som Rigveda). Verifierat: Peterson räknar uttryckligen upp "Indra
+  // killing Vritra the Cosmic Serpent" tillsammans med Marduk/Tiamat,
+  // Theseus/Minotauros och Jahve/Leviatan som varianter av samma
+  // kaosdrake-mönster — men ingen exakt video+tidsstämpel är verifierad
+  // mot ett primärt transkript. Källtext: Rigveda 1.32 (Griffiths fria
+  // översättning, 1896, Wikisource) — bland de allra äldsta texterna i
+  // hela appen.
+  const indraChar = await prisma.character.upsert({ where: { slug: "indra" }, update: {}, create: { slug: "indra", name: "Indra" } });
+  const vritraChar = await prisma.character.upsert({ where: { slug: "vritra" }, update: {}, create: { slug: "vritra", name: "Vritra (kaosdrake)" } });
+  const bhagavadGitaBookForVedic = await prisma.book.findFirstOrThrow({ where: { slug: "bhagavad-gita", corpus: { slug: "other-scriptures" } } });
+  const indraVritraStory = await prisma.story.upsert({
+    where: { bookId_slug: { bookId: bhagavadGitaBookForVedic.id, slug: "indra-and-vritra" } },
+    update: {
+      title: "Indra och Vritra (Rigveda, bakgrund)", startRef: "Rigveda 1.32", endRef: "Rigveda 1.32", orderInBook: 7,
+      quote:
+        "I will declare the manly deeds of Indra, the first that he achieved, the Thunder-wielder. He slew the Dragon, then disclosed the waters, and cleft the channels of the mountain torrents. [...] Indra with his own great and deadly thunder smote into pieces Vritra, worst of Vritras. As trunks of trees, what time the axe hath felled them, low on the earth so lies the prostrate Dragon. [...] Then humbled was the strength of Vritra's mother: Indra hath cast his deadly bolt against her. The mother was above, the son was under, and like a cow beside her calf lay Danu.",
+      summary:
+        "Rigveda (ca 1500–1200 f.Kr., äldre än nästan allt annat i " +
+        "appen) — inte en del av Bhagavad Gita självt, men samma " +
+        "vidare vediska tradition, tillagd här som bakgrund. Indra " +
+        "besegrar Vritra, en drake som håller världens vatten " +
+        "instängda, och befriar därmed floderna. Vritras mor Danu " +
+        "(ett kaos-modersnamn som ekar Tiamat, se Mesopotamisk " +
+        "mytologi) drabbas av samma öde. Peterson räknar uttryckligen " +
+        "upp just den här myten tillsammans med Marduk/Tiamat, " +
+        "Theseus/Minotauros och Jahve/Leviatan som varianter av samma " +
+        "'kaosdrake'-mönster i sina föreläsningar om ordning och kaos.",
+    },
+    create: {
+      bookId: bhagavadGitaBookForVedic.id, slug: "indra-and-vritra",
+      title: "Indra och Vritra (Rigveda, bakgrund)", startRef: "Rigveda 1.32", endRef: "Rigveda 1.32", orderInBook: 7,
+      quote:
+        "I will declare the manly deeds of Indra, the first that he achieved, the Thunder-wielder. He slew the Dragon, then disclosed the waters, and cleft the channels of the mountain torrents. [...] Indra with his own great and deadly thunder smote into pieces Vritra, worst of Vritras. As trunks of trees, what time the axe hath felled them, low on the earth so lies the prostrate Dragon. [...] Then humbled was the strength of Vritra's mother: Indra hath cast his deadly bolt against her. The mother was above, the son was under, and like a cow beside her calf lay Danu.",
+      summary:
+        "Rigveda (ca 1500–1200 f.Kr., äldre än nästan allt annat i " +
+        "appen) — inte en del av Bhagavad Gita självt, men samma " +
+        "vidare vediska tradition, tillagd här som bakgrund. Indra " +
+        "besegrar Vritra, en drake som håller världens vatten " +
+        "instängda, och befriar därmed floderna. Vritras mor Danu " +
+        "(ett kaos-modersnamn som ekar Tiamat, se Mesopotamisk " +
+        "mytologi) drabbas av samma öde. Peterson räknar uttryckligen " +
+        "upp just den här myten tillsammans med Marduk/Tiamat, " +
+        "Theseus/Minotauros och Jahve/Leviatan som varianter av samma " +
+        "'kaosdrake'-mönster i sina föreläsningar om ordning och kaos.",
+    },
+  });
+  for (const characterId of [indraChar.id, vritraChar.id]) {
+    await prisma.storyCharacter.upsert({
+      where: { storyId_characterId: { storyId: indraVritraStory.id, characterId } },
+      update: {},
+      create: { storyId: indraVritraStory.id, characterId },
+    });
+  }
+  console.log("Seedat vedisk mytologi: 1 berättelse (Indra och Vritra, Gita-kopplad).");
+
   // --- Tvärtraditions-karaktärslänkning: Koranens berättelser om samma
   // personer som redan finns i Bibel-korpusen länkas till SAMMA
   // Character-rad (inte en ny "islamisk Adam" osv.) — detta är vad som
@@ -8713,6 +8772,7 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
     [dualityParallel.id, enumaElishStory.id, "Tiamat SOM formlöst kaosvatten, före Marduks ordnande — här dock med en aktiv kamp, inte bara ren dualitet."],
     [heroParallel.id, enumaElishStory.id, "Marduk väljs till kung för att han kan SE och TALA ('logos') — inte för att han är starkast."],
     [heroParallel.id, zeusTyphonStory.id, "Zeus möter sin sista utmanare efter att ha störtat titanerna — samma 'bevisa ordningen genom att besegra kaos'-mönster, en av flera antika varianter Peterson återkommer till."],
+    [heroParallel.id, indraVritraStory.id, "Peterson räknar uttryckligen upp just den här myten (Indra mot 'the Cosmic Serpent') tillsammans med Marduk/Tiamat och Zeus/Typhon i sina föreläsningar om ordning och kaos."],
     [heroParallel.id, osirisHorusStory.id, "Horus mot Seth appliceras på statens förfall/förnyelse istället för kosmos skapelse — samma mönster, ny kontext."],
     [heroParallel.id, creationStory.id, "Gud talar ordning ur kaos ('Guds ande svävade över vattnet') — samma djupstruktur i en mer abstrakt, avpersonifierad form."],
     [floodParallel.id, noahsFloodStoryForParallel.id, "Den bibliska versionen — Noa varnas, bygger arken, överlever med sin familj och djuren."],

@@ -70,6 +70,31 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 70 (2026-08-28): Vedisk mytologi (Indra och Vritra)
+
+Fas 3 av 10. Direkt användarbeslut: läggs till som en Gita-KOPPLAD
+berättelse, inte ett eget verk (Bhagavad Gita hör till samma vidare
+vediska/hinduiska tradition som Rigveda). Verifierat: Peterson räknar
+uttryckligen upp "Indra killing Vritra the Cosmic Serpent" tillsammans
+med Marduk/Tiamat, Theseus/Minotauros och Jahve/Leviatan som varianter
+av samma kaosdrake-mönster — men ingen exakt video+tidsstämpel
+verifierad mot ett primärt transkript.
+
+Hela citatet (Rigveda 1.32, Griffiths fria 1896-översättning,
+Wikisource) — bland de allra äldsta texterna i hela appen (ca 1500–
+1200 f.Kr.). Bonusfynd: Vritras mor heter Danu — ett kaos-modersnamn
+som ekar Tiamat, tillagt i berättelsens egen sammanfattning.
+
+Lagt till i "Hjälten som besegrar kaos-monstret"-Parallelen, som nu
+spänner över FEM traditioner (Bibeln, Mesopotamien, Egypten, Grekland,
+Vedisk mytologi) — synligt direkt på varje enskild berättelses sida.
+
+**Sidofynd, sparat för Fas 76**: research bekräftade att Peterson
+faktiskt citerat Bhagavad Gita direkt i 12 Rules for Life ("the sage
+does not contrive to win, and therefore is not defeated") — en
+konkret, verifierbar koppling att bygga vidare på när Gitan
+färdigställs.
+
 ## Fas 69 (2026-08-28): Grekisk mytologi
 
 Fas 2 av 10. Svagare Peterson-källäge än Taoismen (flaggat redan i Fas
