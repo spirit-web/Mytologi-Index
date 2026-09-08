@@ -70,6 +70,50 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 77 (2026-08-28): Sammanlänkning — planen (Fas 68–77) avslutad
+
+Sista fasen. Full slutaudit av allt som byggts i Fas 68–76, plus tre
+genuina, tidigare outnyttjade kopplingar som auditen hittade:
+
+- **"Abrahams offer" (Koranen)** lades till i den redan existerande
+  "Uppoffring som återkommande arketyp"-Parallelen (fanns sedan
+  tidigt i projektet, bara med de två bibliska varianterna) — nu med
+  en tredje, tydligt skild variant (sonen tillfrågas och samtycker).
+- **"Uppståndelsen" (Matteus)** lades till i "Hjälten som besegrar
+  kaos-monstret" — Parallelens EGEN beskrivningstext nämnde redan
+  Kristus som ett exempel, men ingen story-länk fanns förrän nu.
+- **Ny Parallel: "Profeten som utmanar himlen om regn"** — kopplar
+  Elia mot Baals profeter (redan i Bibel-korpusen sedan tidigare) med
+  Choni cirkeldragaren (Fas 75): två fristående traditioners samma
+  djärva grundfigur som inte bara ber om regn utan ställer Gud till
+  svars för att det uteblivit.
+
+**Slutaudit, tekniskt**: alla 46 böcker har `approxYearStart` (ingen
+lucka i historiska tidslinjen); alla 71 `Reference`-rader har stabila
+`seed-*`-id:n (inga dubbletter återintroducerade sedan Fas 66:s
+bugfix); 7 `Parallel`-poster med totalt 24 kopplingar, alla verifierat
+renderade live.
+
+**Hela civilisations-utökningen i sammandrag (Fas 68–77):**
+
+| Fas | Innehåll | Peterson-källäge |
+|---|---|---|
+| 68 | Taoismen (5 kapitel) | Starkt — 12 Rules öppnar med yin-yang |
+| 69 | Grekisk mytologi (3) | Medel — kaosdrake-tes + Freud/Oidipus |
+| 70 | Vedisk mytologi (1, Gita-kopplad) | Starkt — uttrycklig uppräkning |
+| 71 | Buddhism (2) | Starkast — hel egen namngiven föreläsning |
+| 72 | Nordisk mytologi (2) | Svagast — löst omnämnande |
+| 73 | Zoroastrism (1) | Inget hittat — egna meriter |
+| 74 | Koranen (10, färdigställd) | Befintliga kopplingar (Fas 66) |
+| 75 | Talmud (7, färdigställd) | Inga nya hittade |
+| 76 | Bhagavad Gita (6, färdigställd) | Inga verifierade hittade |
+| 77 | 3 nya tvärtext-kopplingar | — |
+
+Totalt: **10 nya böcker, ~40 nya berättelser**, samtliga med hela eller
+korta verifierade citat (aldrig återgivna ur minnet), 18 nya porträtt,
+en historisk tidslinje över alla 46 böcker, och 7 tvärtext-Parallels
+med 24 kopplingar synliga direkt på berörda story-sidor.
+
 ## Fas 76 (2026-08-28): Bhagavad Gita färdigställd
 
 Fas 9 av 10 — sista av de tre "färdigställ skelettet"-faserna. De

@@ -9474,6 +9474,49 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
     [adamParallel.id, gardenOfEdenStory.id, "Den bibliska versionen — ormen frestar, ätandet av frukten ger bestående konsekvenser (dödlighet, smärta, utvisning)."],
     [adamParallel.id, quranAdamStory.id, "Koranens version — Adam och Eva förleds av Iblis/Satan, men Adam ångrar sig och förlåts direkt av Gud."],
   ];
+
+  // --- Fas 77: Sammanlänkning — sista fasen. Slutaudit av alla Parallels
+  // hittade två genuina luckor (kopplingar som Parallelens EGEN
+  // beskrivningstext redan antydde, men som aldrig fick en faktisk
+  // story-länk) plus en helt ny, tidigare outnyttjad koppling. ---
+  const quranIbrahimSacrificeStory = await prisma.story.findFirstOrThrow({ where: { slug: "ibrahims-sacrifice", book: { slug: "quran" } } });
+  const resurrectionStory = await prisma.story.findFirstOrThrow({ where: { slug: "resurrection", book: { slug: "matthew" } } });
+  const elijahBaalStory = await prisma.story.findFirstOrThrow({ where: { slug: "elijah-and-the-prophets-of-baal" } });
+  const honiStory = await prisma.story.findFirstOrThrow({ where: { slug: "honi-the-circle-drawer", book: { slug: "talmud" } } });
+
+  const rainProphetParallel = await prisma.parallel.upsert({
+    where: { id: "seed-parallel-rain-prophet" },
+    update: {},
+    create: {
+      id: "seed-parallel-rain-prophet",
+      title: "Profeten som utmanar himlen om regn",
+      description:
+        "Två fristående traditioner (bibliskt Israel, rabbinskt " +
+        "judendom några sekler senare) med samma djärva grundfigur: en " +
+        "enskild, karismatisk man som — i en akut torka — inte bara " +
+        "BER om regn utan STÄLLER GUD TILL SVARS för att det uteblivit, " +
+        "och får rätt. Elia utmanar Baals 450 profeter offentligt " +
+        "innan han ber om regnet; Choni går ett steg längre och vägrar " +
+        "bokstavligen lämna sin egenritade cirkel förrän Gud svarar — " +
+        "en djärvhet senare rabbiner själva debatterade om gränsade " +
+        "till respektlöshet.",
+      themeId: null,
+    },
+  });
+  const finalParallelLinks: Array<[string, string, string]> = [
+    [sacrificeParallel.id, quranIbrahimSacrificeStory.id, "Koranens version av samma prövning — den avgörande skillnaden är att sonen här TILLFRÅGAS och samtycker uttryckligen innan offret, istället för att bara följa med."],
+    [heroParallel.id, resurrectionStory.id, "Kristi uppståndelse som Petersons mest utrenade, avpersonifierade variant av samma hjälte-mot-kaos/död-mönster — döden själv besegras, inte ett fysiskt monster."],
+    [rainProphetParallel.id, elijahBaalStory.id, "Elia utmanar offentligt Baals 450 profeter att få eld från himlen, sedan sin egen Gud att bryta en flerårig torka — en av Bibelns mest offentliga, konfrontativa mirakelscener."],
+    [rainProphetParallel.id, honiStory.id, "Choni går ett steg längre än Elia: en bokstavlig, uttalad ultimatum-liknande begäran ('jag rör mig inte förrän...') snarare än en offentlig tävling."],
+  ];
+  for (const [parallelId, storyId, note] of finalParallelLinks) {
+    await prisma.parallelStory.upsert({
+      where: { parallelId_storyId: { parallelId, storyId } },
+      update: { note },
+      create: { parallelId, storyId, note },
+    });
+  }
+  console.log(`Seedat Fas 77-sammanlänkning: 1 ny Parallel, ${finalParallelLinks.length} kopplingar.`);
   for (const [parallelId, storyId, note] of moreParallelLinks) {
     await prisma.parallelStory.upsert({
       where: { parallelId_storyId: { parallelId, storyId } },
