@@ -70,6 +70,52 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 65 (2026-08-28): Relevans-filtrerade berättelse-stubbar för Koranen, Talmud, Bhagavad Gita
+
+Fas 64 gav bara tomma `Book`-rader. Den här fasen går ett steg djupare
+— en STORY-stub per relevant avsnitt (bara `title`/`startRef`/`endRef`/
+`orderInBook`, `quote`/`summary` medvetet NULL, ingen fejk-placeholder-
+text) — så att kommande faser vet exakt VILKA suror/traktat/kapitel
+som ska fyllas i, inte bara att "något" ska fyllas i.
+
+**Relevans-sorteringsmodellen** (samma tre nivåer oavsett verk):
+- **(A) Delar som redan överlappar med Bibel-korpusen** — högst
+  prioritet, eftersom det möjliggör framtida tvärkorpus-länkning
+  (samma person/berättelse ur en annan traditions lins, jämför redan
+  existerande We Who Wrestle with God ↔ Genesis-länkning).
+- **(B) Kort men kulturellt/teologiskt centralt material** — även utan
+  Bibel-överlapp eller Peterson-koppling (t.ex. Al-Fatiha, Pirkei
+  Avot, Bhagavad Gitas mest citerade kapitel).
+- **(C) Verifierat Peterson-refererat material** — högsta prioritet
+  OM det finns, men ingen sådan koppling hittad/verifierad än för
+  dessa tre verk (till skillnad från Källor & influenser-kapitlen).
+
+**Medvetet uteslutet, inte bortglömt**: rent juridiskt/tekniskt
+material utan narrativt/filosofiskt innehåll — Koranens arvs- och
+äktenskapslagstiftning, Talmuds tusentals sidor halakha-debatt (utöver
+de utvalda aggada-berättelserna), Bhagavad Gitas mer repetitiva
+yoga-praktik-kapitel (6, 13–17). Detta är appens egen avgränsning
+("berättelseindex", inte en fullständig digital utgåva), samma princip
+som redan gäller för Psaltaren/Ordspråksboken/breven i Bibel-korpusen.
+
+**Resultat**: 10 Koran-stubbar (Adam, Noa, Abraham x2, Mose, Josef,
+Maria/Jesus, Nattresan, plus Al-Fatiha och Tron-versen), 7 Talmud-
+stubbar (Akhnais ugn, Kamtza/Bar Kamtza, Choni, Hillel-konvertiten, De
+fyra i Pardes, Rabbi Akivas död, Pirkei Avot), 6 Gita-kapitel (1, 2, 3,
+11, 12, 18).
+
+**Bieffekt-bugg hittad och fixad**: story-sidan gated tidigare
+bibeltext-hämtning (bible-api.com) och "Läs på BibleGateway"-länken på
+`corpus.kind === "scripture"` — vilket nu även träffade Koranen/
+Talmud/Gita (samma `kind`, för att återanvända annan scripture-logik
+som avsaknad av författar-attribution). Resultatet blev en förvirrande
+"kunde inte hämta versstexten"-felruta och en trasig BibleGateway-länk
+på varje ny stub. Fixat genom att gata om just dessa två ställen till
+`corpus.slug === "bible"` specifikt (`src/app/[corpus]/[book]/[story]/page.tsx`)
+— övrig `kind === "scripture"`-logik (t.ex. ingen citat-författare
+krävs) är fortfarande korrekt oförändrad. Verifierat live på alla tre
+nya böcker efteråt.
+
 ## Fas 64 (2026-08-28): Skelett för andra religiösa texter
 
 Ny Corpus `other-scriptures` ("Andra religiösa texter", kind

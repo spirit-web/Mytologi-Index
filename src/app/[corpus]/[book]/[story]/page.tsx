@@ -116,9 +116,11 @@ export default async function StoryPage({
       ? await findCandidateVideos(story.title, story.book.name)
       : [];
 
-  // Bibeltext hämtas on-demand (bara för scripture-korpusar, se README).
+  // Bibeltext hämtas on-demand — bara för Bibel-korpusen specifikt (INTE
+  // alla scripture-korpusar: bible-api.com känner förstås bara till
+  // bibelreferenser, inte suror/traktat/Gita-kapitel, se README Fas 65).
   const passage =
-    story.book.corpus.kind === "scripture"
+    story.book.corpus.slug === "bible"
       ? await fetchBiblePassage(story.startRef, story.endRef)
       : null;
 
@@ -192,7 +194,7 @@ export default async function StoryPage({
       {story.images.length > 0 && (
         <div className="mb-8">
           <p className="mb-2 text-xs uppercase tracking-wide text-[var(--text-faint)]">
-            {story.book.corpus.kind === "scripture"
+            {story.book.corpus.slug === "bible"
               ? 'Bildberättelse (parafras från bildkällan — inte bibeltext, se "Text" nedan för det)'
               : "Symbolbilder (se bildtext för sammanhang och källa)"}
           </p>
@@ -317,7 +319,7 @@ export default async function StoryPage({
               })}
             </div>
           </div>
-        ) : story.book.corpus.kind === "scripture" ? (
+        ) : story.book.corpus.slug === "bible" ? (
           <p className="text-sm text-[var(--text-muted)]">
             Kunde inte hämta versstexten just nu (bible-api.com svarade inte). Prova ladda om sidan.
           </p>
@@ -372,11 +374,11 @@ export default async function StoryPage({
           </div>
         ) : (
           <p className="text-sm text-[var(--text-muted)]">
-            Ingen extern källtext kopplad för detta ramverkskapitel ännu.
+            Inget citat/sammanfattning inlagt för denna berättelse ännu.
           </p>
         )}
 
-        {story.book.corpus.kind === "scripture" && (
+        {story.book.corpus.slug === "bible" && (
           <p className="mt-4 border-t border-[var(--border-soft)] pt-3 text-xs text-[var(--text-faint)]">
             <a
               href={externalBibleUrl(story.startRef, story.endRef)}

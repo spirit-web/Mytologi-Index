@@ -6301,14 +6301,20 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
   }
   console.log(`Seedat Solzjenitsyn/Eliade/Neumann/Paglia: ${solzhenitsynWorks.length + eliadeWorks.length + neumannWorks.length + pagliaWorks.length} verk, ${breadthReferences.length} verifierade kopplingar.`);
 
-  // --- Fas 64: SKELETT för andra religiösa texter (Koranen, Talmud,
+  // --- Fas 64/65: SKELETT för andra religiösa texter (Koranen, Talmud,
   // Bhagavad Gita) ------------------------------------------------------
-  // Bara Corpus+Book, INGA Story-rader än — ren strukturell platshållare
-  // så framtida faser vet exakt vad som ska fyllas i. Varje "description"
-  // fylls i på riktigt i respektive faktiska fas; texten här markerar
-  // uttryckligen att den INTE är gjord än. Se README Fas 64 för
-  // omfattning/plan per verk (flera faser per text, enligt tidigare
-  // effort-uppskattning till användaren).
+  // Corpus+Book (Fas 64) + relevans-filtrerade Story-STUBBAR (Fas 65) —
+  // bara slug/title/startRef/endRef/orderInBook, `quote`/`summary`
+  // medvetet NULL (inte fejk-placeholdertext) tills en riktig fas fyller
+  // i dem. Se README Fas 65 för den fullständiga relevans-sorterings-
+  // modellen per verk — sammanfattat: (A) berättelser som redan
+  // finns/överlappar med Bibel-korpusen (högst prioritet, möjliggör
+  // framtida tvärkorpus-länkning), (B) korta men kulturellt/teologiskt
+  // centrala texter, (C) verifierat Peterson-refererat material (tomt
+  // tills vidare — ingen sådan koppling hittad än för dessa tre verk).
+  // Rent legalt/tekniskt material (t.ex. Talmuds halakha-debatter,
+  // Koranens arvs-/äktenskapslagstiftning) är MEDVETET UTESLUTET — inte
+  // en lucka, utan en avgränsning: det är inte berättelser.
   const otherScripturesCorpus = await prisma.corpus.upsert({
     where: { slug: "other-scriptures" },
     update: {},
@@ -6324,25 +6330,95 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
         "läggs in där det finns.",
     },
   });
-  const skeletonBooks: Array<{ slug: string; name: string; order: number }> = [
-    { slug: "quran", name: "Koranen" },
-    { slug: "talmud", name: "Talmud" },
-    { slug: "bhagavad-gita", name: "Bhagavad Gita" },
-  ].map((b, i) => ({ ...b, order: i + 1 }));
-  for (const b of skeletonBooks) {
-    await prisma.book.upsert({
+  type ScriptureStub = { slug: string; title: string; startRef: string; endRef: string };
+  const scriptureBooks: Array<{ slug: string; name: string; description: string; stubs: ScriptureStub[] }> = [
+    {
+      slug: "quran",
+      name: "Koranen",
+      description:
+        "Islams heliga skrift, 114 suror (kapitel), av muslimer trodda " +
+        "vara Guds bokstavliga ord uppenbarat för profeten Muhammed " +
+        "610–632 e.Kr. Berättelserna nedan är URVALET av suror med " +
+        "narrativt innehåll som direkt speglar/skiljer sig från redan " +
+        "indexerade Bibel-berättelser (samma personer: Josef, Abraham, " +
+        "Mose, Noa, Maria/Jesus, Adam) plus ett fåtal icke-narrativa men " +
+        "centrala texter (öppningsbönen, tron-versen). Koranens " +
+        "juridiska/sociala suror (arv, äktenskap, kost) är medvetet " +
+        "uteslutna — se README Fas 65.",
+      stubs: [
+        { slug: "al-fatiha", title: "Al-Fatiha — Öppningen", startRef: "Sura 1", endRef: "Sura 1" },
+        { slug: "adam-and-the-fall", title: "Adam och syndafallet", startRef: "Sura 2:30-39", endRef: "Sura 7:11-25" },
+        { slug: "nuh", title: "Noa (Nuh)", startRef: "Sura 71", endRef: "Sura 71" },
+        { slug: "ibrahim-and-the-idols", title: "Abraham (Ibrahim) och avgudarna", startRef: "Sura 21:51-70", endRef: "Sura 21:51-70" },
+        { slug: "ibrahims-sacrifice", title: "Abrahams prövning — offret av sonen", startRef: "Sura 37:99-113", endRef: "Sura 37:99-113" },
+        { slug: "musa-and-pharaoh", title: "Mose (Musa) och Farao", startRef: "Sura 20:9-79", endRef: "Sura 20:9-79" },
+        { slug: "yusuf", title: "Josef (Yusuf)", startRef: "Sura 12", endRef: "Sura 12" },
+        { slug: "maryam", title: "Maria (Maryam) och Jesus födelse", startRef: "Sura 19:16-34", endRef: "Sura 19:16-34" },
+        { slug: "al-isra", title: "Nattresan och himmelsfärden (Al-Isra/Mi'raj)", startRef: "Sura 17:1", endRef: "Sura 17:1" },
+        { slug: "ayat-al-kursi", title: "Tron-versen (Ayat al-Kursi)", startRef: "Sura 2:255", endRef: "Sura 2:255" },
+      ],
+    },
+    {
+      slug: "talmud",
+      name: "Talmud",
+      description:
+        "Judendomens centrala rabbinska textkorpus (Mishna + Gemara), " +
+        "färdigställd i sin babyloniska form ca 500 e.Kr. — huvudsakligen " +
+        "juridisk argumentation (halakha), men med berömda narrativa " +
+        "inslag (aggada) utspridda i enskilda traktat. Berättelserna " +
+        "nedan är just dessa aggada-avsnitt plus Pirkei Avot (Fädernas " +
+        "etik, tekniskt en del av Mishna men alltid buntad med " +
+        "Talmud-studier) — inte de tusentals sidorna halakha-debatt, " +
+        "som faller utanför ett berättelseindex. Se README Fas 65.",
+      stubs: [
+        { slug: "oven-of-akhnai", title: "Akhnais ugn — 'Det är inte i himlen'", startRef: "Bava Metzia 59b", endRef: "Bava Metzia 59b" },
+        { slug: "kamtza-and-bar-kamtza", title: "Kamtza och Bar Kamtza", startRef: "Gittin 55b", endRef: "Gittin 56a" },
+        { slug: "honi-the-circle-drawer", title: "Choni HaMe'agel — cirkeldragaren", startRef: "Taanit 23a", endRef: "Taanit 23a" },
+        { slug: "hillel-and-the-convert", title: "Hillel och konvertiten som ville lära sig Toran stående på ett ben", startRef: "Shabbat 31a", endRef: "Shabbat 31a" },
+        { slug: "four-who-entered-pardes", title: "De fyra som gick in i Pardes", startRef: "Chagigah 14b", endRef: "Chagigah 14b" },
+        { slug: "death-of-rabbi-akiva", title: "Rabbi Akivas martyrdöd", startRef: "Berakhot 61b", endRef: "Berakhot 61b" },
+        { slug: "pirkei-avot", title: "Pirkei Avot — Fädernas etik (urval)", startRef: "Avot 1:1", endRef: "Avot 6:11" },
+      ],
+    },
+    {
+      slug: "bhagavad-gita",
+      name: "Bhagavad Gita",
+      description:
+        "700-versigt sanskritdikt (troligen 400–200 f.Kr.), en del av " +
+        "eposet Mahabharata — Krishnas dialog med krigaren Arjuna på " +
+        "slagfältet Kurukshetra strax innan ett brödrafolks-krig. Till " +
+        "skillnad från Koranen/Talmud är hela verket redan en " +
+        "sammanhållen berättelse/filosofisk dialog, så urvalet nedan är " +
+        "de mest centrala/mest citerade av de 18 kapitlen snarare än en " +
+        "hård exkludering — några mer repetitiva yoga-praktik-kapitel " +
+        "(bl.a. kap. 6, 13-17) är utelämnade tills vidare. Se README Fas 65.",
+      stubs: [
+        { slug: "arjunas-despair", title: "Kapitel 1: Arjunas förtvivlan", startRef: "Kapitel 1", endRef: "Kapitel 1" },
+        { slug: "sankhya-yoga", title: "Kapitel 2: Sankhya Yoga — själens odödlighet och plikten", startRef: "Kapitel 2", endRef: "Kapitel 2" },
+        { slug: "karma-yoga", title: "Kapitel 3: Karma Yoga — handling utan bindning till frukten", startRef: "Kapitel 3", endRef: "Kapitel 3" },
+        { slug: "universal-form", title: "Kapitel 11: Den kosmiska uppenbarelsen", startRef: "Kapitel 11", endRef: "Kapitel 11" },
+        { slug: "bhakti-yoga", title: "Kapitel 12: Bhakti Yoga — hängivenhetens väg", startRef: "Kapitel 12", endRef: "Kapitel 12" },
+        { slug: "moksha-conclusion", title: "Kapitel 18: Avslutningen — frigörelsens väg", startRef: "Kapitel 18", endRef: "Kapitel 18" },
+      ],
+    },
+  ];
+  let totalStubs = 0;
+  for (const b of scriptureBooks) {
+    const book = await prisma.book.upsert({
       where: { corpusId_slug: { corpusId: otherScripturesCorpus.id, slug: b.slug } },
-      update: {},
-      create: {
-        corpusId: otherScripturesCorpus.id,
-        slug: b.slug,
-        name: b.name,
-        order: b.order,
-        description: "SKELETT — inte påbörjad än. Se README Fas 64.",
-      },
+      update: { description: b.description },
+      create: { corpusId: otherScripturesCorpus.id, slug: b.slug, name: b.name, order: scriptureBooks.indexOf(b) + 1, description: b.description },
     });
+    for (const [i, s] of b.stubs.entries()) {
+      await prisma.story.upsert({
+        where: { bookId_slug: { bookId: book.id, slug: s.slug } },
+        update: { title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: i + 1 },
+        create: { bookId: book.id, slug: s.slug, title: s.title, startRef: s.startRef, endRef: s.endRef, orderInBook: i + 1 },
+      });
+      totalStubs++;
+    }
   }
-  console.log(`Seedat skelett för andra religiösa texter: ${skeletonBooks.length} böcker (inga stories än).`);
+  console.log(`Seedat skelett för andra religiösa texter: ${scriptureBooks.length} böcker, ${totalStubs} relevans-filtrerade stub-berättelser (utan quote/summary än).`);
 
   // --- Fas 14: Beyond Order: 12 More Rules for Life (2021) -----------
   // Uppföljaren till 12 Rules for Life — samma metod: inget digitalt
