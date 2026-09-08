@@ -7142,6 +7142,158 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
   });
   console.log("Seedat Zoroastrism: 1 berättelse (De två tvillingandarna).");
 
+  // --- Fas 74: Färdigställ Koranen — fyller i alla 10 stubbar från Fas
+  // 65 med riktiga citat/sammanfattningar. Koranens ARABISKA text är
+  // förstås fri, men engelska ÖVERSÄTTNINGAR är oftast skyddade —
+  // använder därför E.H. Palmers fria 1880-översättning (Sacred Books
+  // of the East vol. 6/9, Wikisource) för de flesta suror, plus J.M.
+  // Rodwells fria 1861-översättning (Gutenberg #3434) för Nuh (71),
+  // som inte hade en egen sida i Palmer-utgåvan på Wikisource. Alla
+  // citat hämtade och kontrollerade ord för ord mot respektive
+  // primärkälla 2026-08-28.
+  const quranBook = await prisma.book.findFirstOrThrow({ where: { slug: "quran", corpus: { slug: "other-scriptures" } } });
+  const quranContent: Array<{ slug: string; quote: string; summary: string }> = [
+    {
+      slug: "al-fatiha",
+      quote:
+        "In the name of the merciful and compassionate God. Praise belongs to God, the Lord of the worlds, the merciful, the compassionate, the ruler of the day of judgment! Thee we serve and Thee we ask for aid. Guide us in the right path, the path of those Thou art gracious to; not of those Thou art wroth with; nor of those who err.",
+      summary:
+        "Koranens öppningskapitel, sju verser, reciterad av muslimer i " +
+        "varje bön flera gånger dagligen — motsvarigheten till Fader " +
+        "vår i sin centrala, upprepade ställning i det religiösa livet. " +
+        "En kort bön om vägledning på 'den raka vägen'.",
+    },
+    {
+      slug: "adam-and-the-fall",
+      quote:
+        "And when thy Lord said unto the angels, 'I am about to place a vicegerent in the earth,' they said, 'Wilt Thou place therein one who will do evil therein and shed blood?' [...] And He taught Adam the names, all of them; then He propounded them to the angels [...] And we said to the angels, 'Adore Adam,' they adored him save only Iblîs, who refused and was too proud and became one of the misbelievers. And we said, 'O Adam dwell, thou and thy wife, in Paradise, and eat therefrom amply as you wish; but do not draw near this tree or ye will be of the transgressors.' And Satan made them backslide therefrom and drove them out from what they were in [...] And Adam caught certain words from his Lord, and He turned towards him, for He is the compassionate one easily turned.",
+      summary:
+        "Sura 2 (Al-Baqarah), verserna 30–37 (samma händelse återberättas " +
+        "kortare i Sura 7, Al-A'raf, 11–25). Skiljer sig från den " +
+        "bibliska versionen på en avgörande punkt: Adam 'fångar upp " +
+        "ord' från Gud och ÅNGRAR SIG, och Gud vänder sig genast till " +
+        "honom igen — ingen bestående förbannelse, inget permanent " +
+        "syndafall i kristen mening. Iblis (Satan) vägrar buga för " +
+        "Adam av stolthet, inte genom att fresta i ormform som i " +
+        "Bibeln (den kopplingen görs istället, med ormsymbolik, i Sura " +
+        "7 och 20).",
+    },
+    {
+      slug: "nuh",
+      quote:
+        "We sent NOAH to his people, and said to him, \"Warn thou thy people ere there come on them an afflictive punishment.\" He said, \"O my people! I come to you a plain-spoken warner: Serve God and fear Him, and obey me [...] Beg forgiveness of your Lord, for He is ready to forgive. He will send down the very Heaven upon you in plenteous rains; And will increase you in wealth and children; and will give you gardens, and will give you watercourses.\" [...] And Noah said, \"Lord, leave not one single family of Infidels on the Earth: for if thou leave them they will beguile thy servants and will beget only sinners, infidels. O my Lord, forgive me, and my parents, and every one who, being a believer, shall enter my house.\"",
+      summary:
+        "Hela Sura 71, uppkallad efter Noa. Till skillnad från Bibelns " +
+        "korta, handlingsdrivna berättelse är detta nästan uteslutande " +
+        "Noas egen, långa VÄDJAN till sitt folk — natt och dag, öppet " +
+        "och i enrum — innan Gud till slut, på Noas egen bön, dränker " +
+        "de obotfärdiga. Folkets envishet ('de stoppar fingrarna i " +
+        "öronen') och Noas växande förtvivlan är kapitlets tyngdpunkt, " +
+        "inte själva floden eller arken.",
+    },
+    {
+      slug: "ibrahim-and-the-idols",
+      quote:
+        "When he said to his father and to his people, 'What are these images to which ye pay devotion?' Said they, 'We found our fathers serving them.' Said he, 'Both you and your fathers have been in obvious error.' [...] So he brake them all in pieces, except a large one they had; that haply they might refer it to that. Said they, 'Who has done this with our gods? verily, he is of the wrong-doers!' [...] Said he, 'Nay, it was this largest of them; but ask them, if they can speak.' [...] Said they, 'Burn him, and help your gods, if ye are going to do so!' We said, 'O fire! be thou cool and a safety for Abraham!'",
+      summary:
+        "Sura 21 (Al-Anbiya), verserna 51–70 — en berättelse som saknar " +
+        "direkt motsvarighet i Bibeln (den judiska Midrash-traditionen " +
+        "har en liknande legend om Abraham och avgudarna, dock). " +
+        "Abraham krossar sin fars/stammens avgudabilder, lämnar avsiktligt " +
+        "den största kvar med yxan i handen, och svarar sedan hånfullt " +
+        "'fråga den då, om den kan tala' när han grips. Straffad med " +
+        "eld som Gud gör overksam ('var sval') — en tidig, tydlig " +
+        "'Gud räddar sin trogne från döden genom eld'-scen.",
+    },
+    {
+      slug: "ibrahims-sacrifice",
+      quote:
+        "'My Lord! grant me (a son), one of the righteous;' and we gave him glad tidings of a clement boy. And when he reached the age to work with him, he said, 'O my boy! verily, I have seen in a dream that I should sacrifice thee, look then what thou seest right.' Said he, 'O my sire! do what thou art bidden; thou wilt find me, if it please God, one of the patient!' And when they were resigned, and Abraham had thrown him down upon his forehead, we called to him, 'O Abraham! thou hast verified the vision; verily, thus do we reward those who do well. This is surely an obvious trial.' And we ransomed him with a mighty victim.",
+      summary:
+        "Sura 37 (As-Saffat), verserna 99–113. Central skillnad mot " +
+        "1 Mosebok 22: sonen (i koransk tradition oftast tolkad som " +
+        "Ismael, inte Isak) TILLFRÅGAS och samtycker uttryckligen innan " +
+        "offret — 'gör vad du blir befalld, du skall finna mig " +
+        "tålmodig' — snarare än att bara följa med utan att förstå. " +
+        "Peterson diskuterar den bibliska Isak-versionen ingående i " +
+        "sina Genesis-föreläsningar (redan i appen); ingen motsvarande " +
+        "koppling till just den koranska versionen är verifierad.",
+    },
+    {
+      slug: "musa-and-pharaoh",
+      quote:
+        "Has the story of Moses come to thee? When he saw the fire and said to his family, 'Tarry ye; verily, I perceive a fire!' [...] And when he came to it he was called to, 'O Moses! verily, I am thy Lord, so take off thy sandals; verily, thou art in the holy valley Tuvâ, and I have chosen thee.' [...] 'What is that in thy right hand, O Moses?' Said he, 'It is my staff on which I lean.' [...] Said He, 'Throw it down, O Moses!' and he threw it down, and behold! it was a snake that moved about. [...] 'Go unto Pharaoh, verily, he is outrageous!'",
+      summary:
+        "Sura 20 (Ta-Ha), verserna 9–79 i sammandrag — burning bush-" +
+        "scenen (den heliga dalen Tuva, skorna som ska tas av) och " +
+        "staven som blir en orm, samma grundelement som i 2 Moseboken " +
+        "men med Koranens karakteristiska direkta, repetitiva " +
+        "dialogform. Mose ber uttryckligen om Arons hjälp eftersom han " +
+        "har svårt att tala ('lös knuten från min tunga') — en detalj " +
+        "Koranen delar med den bibliska versionen (2 Mos 4:10).",
+    },
+    {
+      slug: "yusuf",
+      quote:
+        "When Joseph said to his father, 'O my sire! verily, I saw eleven stars, and the sun, and the moon,—I saw them adoring me!' He said, 'O my boy! tell not thy vision to thy brethren, for they will plot a plot against thee; verily, the devil is to man an open foe.' [...] When they said, 'Surely, Joseph and his brother are dearer to our father than we, a band although we be; verily, our father is in obvious error. Slay Joseph, or cast him in some land.' A speaker from amongst them spake, 'Slay not Joseph, but throw him into the bottom of the pit; some of the travellers may pick him up, if so ye do.'",
+      summary:
+        "Sura 12, den enda suran i hela Koranen som ägnas ÅT EN ENDA, " +
+        "sammanhängande berättelse från början till slut, kallad " +
+        "'den vackraste av berättelser' i sin egen inledning. Följer " +
+        "1 Moseboks Josef-berättelse tätt i huvuddragen (drömmen, " +
+        "brödernas svartsjuka, brunnen, Egypten, Potifars hustru, " +
+        "återföreningen) men med Koranens egna teologiska betoningar, " +
+        "bl.a. ett större fokus på Josefs egen sedliga fasthet mot " +
+        "frestelse.",
+    },
+    {
+      slug: "maryam",
+      quote:
+        "And mention, in the Book, Mary; when she retired from her family into an eastern place; and she took a veil (to screen herself) from them; and we sent unto her our spirit; and he took for her the semblance of a well-made man. Said she, 'Verily, I take refuge in the Merciful One from thee, if thou art pious.' Said he, 'I am only a messenger of thy Lord to bestow on thee a pure boy.' Said she, 'How can I have a boy when no man has touched me, and when I am no harlot?' He said, 'Thus says thy Lord, It is easy for Me! and we will make him a sign unto man, and a mercy from us.' [...] And she pointed to him, and they said, 'How are we to speak with one who is in the cradle a child?' He said, 'Verily, I am a servant of God; He has brought me the Book, and He has made me a prophet.'",
+      summary:
+        "Sura 19 (uppkallad efter Maria), verserna 16–34. Jungfrufödseln " +
+        "berättas i påfallande detalj och med stor vördnad för Maria — " +
+        "hon nämns oftare vid namn i Koranen än i Nya Testamentet. Den " +
+        "mest slående skillnaden mot Bibeln: det NYFÖDDA BARNET Jesus " +
+        "talar själv från vaggan för att försvara sin mors heder och " +
+        "förklara sitt eget profetuppdrag — ett mirakel som inte finns " +
+        "i de kanoniska evangelierna.",
+    },
+    {
+      slug: "al-isra",
+      quote:
+        "Celebrated be the praises of Him who took His servant a journey by night from the Sacred Mosque to the Remote Mosque, the precinct of which we have blessed, to show him of our signs! verily, He both hears and looks.",
+      summary:
+        "Sura 17:1 — en enda, tät vers som utgör grunden för hela " +
+        "berättelsen om Isra och Mi'raj: Muhammeds nattliga resa från " +
+        "Mecka till 'den fjärran moskén' (av tradition Jerusalem) och " +
+        "vidare genom himlarna (utvecklat i senare hadith-litteratur, " +
+        "inte i Koranens egen text). En av islams mest centrala " +
+        "mystika/kosmologiska händelser, jämförbar i religiös vikt " +
+        "med bibliska teofani-scener som Moses på Sinai eller Jakobs " +
+        "himlastege.",
+    },
+    {
+      slug: "ayat-al-kursi",
+      quote:
+        "God, there is no god but He, the living, the self-subsistent. Slumber takes Him not, nor sleep. His is what is in the heavens and what is in the earth. Who is it that intercedes with Him save by His permission? He knows what is before them and what behind them, and they comprehend not aught of His knowledge but of what He pleases. His throne extends over the heavens and the earth, and it tires Him not to guard them both, for He is high and grand.",
+      summary:
+        "Sura 2:255 — enligt en välkänd hadith 'den mäktigaste versen' " +
+        "i hela Koranen, ofta memorerad separat och uppsatt på " +
+        "kalligrafiska plakat i hem och moskéer. En koncentrerad " +
+        "beskrivning av Guds allvetande, ständigt vakna herravälde — " +
+        "jämförbar i funktion (kort, koncentrerad trosbekännelse-vers) " +
+        "med Sura 112 (Al-Ikhlas) eller judendomens Shema.",
+    },
+  ];
+  for (const c of quranContent) {
+    await prisma.story.update({
+      where: { bookId_slug: { bookId: quranBook.id, slug: c.slug } },
+      data: { quote: c.quote, summary: c.summary },
+    });
+  }
+  console.log(`Seedat Koranen (Fas 74): ${quranContent.length} berättelser fyllda i.`);
+
   // --- Tvärtraditions-karaktärslänkning: Koranens berättelser om samma
   // personer som redan finns i Bibel-korpusen länkas till SAMMA
   // Character-rad (inte en ny "islamisk Adam" osv.) — detta är vad som

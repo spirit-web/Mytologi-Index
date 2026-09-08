@@ -70,6 +70,24 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 74 (2026-08-28): Koranen färdigställd
+
+Fas 7 av 10. Alla 10 skelett-stubbar från Fas 65 fyllda i med riktiga,
+verifierade citat och sammanfattningar. Koranens ARABISKA text är
+förstås fri, men engelska översättningar är oftast skyddade — löst med
+E.H. Palmers fria 1880-översättning (Sacred Books of the East vol.
+6/9, Wikisource) för 9 av 10 suror, plus J.M. Rodwells fria
+1861-översättning (Gutenberg #3434) för Nuh (71), som saknade egen
+Wikisource-sida i Palmer-utgåvan. Alla citat hämtade och kontrollerade
+ord för ord mot respektive primärkälla.
+
+Genomgående betoning i sammanfattningarna på VAD SOM SKILJER Koranens
+version från Bibelns (inte bara vad som är gemensamt) — Adam ångrar sig
+och förlåts direkt, Ismael/Isak tillfrågas och samtycker till offret
+innan det sker, det nyfödda Jesusbarnet talar själv från vaggan. Ingen
+ny Peterson-koppling hittad utöver de befintliga (bookSourceRef/
+tvärtraditions-karaktärerna från Fas 66).
+
 ## Fas 72–73 (2026-08-28): Nordisk mytologi + Zoroastrism
 
 Fas 5 och 6 av 10, körda direkt efter varandra på användarens begäran.
