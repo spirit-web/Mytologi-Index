@@ -6590,6 +6590,127 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
   }
   console.log(`Seedat egyptisk/mesopotamisk mytologi: ${mythStories.length} berättelser.`);
 
+  // --- Fas 68: Taoismen (Tao Te Ching) ---------------------------------
+  // Föranledd av direkt användarfråga (efter att research bekräftade det
+  // som en av Petersons MEST centrala referenser — 12 Rules for Life
+  // öppnar bokstavligen med Taoismens yin-yang-symbol). Laozi (om han
+  // ens är en historisk person, vilket är omtvistat) levde traditionellt
+  // 500-talet f.Kr. — fri text, så FULLA verifierade citat är säkra.
+  // Hämtade och kontrollerade ord för ord mot James Legges klassiska,
+  // fria översättning (Project Gutenberg #216, 1891 — Legge död 1897,
+  // väl fritt).
+  const laoziChar = await prisma.character.upsert({
+    where: { slug: "laozi" }, update: {}, create: { slug: "laozi", name: "Laozi (Lao-Tse)" },
+  });
+  const taoismBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: otherScripturesCorpus.id, slug: "taoism" } },
+    update: {},
+    create: {
+      corpusId: otherScripturesCorpus.id,
+      slug: "taoism",
+      name: "Taoismen (Tao Te Ching)",
+      order: 6,
+      description:
+        "Kinesisk grundtext (traditionellt tillskriven Laozi, ca 500-" +
+        "talet f.Kr.; moderna forskare daterar sammanställningen ofta " +
+        "till 400–200-talet f.Kr.), 81 korta kapitel om Tao ('vägen') " +
+        "och wu wei (att handla utan påtvingad kraft). Peterson " +
+        "återkommer till Taoismens yin-yang-symbol som sin egen " +
+        "föredragna bild för förhållandet mellan ordning och kaos — 12 " +
+        "Rules for Life öppnar bokstavligen med den ('Order and chaos " +
+        "are the yang and yin of the famous Taoist symbol: two " +
+        "serpents, head to tail').",
+    },
+  });
+  const taoismWorks: ThinkerWorkDef[] = [
+    {
+      order: 1, slug: "chapter-1-the-tao", title: "Kapitel 1: Tao som kan uttalas",
+      quote:
+        "The Tao that can be trodden is not the enduring and unchanging Tao. The name that can be named is not the enduring and unchanging name.\n\n(Conceived of as) having no name, it is the Originator of heaven and earth; (conceived of as) having a name, it is the Mother of all things. [...] Under these two aspects, it is really the same; but as development takes place, it receives the different names. Together we call them the Mystery. Where the Mystery is the deepest is the gate of all that is subtle and wonderful.",
+      summary:
+        "Verkets berömda öppning: Tao kan inte fångas fullständigt i " +
+        "språk eller namn — det som kan sägas om det är redan en " +
+        "förenkling. Namnlöst är det alltings ursprung; namngivet är " +
+        "det 'alla tings moder'. Samma grundparadox (det obeskrivbara " +
+        "som ändå måste beskrivas för att alls kunna diskuteras) " +
+        "återkommer i mystik tradition efter mystik tradition.",
+    },
+    {
+      order: 2, slug: "chapter-2-opposites", title: "Kapitel 2: Motsatsernas ömsesidiga uppkomst",
+      quote:
+        "All in the world know the beauty of the beautiful, and in doing this they have (the idea of) what ugliness is; they all know the skill of the skilful, and in doing this they have (the idea of) what the want of skill is.\n\nSo it is that existence and non-existence give birth the one to (the idea of) the other; that difficulty and ease produce the one (the idea of) the other; that length and shortness fashion out the one the figure of the other [...] Therefore the sage manages affairs without doing anything, and conveys his instructions without the use of speech.",
+      summary:
+        "Den textuella roten till hela yin-yang-tänkandet: skönt och " +
+        "fult, svårt och lätt, långt och kort — inget av dem existerar " +
+        "oberoende, varje begrepp definierar och föder sin motsats. " +
+        "Härur följer 'wu wei' (att handla utan påtvingad kraft, utan " +
+        "att 'göra' i vanlig mening) som den vises hållning.",
+    },
+    {
+      order: 3, slug: "chapter-11-usefulness-of-emptiness", title: "Kapitel 11: Tomhetens nytta",
+      quote:
+        "The thirty spokes unite in the one nave; but it is on the empty space (for the axle), that the use of the wheel depends. Clay is fashioned into vessels; but it is on their empty hollowness, that their use depends. The door and windows are cut out (from the walls) to form an apartment; but it is on the empty space (within), that its use depends. Therefore, what has a (positive) existence serves for profitable adaptation, and what has not that for (actual) usefulness.",
+      summary:
+        "Ett av verkets mest citerade kapitel: hjulets EK, kärlets " +
+        "HÅLIGHET, rummets TOMMA UTRYMME — det är just frånvaron, inte " +
+        "materialet, som gör tingen användbara. En bild för värdet av " +
+        "det icke-manifesterade, det som ännu inte blivit till en sak.",
+    },
+    {
+      order: 4, slug: "chapter-28-masculine-feminine", title: "Kapitel 28: Känn det manliga, behåll det kvinnliga",
+      quote:
+        "Who knows his manhood's strength, Yet still his female feebleness maintains; As to one channel flow the many drains, All come to him, yea, all beneath the sky. Thus he the constant excellence retains; The simple child again, free from all stains.\n\nWho knows how white attracts, Yet always keeps himself within black's shade, The pattern of humility displayed [...] Who knows how glory shines, Yet loves disgrace, nor e'er for it is pale [...] The unwrought material, when divided and distributed, forms vessels.",
+      summary:
+        "Direkt förelöpare till Petersons eget maskulint/feminint-" +
+        "kodade ordning/kaos-språk: att KÄNNA styrka men VÄLJA " +
+        "mjukhet/mottaglighet, att känna det vita (klarhet, ordning) " +
+        "men behålla förtrogenhet med det svarta (mörker, det okända) " +
+        "— hållas i en produktiv spänning mellan båda, inte en ren " +
+        "seger för det ena över det andra.",
+    },
+    {
+      order: 5, slug: "chapter-42-the-one-the-two", title: "Kapitel 42: Tao frambringade Ett",
+      quote:
+        "The Tao produced One; One produced Two; Two produced Three; Three produced All things. All things leave behind them the Obscurity (out of which they have come), and go forward to embrace the Brightness (into which they have emerged), while they are harmonised by the Breath of Vacancy. [...] The violent and strong do not die their natural death. I will make this the basis of my teaching.",
+      summary:
+        "Taoismens egen kosmogoni (skapelseberättelse): ur Tao uppstår " +
+        "Ett, ur Ett uppstår Två (traditionellt tolkat som just yin " +
+        "och yang), ur Två uppstår Tre, och ur Tre allting annat. " +
+        "Detta är den kanoniska textuella källan till yin-yang-" +
+        "symbolens filosofiska bakgrund som Peterson lånar för sin " +
+        "egen ordning/kaos-modell.",
+    },
+  ];
+  for (const w of taoismWorks) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: taoismBook.id, slug: w.slug } },
+      update: { title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+      create: { bookId: taoismBook.id, slug: w.slug, title: w.title, startRef: w.title, endRef: w.title, quote: w.quote, summary: w.summary, orderInBook: w.order },
+    });
+    await prisma.storyCharacter.upsert({
+      where: { storyId_characterId: { storyId: story.id, characterId: laoziChar.id } },
+      update: {},
+      create: { storyId: story.id, characterId: laoziChar.id, role: "författare" },
+    });
+  }
+  // Verifierad koppling: bookSourceRef (INTE video — det är boken 12
+  // Rules for Life själv som citerar yin-yang-symbolen, i introduktions-
+  // kapitlet "Overture", innan Regel 1). Ingen matchande Story-rad finns
+  // för "Overture" (bara de 12 reglerna är indexerade som egna stories)
+  // — bookSourceRef visas då som oklickbar text istället för länk, vilket
+  // är korrekt eftersom det inte finns någon story att länka till.
+  const chapter42Story = await prisma.story.findFirstOrThrow({ where: { bookId: taoismBook.id, slug: "chapter-42-the-one-the-two" } });
+  await prisma.reference.upsert({
+    where: { id: "seed-workref-chapter-42-the-one-the-two" },
+    update: { storyId: chapter42Story.id, bookSourceRef: "12 Rules for Life, Overture" },
+    create: {
+      id: "seed-workref-chapter-42-the-one-the-two", storyId: chapter42Story.id,
+      bookSourceRef: "12 Rules for Life, Overture",
+      note: "Öppnar hela boken med just den här symboliken: 'Order and chaos are the yang and yin of the famous Taoist symbol: two serpents, head to tail. Order is the white, masculine serpent; Chaos, its black, feminine counterpart.' Korskontrollerat mot flera oberoende sekundärkällor (boken själv är inte digitalt tillgänglig för oss) — se README Fas 68.",
+    },
+  });
+  console.log(`Seedat Taoismen: ${taoismWorks.length} kapitel.`);
+
   // --- Tvärtraditions-karaktärslänkning: Koranens berättelser om samma
   // personer som redan finns i Bibel-korpusen länkas till SAMMA
   // Character-rad (inte en ny "islamisk Adam" osv.) — detta är vad som
@@ -6644,7 +6765,7 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
     solzhenitsyn: [1962, 2008], eliade: [1949, 1983], neumann: [1949, 1960], paglia: [1990, 2026],
     // Andra religiösa texter
     quran: [610, 632], talmud: [200, 500], "bhagavad-gita": [-400, -200],
-    mesopotamia: [-2100, -1100], egypt: [-2400, -100],
+    mesopotamia: [-2100, -1100], egypt: [-2400, -100], taoism: [-400, -200],
   };
   let yearsUpdated = 0;
   for (const [slug, [start, end]] of Object.entries(approxYears)) {
@@ -7763,6 +7884,11 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
       credit: "Foto: Vaner Casaes/Ag. BAPRESS, 2017 (Wikimedia Commons, CC BY-SA 4.0)",
       creditUrl: "https://commons.wikimedia.org/wiki/File:Camille_Paglia.jpg",
     },
+    laozi: {
+      path: "/images/personer/laozi.png",
+      credit: "Kinesiskt träsnitt, konstnär okänd (Wikimedia Commons, public domain)",
+      creditUrl: "https://commons.wikimedia.org/wiki/File:Representation_of_Laozi.PNG",
+    },
   };
   for (const [slug, p] of Object.entries(refPortraits)) {
     await prisma.character.update({
@@ -8425,7 +8551,34 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
     },
   });
 
+  // Fas 68-tillägg: Taoismens yin-yang är INTE en hjälte-mot-monster-
+  // berättelse (som heroParallel ovan) utan en ren, konfliktfri DUALITET
+  // — förtjänar därför en egen Parallel snarare än att pressas in i
+  // hero-mönstret.
+  const dualityParallel = await prisma.parallel.upsert({
+    where: { id: "seed-parallel-order-chaos-duality" },
+    update: {},
+    create: {
+      id: "seed-parallel-order-chaos-duality",
+      title: "Ordning och kaos som urkrafter",
+      description:
+        "Till skillnad från hjälte-mot-monster-mönstret ovan (en aktiv " +
+        "KAMP mellan ordning och kaos) beskriver Taoismens yin-yang en " +
+        "ren, konfliktfri DUALITET — två krafter som ömsesidigt " +
+        "definierar och föder varandra, ingen 'vinner'. Peterson lånar " +
+        "uttryckligen just den symbolen (12 Rules for Life öppnar med " +
+        "den) som sin egen bild för ordning/kaos, och samma " +
+        "grundidé — en formlös, vattenlik urmassa som föregår all " +
+        "ordnad struktur — återfinns i Bibelns 'tomhet och öde' " +
+        "(tohu wa-bohu) före skapelsen och i Enuma Elishs Tiamat.",
+      themeId: chaosOrderTheme.id,
+    },
+  });
+
   const moreParallelLinks: Array<[string, string, string]> = [
+    [dualityParallel.id, chapter42Story.id, "Tao frambringar Ett, Ett frambringar Två (traditionellt tolkat som yin och yang) — duplitetens filosofiska källtext."],
+    [dualityParallel.id, creationStory.id, "'Jorden var öde och tom' (tohu wa-bohu) före Guds ordnande ord — kaos som förutsättning, inte fiende."],
+    [dualityParallel.id, enumaElishStory.id, "Tiamat SOM formlöst kaosvatten, före Marduks ordnande — här dock med en aktiv kamp, inte bara ren dualitet."],
     [heroParallel.id, enumaElishStory.id, "Marduk väljs till kung för att han kan SE och TALA ('logos') — inte för att han är starkast."],
     [heroParallel.id, osirisHorusStory.id, "Horus mot Seth appliceras på statens förfall/förnyelse istället för kosmos skapelse — samma mönster, ny kontext."],
     [heroParallel.id, creationStory.id, "Gud talar ordning ur kaos ('Guds ande svävade över vattnet') — samma djupstruktur i en mer abstrakt, avpersonifierad form."],
@@ -8442,7 +8595,7 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
       create: { parallelId, storyId, note },
     });
   }
-  console.log(`Seedat Jordans Mytologi: 3 nya Parallels, ${moreParallelLinks.length} kopplingar.`);
+  console.log(`Seedat Jordans Mytologi: 4 nya Parallels, ${moreParallelLinks.length} kopplingar.`);
 
   console.log(
     `Seedat: ${stories.length} stories i Genesis, ` +

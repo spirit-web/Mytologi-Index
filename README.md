@@ -70,6 +70,35 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 68 (2026-08-28): Taoismen (Tao Te Ching)
+
+Första fasen i en ny, tio-fas-plan (nya civilisationer + färdigställa
+Koranen/Talmud/Gita + sammanlänkning — se chattlogg för fullständig
+plan). Taoismen bedömdes vara Petersons MEST centrala icke-abrahamitiska
+referens: 12 Rules for Life öppnar bokstavligen med Taoismens yin-yang-
+symbol ("Order and chaos are the yang and yin of the famous Taoist
+symbol: two serpents, head to tail").
+
+Ny bok med 5 kapitel, alla med HELA verifierade citat (Laozi ~500-talet
+f.Kr., fri text) — hämtade och kontrollerade ord för ord mot James
+Legges klassiska översättning (Project Gutenberg #216, 1891, Legge
+död 1897, väl fritt): kapitel 1 (öppningen), 2 (motsatsernas
+ömsesidiga uppkomst — yin-yangs textuella rot), 11 (tomhetens nytta),
+28 ("känn det manliga, behåll det kvinnliga" — direkt förelöpare till
+Petersons maskulint/feminint-kodade ordning/kaos-språk), och 42
+("Tao frambringade Ett... Två" — den kanoniska yin-yang-kosmogonin).
+
+Kapitel 42 fick en `bookSourceRef`-koppling till "12 Rules for Life,
+Overture" (boken själv, inte en video) — korskontrollerad mot flera
+oberoende sekundärkällor snarare än ett eget digitalt exemplar (boken
+är inte digitalt tillgänglig för oss, samma avgränsning som gäller
+övriga 12 Rules-bokreferenser sedan tidigare faser).
+
+**Ny Jordans Mytologi-koppling**: "Ordning och kaos som urkrafter" —
+skiljer yin-yangs KONFLIKTFRIA dualitet från "Hjälten mot kaos-
+monstret"-Parallelns AKTIVA KAMP-mönster (Fas 66), kopplad till
+Bibelns tohu wa-bohu och Enuma Elishs Tiamat.
+
 ## Fas 67 (2026-08-28): Historisk tidslinje + "Jordans Mytologi"
 
 Två nya sidor, ett schema-tillägg (via `prisma db push`, INTE `migrate
