@@ -6420,6 +6420,205 @@ Dost Thou know that the ages will pass, and humanity will proclaim by the lips o
   }
   console.log(`Seedat skelett för andra religiösa texter: ${scriptureBooks.length} böcker, ${totalStubs} relevans-filtrerade stub-berättelser (utan quote/summary än).`);
 
+  // --- Fas 66: Egyptisk och mesopotamisk mytologi + tvärtraditions-
+  // karaktärslänkning -----------------------------------------------
+  // Föranledd av direkt användarfråga: "Jordan brukar referera till
+  // mesopotamiska och egyptiska historier ... ögat över pyramiden ...
+  // civilisationers egna gudar battle out sina värderingar." Två nya
+  // Book i other-scriptures, DENNA gång med riktigt innehåll (inte bara
+  // skelett) eftersom vi redan har VERIFIERAT Peterson-material för de
+  // två centrala myterna (Enuma Elish, Osiris/Horus/Seth) — samma citat/
+  // tidsstämplar som `references`-arrayen längre ner i filen redan
+  // pekar på (Maps of Meaning-föreläsning 8, Nb5cBkbQpGY), bara i en ny
+  // riktning (från myten som EGET verk, inte bara som karaktärsomnämnande).
+  //
+  // upsert:erna nedan för marduk/tiamat/osiris-horus skapar samma
+  // Character-rader som refCharacterDefs längre ner i filen (ordning
+  // spelar ingen roll — upsert med update:{} — samma mönster som
+  // nietzscheChar/jungChar återanvänder redan existerande slugs).
+  //
+  // "Ögat på toppen av pyramiden"-poängen (Fas 66) är VÄL DOKUMENTERAD
+  // över många av Petersons föreläsningar/intervjuer (bl.a. citerad på
+  // flera oberoende sekundärkällor: "...you have to be awake to
+  // malevolence and chaos and you have to embody your tradition and
+  // that puts you at the highest pinnacle of the dominant structure")
+  // men INGEN exakt video+tidsstämpel har verifierats än mot ett
+  // primärt transkript — samma sak för Gilgamesh-eposet (hjälten som
+  // lämnar hemmet/civilisationen, en föregångare till syndaflodsmyten).
+  // Båda får därför bara `summary` (egen parafras) och INGEN Reference-
+  // rad, tills en riktig transkript-verifiering gjorts — se README Fas 66.
+  const mardukChar = await prisma.character.upsert({
+    where: { slug: "marduk" }, update: {}, create: { slug: "marduk", name: "Marduk (mesopotamisk gud)" },
+  });
+  const tiamatChar = await prisma.character.upsert({
+    where: { slug: "tiamat" }, update: {}, create: { slug: "tiamat", name: "Tiamat (mesopotamisk urmoder/kaos)" },
+  });
+  const osirisHorusChar = await prisma.character.upsert({
+    where: { slug: "osiris-horus" }, update: {}, create: { slug: "osiris-horus", name: "Osiris/Horus (egyptisk gud)" },
+  });
+  const mapsOfMeaningLecture8ForMyths = await prisma.petersonVideo.findUniqueOrThrow({ where: { youtubeId: "Nb5cBkbQpGY" } });
+
+  const mesopotamianBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: otherScripturesCorpus.id, slug: "mesopotamia" } },
+    update: {},
+    create: {
+      corpusId: otherScripturesCorpus.id,
+      slug: "mesopotamia",
+      name: "Mesopotamisk mytologi",
+      order: 4,
+      description:
+        "Sumerisk/babylonisk mytologi, nedtecknad på kilskrift från ca " +
+        "1800-talet f.Kr. och framåt — äldre än både Bibeln och de " +
+        "flesta andra verk i den här appen. Central i Petersons Maps of " +
+        "Meaning-föreläsningar som exempel på hur civilisationers gudar " +
+        "('värde-hierarkier') konkurrerar tills en enda framträder som " +
+        "den erkänt högsta — samt som en möjlig ANOR till flera " +
+        "bibliska berättelser (syndafloden, Edens lustgård).",
+    },
+  });
+  const egyptianBook = await prisma.book.upsert({
+    where: { corpusId_slug: { corpusId: otherScripturesCorpus.id, slug: "egypt" } },
+    update: {},
+    create: {
+      corpusId: otherScripturesCorpus.id,
+      slug: "egypt",
+      name: "Egyptisk mytologi",
+      order: 5,
+      description:
+        "Forntida egyptisk religion, med rötter tillbaka till ca 3000 " +
+        "f.Kr. (före de äldsta bevarade Mesopotamien-texterna i denna " +
+        "app, men den muntliga myttraditionen kan vara jämngammal). " +
+        "Peterson återkommer ofta till Osiris/Horus/Seth-myten och till " +
+        "Horus-ögat/pyramid-symboliken som en tidig, konkret bild av " +
+        "'den högsta värdehierarkin' — samma grundmönster han ser i " +
+        "Enuma Elish (Mesopotamien, ovan) och senare i Bibeln.",
+    },
+  });
+
+  const mythStories: Array<{
+    bookId: string; slug: string; title: string; startRef: string; endRef: string; summary: string;
+    characterIds: string[]; verifiedAtSec: number | null;
+  }> = [
+    {
+      bookId: mesopotamianBook.id, slug: "enuma-elish", title: "Enuma Elish — Marduk och Tiamat", startRef: "Tavla 4", endRef: "Tavla 6",
+      characterIds: [mardukChar.id, tiamatChar.id], verifiedAtSec: 7029,
+      summary:
+        "Den babyloniska skapelsemyten: Tiamat, de äldre gudarnas " +
+        "kaotiska urmoder ('Moder Natur'), skapar efter sin makes död en " +
+        "armé av monster ledda av demonen Kingu för att utplåna gudarna " +
+        "— ingen vågar möta henne. Marduk väljs till 'kungars kung' inte " +
+        "för att han är starkast, utan för att han kan SE (ögon runt " +
+        "hela huvudet) och TALA (magiska ord som förvandlar natt till " +
+        "dag) — Peterson tolkar det som mänsklighetens första " +
+        "formulering av att uppmärksamt seende och sant tal ('logos') " +
+        "bör stå överst i hierarkin. Marduk fångar Tiamat i ett nät, " +
+        "dödar henne och skapar världen av hennes styckade kropp — och " +
+        "människor av Kingus blod, vilket Peterson kopplar till " +
+        "syndafallets idé om att människan ensam bland varelserna kan " +
+        "ljuga och göra ont med avsikt. Den mesopotamiske kejsaren fick " +
+        "sedan rituellt (vid nyår) bekänna hur han misslyckats vara 'en " +
+        "god Marduk' föregående år — civilisationens egen gud prövas " +
+        "och bekräftas på nytt varje år.",
+    },
+    {
+      bookId: mesopotamianBook.id, slug: "epic-of-gilgamesh", title: "Gilgamesh-eposet", startRef: "Tavla 1", endRef: "Tavla 11",
+      characterIds: [], verifiedAtSec: null,
+      summary:
+        "Världens äldsta bevarade litterära epos (ca 2100 f.Kr.): kung " +
+        "Gilgamesh av Uruk tvingas ut ur civilisationens trygghet av sin " +
+        "vilde vän Enkidu, och efter Enkidus död ger han sig ut på en " +
+        "meningslös jakt efter odödlighet. Innehåller en syndaflods-" +
+        "berättelse (Utnapishtim och arken) som är äldre än den " +
+        "bibliska och troligen en gemensam källa/parallell till den. " +
+        "Peterson använder eposet som ett återkommande exempel på " +
+        "hjälte-mönstret 'att lämna hemmet/det trygga och kända' — " +
+        "samma grundstruktur han spårar ända fram till Bilbo Baggins i " +
+        "Bilbo/Sagan om ringen.",
+    },
+    {
+      bookId: egyptianBook.id, slug: "osiris-horus-seth", title: "Osiris, Horus och Seth", startRef: "Pyramidtexterna", endRef: "Plutarchos version",
+      characterIds: [osirisHorusChar.id], verifiedAtSec: 8311,
+      summary:
+        "Farao sågs som en förening av Osiris (den mördade, " +
+        "återuppståndne kungen) och Horus (sonen som besegrar sin onda " +
+        "farbror Seth och återupprättar ordningen) — Peterson jämför " +
+        "detta direkt med Marduk mot Tiamat (Mesopotamien, se ovan), " +
+        "fast applicerat på statens förfall/förnyelse istället för " +
+        "kosmos skapelse. Han spårar sedan en 'demokratisering av " +
+        "Osiris': idén om detta gudomliga spred sig från enbart farao, " +
+        "till aristokratin, till (hos grekerna) alla fria män, till " +
+        "(hos de kristna) bokstavligen alla människor oavsett kön eller " +
+        "status — vilket han kallar 'grundbulten' för hela idén om den " +
+        "suveräna individens värde i västerländsk civilisation.",
+    },
+    {
+      bookId: egyptianBook.id, slug: "eye-of-horus-pyramid", title: "Horus-ögat och pyramidens topp", startRef: "Diverse pyramidtexter/amuletter", endRef: "Diverse pyramidtexter/amuletter",
+      characterIds: [osirisHorusChar.id], verifiedAtSec: null,
+      summary:
+        "Ögat (Horus återupprättade, helade öga efter striden mot Seth) " +
+        "placerat på toppen av pyramiden/hierarkin är, enligt Peterson, " +
+        "en av civilisationens äldsta bilder av 'den högsta värdet': " +
+        "att stå överst kräver att man är vaken inför ondska och kaos " +
+        "OCH förkroppsligar sin tradition — inte bara makt i sig. Samma " +
+        "bildspråk återfinns (via frimureriet) på den amerikanska " +
+        "dollarsedeln. Peterson återkommer till poängen i flera " +
+        "föreläsningar/intervjuer, men ingen enskild video+tidsstämpel " +
+        "är ännu verifierad mot ett primärkällstranskript — se README " +
+        "Fas 66.",
+    },
+  ];
+  for (const [i, s] of mythStories.entries()) {
+    const story = await prisma.story.upsert({
+      where: { bookId_slug: { bookId: s.bookId, slug: s.slug } },
+      update: { title: s.title, startRef: s.startRef, endRef: s.endRef, summary: s.summary, orderInBook: i + 1 },
+      create: { bookId: s.bookId, slug: s.slug, title: s.title, startRef: s.startRef, endRef: s.endRef, summary: s.summary, orderInBook: i + 1 },
+    });
+    for (const characterId of s.characterIds) {
+      await prisma.storyCharacter.upsert({
+        where: { storyId_characterId: { storyId: story.id, characterId } },
+        update: {},
+        create: { storyId: story.id, characterId },
+      });
+    }
+    if (s.verifiedAtSec !== null) {
+      await prisma.reference.upsert({
+        where: { id: `seed-workref-${s.slug}` },
+        update: { storyId: story.id, videoId: mapsOfMeaningLecture8ForMyths.id, atSec: s.verifiedAtSec, note: "Del av samma genomgång av Enuma Elish/Osiris-Horus-myterna i Maps of Meaning-föreläsning 8 — se karaktärssidan för Marduk/Tiamat/Osiris-Horus för den fullständiga, ordagrant nedtecknade kommentaren." },
+        create: { id: `seed-workref-${s.slug}`, storyId: story.id, videoId: mapsOfMeaningLecture8ForMyths.id, atSec: s.verifiedAtSec, note: "Del av samma genomgång av Enuma Elish/Osiris-Horus-myterna i Maps of Meaning-föreläsning 8 — se karaktärssidan för Marduk/Tiamat/Osiris-Horus för den fullständiga, ordagrant nedtecknade kommentaren." },
+      });
+    }
+  }
+  console.log(`Seedat egyptisk/mesopotamisk mytologi: ${mythStories.length} berättelser.`);
+
+  // --- Tvärtraditions-karaktärslänkning: Koranens berättelser om samma
+  // personer som redan finns i Bibel-korpusen länkas till SAMMA
+  // Character-rad (inte en ny "islamisk Adam" osv.) — detta är vad som
+  // driver den nya "förekommer även i"-markeringen på story-sidan
+  // (se page.tsx) OCH gör att personsidan (/personer/adam) automatiskt
+  // visar båda traditionernas berättelser under "Förekommer i".
+  const crossTraditionLinks: Array<{ storySlug: string; bookSlug: string; characterSlug: string }> = [
+    { storySlug: "adam-and-the-fall", bookSlug: "quran", characterSlug: "adam" },
+    { storySlug: "nuh", bookSlug: "quran", characterSlug: "noah" },
+    { storySlug: "ibrahim-and-the-idols", bookSlug: "quran", characterSlug: "abraham" },
+    { storySlug: "ibrahims-sacrifice", bookSlug: "quran", characterSlug: "abraham" },
+    { storySlug: "musa-and-pharaoh", bookSlug: "quran", characterSlug: "mose" },
+    { storySlug: "yusuf", bookSlug: "quran", characterSlug: "joseph" },
+    { storySlug: "maryam", bookSlug: "quran", characterSlug: "maria" },
+    { storySlug: "maryam", bookSlug: "quran", characterSlug: "jesus" },
+  ];
+  for (const l of crossTraditionLinks) {
+    const story = await prisma.story.findFirstOrThrow({
+      where: { slug: l.storySlug, book: { slug: l.bookSlug, corpus: { slug: "other-scriptures" } } },
+    });
+    const character = await prisma.character.findUniqueOrThrow({ where: { slug: l.characterSlug } });
+    await prisma.storyCharacter.upsert({
+      where: { storyId_characterId: { storyId: story.id, characterId: character.id } },
+      update: {},
+      create: { storyId: story.id, characterId: character.id },
+    });
+  }
+  console.log(`Seedat tvärtraditions-karaktärslänkning: ${crossTraditionLinks.length} länkar.`);
+
   // --- Fas 14: Beyond Order: 12 More Rules for Life (2021) -----------
   // Uppföljaren till 12 Rules for Life — samma metod: inget digitalt
   // exemplar/transkript tillgängligt, så varje regels citat är

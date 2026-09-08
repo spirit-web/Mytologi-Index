@@ -70,6 +70,59 @@ Det som finns just nu:
   isolerad från kärnmodellen tills den aktivt tas upp igen — ingen
   premature koppling in i `Story`/`Reference` än.
 
+## Fas 66 (2026-08-28): Egyptisk/mesopotamisk mytologi + tvärtraditions-karaktärslänkning
+
+Föranledd av: "Jordan brukar referera till mesopotamiska historier och
+egyptiska historier ... ögat över pyramiden ... civilisationers egna
+gudar battle out sina värderingar." Två nya `Book` i `other-scriptures`
+— men till skillnad från Fas 65 (bara skelett) har dessa RIKTIGT
+innehåll direkt, eftersom vi redan hade verifierat Peterson-material
+för de två centrala myterna:
+
+- **Mesopotamisk mytologi**: Enuma Elish (Marduk & Tiamat) — hela
+  Petersons poäng (varför Marduk väljs till kung: han kan SE och TALA,
+  "logos"; kopplingen till syndafallet; kejsarens årliga rituella
+  bekännelse) återanvänder ordagrant samma research som redan låg i
+  appen sedan Fas 11, bara i en ny riktning (myten som eget verk,
+  inte bara ett omnämnande på en bibel-sida). Plus Gilgamesh-eposet
+  (hjälten som lämnar hemmet/civilisationen — föregångare till
+  syndaflodsmyten), men UTAN en exakt verifierad tidsstämpel än.
+- **Egyptisk mytologi**: Osiris/Horus/Seth-myten (samma
+  återanvändnings-princip som ovan — "demokratiseringen av Osiris"
+  till alla människors värde). Plus "Horus-ögat på pyramidens topp"
+  — användarens eget exempel — som en egen berättelse, men **ingen
+  Reference-rad lades till**: poängen är väl dokumenterad över många
+  av Petersons föreläsningar/intervjuer (flera oberoende
+  sekundärkällor citerar samma resonemang) men ingen exakt
+  video+tidsstämpel har verifierats mot ett primärt transkript än —
+  samma ärliga avgränsning som gäller Gilgamesh ovan.
+
+**Andra civilisationer Peterson återkommer till (efterfrågat av
+användaren) — inte byggda än, men värda att flagga:**
+- **Taoismen/yin-yang-symbolen** — enligt research en av de MEST
+  centrala referenserna i hela hans författarskap (12 Rules for Life
+  öppnar bokstavligen med "Order and chaos are the yang and yin");
+  starkast kandidat för nästa tillägg.
+  - **Grekisk mytologi** (Zeus mot Typhon, Prometheus, Oidipus) —
+  används ofta i jämförelser med Marduk/Tiamat-mönstret, svagare
+  källäge än Taoismen men värt en egen fas.
+  - Vedisk/hinduisk mytologi (Indra mot Vritra) nämndes också i
+  sökningen — troligen mest relevant som en till Bhagavad Gita-
+  anknuten referens snarare än ett helt eget verk.
+
+**Tvärtraditions-karaktärslänkning**: Koranens redan seedade
+berättelser om Adam, Noa (Nuh), Abraham (Ibrahim, båda story-
+stubbarna), Mose (Musa), Josef (Yusuf) och Maria/Jesus (Maryam)
+länkades till EXAKT SAMMA `Character`-rad som redan används i
+Bibel-korpusen — inte nya, dubblerade karaktärer. Det här är vad som
+driver den nya UI-markeringen: på story-sidan får en karaktärs-etikett
+en accent-färg + "⇄"-ikon och en tydlig ruta ("Samma karaktär i andra
+traditioner") med klickbara länkar när personen förekommer i en annan
+korpus — och personsidan (`/personer/adam` osv.) visade redan
+automatiskt båda traditionernas berättelser under "Förekommer i" utan
+någon kodändring (samma mekanism som redan fanns för Nietzsche/Jung-
+kapitlens författar-länkning, Fas 58).
+
 ## Fas 65 (2026-08-28): Relevans-filtrerade berättelse-stubbar för Koranen, Talmud, Bhagavad Gita
 
 Fas 64 gav bara tomma `Book`-rader. Den här fasen går ett steg djupare

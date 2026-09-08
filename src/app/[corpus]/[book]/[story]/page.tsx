@@ -51,6 +51,34 @@ export default async function StoryPage({
   const quoteAuthorCharacter = story.characters.find((c) => c.role === "författare")?.character;
   const quoteAuthorIsPeterson = story.book.corpus.kind === "framework" && !quoteAuthorCharacter;
 
+  // Tvärtraditions-överlapp (Fas 66, direkt användarönskemål): om en
+  // karaktär i den här berättelsen (t.ex. "Adam") ÄVEN förekommer i en
+  // berättelse i en ANNAN korpus (t.ex. Koranens "Adam och syndafallet"),
+  // visa det extra tydligt — annars syns kopplingen bara indirekt via
+  // personsidans "Förekommer i"-lista. Bara relevant för samma karaktär
+  // i olika KORPUSAR (inte olika böcker inom samma korpus, det är redan
+  // det normala för återkommande bibelkaraktärer).
+  const crossTraditionAppearances = new Map<
+    string,
+    { corpusName: string; corpusSlug: string; bookSlug: string; storySlug: string; storyTitle: string }[]
+  >();
+  for (const c of story.characters) {
+    const otherAppearances = await prisma.storyCharacter.findMany({
+      where: { characterId: c.characterId, storyId: { not: story.id } },
+      include: { story: { include: { book: { include: { corpus: true } } } } },
+    });
+    const otherTraditions = otherAppearances
+      .filter((a) => a.story.book.corpus.slug !== story.book.corpus.slug)
+      .map((a) => ({
+        corpusName: a.story.book.corpus.name,
+        corpusSlug: a.story.book.corpus.slug,
+        bookSlug: a.story.book.slug,
+        storySlug: a.story.slug,
+        storyTitle: a.story.title,
+      }));
+    if (otherTraditions.length > 0) crossTraditionAppearances.set(c.characterId, otherTraditions);
+  }
+
   // Bok-interna referenser (t.ex. "12 Rules for Life, Regel 6" ->
   // Solzjenitsyn, eller "We Who Wrestle with God, Kapitel 2" -> Adam och
   // Eva i Edens lustgård): vilka andra personer/berättelser Jordan
@@ -231,25 +259,34 @@ export default async function StoryPage({
       )}
 
       {(story.characters.length > 0 || story.themes.length > 0) && (
-        <div className="mb-8 flex flex-wrap gap-1.5">
-          {story.characters.map((c) => (
-            <Link
-              key={c.character.slug}
-              href={`/personer/${c.character.slug}`}
-              className="flex items-center gap-1.5 rounded-full border border-[var(--border)] py-1 pl-1 pr-2.5 text-xs text-[var(--text-muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-            >
-              {c.character.portraitPath && (
-                <Image
-                  src={c.character.portraitPath}
-                  alt=""
-                  width={20}
-                  height={20}
-                  className="h-5 w-5 rounded-full object-cover"
-                />
-              )}
-              {c.character.name}
-            </Link>
-          ))}
+        <div className="mb-2 flex flex-wrap gap-1.5">
+          {story.characters.map((c) => {
+            const otherTraditions = crossTraditionAppearances.get(c.characterId);
+            return (
+              <Link
+                key={c.character.slug}
+                href={`/personer/${c.character.slug}`}
+                className={`flex items-center gap-1.5 rounded-full border py-1 pl-1 pr-2.5 text-xs transition ${
+                  otherTraditions
+                    ? "border-[var(--accent-border)] bg-[var(--accent-bg)] text-[var(--accent)] hover:border-[var(--accent)]"
+                    : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                }`}
+                title={otherTraditions ? `Förekommer även i: ${otherTraditions.map((o) => o.corpusName).join(", ")}` : undefined}
+              >
+                {c.character.portraitPath && (
+                  <Image
+                    src={c.character.portraitPath}
+                    alt=""
+                    width={20}
+                    height={20}
+                    className="h-5 w-5 rounded-full object-cover"
+                  />
+                )}
+                {c.character.name}
+                {otherTraditions && <span aria-hidden>⇄</span>}
+              </Link>
+            );
+          })}
           {story.themes.map((t) => (
             <Link
               key={t.theme.slug}
@@ -259,6 +296,25 @@ export default async function StoryPage({
               {t.theme.name}
             </Link>
           ))}
+        </div>
+      )}
+
+      {crossTraditionAppearances.size > 0 && (
+        <div className="mb-8 rounded-lg border border-[var(--accent-border)] bg-[var(--accent-bg)] px-4 py-3 text-xs text-[var(--accent)]">
+          <p className="mb-1.5 font-medium uppercase tracking-wide">⇄ Samma karaktär i andra traditioner</p>
+          <ul className="space-y-1">
+            {[...crossTraditionAppearances.entries()].flatMap(([characterId, appearances]) => {
+              const characterName = story.characters.find((c) => c.characterId === characterId)?.character.name;
+              return appearances.map((a) => (
+                <li key={`${characterId}-${a.storySlug}-${a.bookSlug}`}>
+                  <span className="font-medium">{characterName}</span> förekommer även i{" "}
+                  <Link href={`/${a.corpusSlug}/${a.bookSlug}/${a.storySlug}`} className="underline underline-offset-2 hover:no-underline">
+                    {a.corpusName}: {a.storyTitle}
+                  </Link>
+                </li>
+              ));
+            })}
+          </ul>
         </div>
       )}
 
